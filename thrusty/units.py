@@ -12,7 +12,6 @@ FP_ORIFICE_CD = 0.65
 ureg = UnitRegistry()
 ureg.define('psia = psi')
 ureg.define('psid = psi')
-ureg.define('psig = psia + 14.696')
 ureg.define('lbm = lb')
 ureg.define(f'Cv = Cda / 38')
 ureg.define(f'Cda_in2 = in^2')

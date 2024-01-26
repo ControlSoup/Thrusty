@@ -1,0 +1,6 @@
+CoolProp>=6.6.0
+numpy>=1.24.2
+pandas>=2.2.0
+pint>=0.23
+plotly>=5.18.0
+setuptools>=66.1.1

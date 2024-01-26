@@ -1,8 +1,8 @@
 import numpy as np
 import pandas as pd
 from copy import deepcopy
-from file_hanlding import datadict_to_csv
-from plotting import graph_by_key, graph_datadict
+from .file_hanlding import datadict_to_csv
+from .plotting import graph_by_key, graph_datadict
 
 class DataStorage():
     def __init__(self, dt_s, max_time_s):
@@ -41,7 +41,7 @@ class DataStorage():
 
     def __trim_data(self):
         for key in self.__datadict:
-            self.__datadict[key] = self.__datadict[0:self.__index + 1]
+            self.__datadict[key] = self.__datadict[key][0:self.__index + 1]
             self.__time_array_s = self.__time_array_s[0:self.__index + 1]
 
     def next_cycle(self):
@@ -51,23 +51,31 @@ class DataStorage():
             self.__index -= 1
             print("WARNING| Max Value of time has been reached")
 
-    def set_or_add_data(self, key: str, value: float):
-
-        if self.__index != 0:
-            raise ValueError(
-                f"ERROR| Keys may only be intialized at time 0.0 check [{key}]"
-            )
+    def record_data(self, key: str, value: float):
 
         if key not in self.__datadict:
+            if self.__index != 0:
+                raise ValueError(
+                    f"ERROR| Keys may only be intialized at time 0.0 check [{key}]"
+                )
             self.__datadict[key] = np.zeros_like(self.__time_array_s)
             self.__datadict[key][self.__index] = value
         else:
             self.__datadict[key][self.__index] = value
 
+    def record_list(self, list: [str, float]):
+        for key, val in list:
+            self.record_data(key, val)
+
     def export_to_csv(self, file_path: str):
         datadict_to_csv(self.datadict, file_path)
 
-    def plot_all(self, export_path = None):
-        graph_datadict(self.datadict, self.__time_key, export_path)
+    def plot_all(self, export_path = None, show_fig=True):
+        graph_datadict(
+            self.datadict,
+            self.__time_key,
+            export_path,
+            show_fig=show_fig
+        )
 
 

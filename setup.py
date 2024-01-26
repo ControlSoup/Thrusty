@@ -9,12 +9,12 @@ for i in REQ_LINES:
     i += ','
 
 setup(
-    name='Thrusty',
-    version='0.0.0',
+    name= 'thrusty',
+    version='0.0.1',
     url='',
     author='Some Joe',
     author_email='joe.burge.iii@gmail.com',
     description='Thrust Modeling',
-    packages=find_packages(exclude='testing.test'),
+    packages=find_packages(exclude=("projects",)),
     install_requires=REQ_LINES,
 )
