@@ -1,11 +1,12 @@
 import numpy as np
-import pandas as pd
 from copy import deepcopy
 from .file_hanlding import datadict_to_csv
-from .plotting import graph_by_key, graph_datadict
+from .plotting import graph_datadict
 
 class DataStorage():
-    def __init__(self, dt_s, max_time_s):
+    def __init__(self, dt_s, max_time_s, name: str = ""):
+
+        self.name = name
 
         # Setup how time will be tracked
         self.__max_time_s = max_time_s
@@ -41,8 +42,8 @@ class DataStorage():
 
     def __trim_data(self):
         for key in self.__datadict:
-            self.__datadict[key] = self.__datadict[key][0:self.__index + 1]
-            self.__time_array_s = self.__time_array_s[0:self.__index + 1]
+            self.__datadict[key] = self.__datadict[key][0:self.__index]
+            self.__time_array_s = self.__time_array_s[0:self.__index]
 
     def next_cycle(self):
         self.__index += 1
@@ -67,14 +68,19 @@ class DataStorage():
         for key, val in list:
             self.record_data(key, val)
 
-    def export_to_csv(self, file_path: str):
-        datadict_to_csv(self.datadict, file_path)
+    def export_to_csv(self, file_name: str):
+        datadict_to_csv(self.datadict, file_name)
 
-    def plot_all(self, export_path = None, show_fig=True):
+    def plot_all(self, export_path = None, show_fig=True, title = None):
+
+        if title is None:
+            title = self.name
+
         graph_datadict(
-            self.datadict,
-            self.__time_key,
-            export_path,
+            datadict=self.datadict,
+            title=title,
+            x_key=self.__time_key,
+            export_path=export_path,
             show_fig=show_fig
         )
 

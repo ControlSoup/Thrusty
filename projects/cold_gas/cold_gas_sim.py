@@ -1,8 +1,12 @@
+import faulthandler
+
+faulthandler.enable()
+
 from thrusty import *
 from thrusty import fluids
 
 data = DataStorage(
-    1e-1,
+    1e-3,
     100.0
 )
 
@@ -13,24 +17,36 @@ tank: fluids.BasicStaticVolume = fluids.BasicStaticVolume.from_ptv(
     fluid = "air"
 )
 
-# Need a mdot model
-
 for t in data.time_array_s:
-    # Update mass based on current mdot
-    mdot = np.sin(t) * 0.01
-    new_mass = np_rk4([mdot, tank.mass], data.dt_s)
+    # Stop the sim if tank pressure matches atmospheric
+    if tank.state.presure <= STD_ATM_PA + 100:
+        break
 
-    # Conserve mass and energy
-    # try:
-    #     tank.update_mu(new_mass, mdot * tank.state.sp_enthalpy)
-    # except ValueError as e:
-    #     print(e)
-    #     break
+    # Caluclate mdot from nozzel [need model]
+    mdot = -0.09 + (np.sin(t) * 0.1)
+
+    # Calculate change in energy which in this case = internal energy only
+    udot = mdot * tank.state.sp_enthalpy
+
+    # Integrate udot and mdot
+    new_mass = np_rk4([mdot, tank.mass], data.dt_s)
+    new_inenergy = np_rk4([udot, tank.inenergy], data.dt_s)
+
+    # Try a real gas lookup, update state properties
+    try:
+        tank.update_mu(new_mass, new_inenergy)
+
+    # If you get a lookup error, stop the sim and pint it out
+    except ValueError as e:
+        print(e)
+        break
+
 
     # Record Results
     data.record_list(
         [
             ("mdot [kg/s]", mdot),
+            ("udot [J/s]", udot),
             ("tank.mass [kg]", tank.mass),
             ("tank.volume [kg]", tank.volume),
             ("tank.inenergy [J]", tank.inenergy),

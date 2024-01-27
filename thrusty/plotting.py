@@ -6,6 +6,7 @@ def graph_by_key(
     datadict: str,
     key_list: list[str],
     x_key: str,
+    title: str,
     export_path: bool = None,
     show_fig = True,
     fig = None
@@ -22,7 +23,10 @@ def graph_by_key(
                 mode="lines"
             )
         )
-
+    fig.update_layout(
+        title = title,
+        xaxis_title = x_key
+    )
     if show_fig:
         fig.show()
 
@@ -30,6 +34,7 @@ def graph_by_key(
 def graph_datadict(
     datadict: str,
     x_key: str,
+    title: str,
     export_path: bool = None,
     show_fig = True,
     fig = None
@@ -40,6 +45,7 @@ def graph_datadict(
         datadict=datadict,
         key_list=key_list,
         x_key=x_key,
+        title=title,
         export_path=export_path,
         show_fig=show_fig,
         fig=fig

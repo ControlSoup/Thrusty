@@ -1,13 +1,20 @@
 from CoolProp.CoolProp import PropsSI
+import sys
+from ..errors import check_float, check_str
 
 
 class IntensiveState():
     def __init__(
         self,
-        prop_1: str, value_1: str,
-        prop_2: str, value_2: str,
+        prop_1: str, value_1: float,
+        prop_2: str, value_2: float,
         fluid: str
     ):
+        check_str(prop_1)
+        check_str(prop_2)
+        check_float(value_1)
+        check_float(value_2)
+        check_str(fluid)
         self.__prop_1 = prop_1
         self.__value_1 = value_1
         self.__prop_2 = prop_2
@@ -61,6 +68,7 @@ class IntensiveState():
     def lookup(self, prop: str) -> float:
         ''' Lookup a property from the current state
         '''
+        check_str(prop)
 
         if prop == self.__prop_1:
             return self.__value_1
@@ -68,18 +76,27 @@ class IntensiveState():
         if prop == self.__prop_2:
             return self.__value_2
 
-        return PropsSI(
-            prop,
-            self.__prop_1, self.__value_1,
-            self.__prop_2, self.__value_2,
-            self.__fluid
-        )
+        try:
+            return PropsSI(
+                prop,
+                self.__prop_1, self.__value_1,
+                self.__prop_2, self.__value_2,
+                self.__fluid
+            )
+        except:
+            raise ValueError(
+                f"ERROR| Props Lookup error with ({prop},{self.__prop_1},{self.__value_1},{self.__prop_2},{self.__value_2})"
+            )
 
     def update_from_props(
         self,
         prop_1: str, value_1: str,
         prop_2: str, value_2: str
     ):
+        check_str(prop_1)
+        check_str(prop_2)
+        check_float(value_1)
+        check_float(value_2)
         self.__prop_1 = prop_1
         self.__value_1 = value_1
         self.__prop_2 = prop_2
@@ -91,6 +108,8 @@ class IntensiveState():
         density: float,
         sp_inenergy: float
     ):
+        check_float(density)
+        check_float(sp_inenergy)
         self.__prop_1 = "D"
         self.__value_1 = density
         self.__prop_2 = "UMASS"
@@ -102,24 +121,30 @@ class IntensiveState():
         pressure: float,
         temperature: float
     ):
+        check_float(pressure)
+        check_str(temperature)
         self.__prop_1 = "P"
         self.__value_1 = pressure
         self.__prop_2 = "T"
         self.__value_2 = temperature
         self.__update_state()
 
-    def istentropic(self, prop: str, value: str):
+    def istentropic(self, prop: str, value: float):
         ''' Returns a new state under istentropic conditions
         '''
+        check_str(prop)
+        check_float(value)
 
         return IntensiveState(
             prop, value,
             'SMASS',self.__sp_entropy
         )
 
-    def isothermal(self, prop: str, value: str):
+    def isothermal(self, prop: str, value: float):
         ''' Returns a new state under isothermal conditions
         '''
+        check_str(prop)
+        check_float(value)
 
         return IntensiveState(
             prop, value,
@@ -129,7 +154,8 @@ class IntensiveState():
     def isenthalpic(self, prop: str, value: str):
         ''' Returns a new state under isenthalpic conditions
         '''
-
+        check_str(prop)
+        check_float(value)
         return IntensiveState(
             prop, value,
             'HMSAS', self.__sp_enthalpy

@@ -3,3 +3,4 @@ from .plotting import *
 from .runtimes import *
 from .units import *
 from .integration import *
+from .errors import *
