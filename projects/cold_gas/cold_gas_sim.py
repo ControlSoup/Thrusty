@@ -7,19 +7,20 @@ from thrusty import fluids
 
 data = DataStorage(
     1e-3,
-    100.0
+    100.0,
+    name="Cold Gas Thruster"
 )
 
 tank: fluids.BasicStaticVolume = fluids.BasicStaticVolume.from_ptv(
     pressure = convert(200.0, 'psia', 'Pa'),
     temp = STD_ATM_K,
-    volume = convert(1, 'gal', 'm^3'),
+    volume = convert(1.0, 'gal', 'm^3'),
     fluid = "air"
 )
 
 for t in data.time_array_s:
     # Stop the sim if tank pressure matches atmospheric
-    if tank.state.presure <= STD_ATM_PA + 100:
+    if tank.state.pressure <= STD_ATM_PA + 100.0:
         break
 
     # Caluclate mdot from nozzel [need model]
@@ -48,10 +49,10 @@ for t in data.time_array_s:
             ("mdot [kg/s]", mdot),
             ("udot [J/s]", udot),
             ("tank.mass [kg]", tank.mass),
-            ("tank.volume [kg]", tank.volume),
+            ("tank.volume [m^3]", tank.volume),
             ("tank.inenergy [J]", tank.inenergy),
-            ("tank.pressure [Pa]", tank.state.presure),
-            ("tank.temperature [K]", tank.state.temp),
+            ("tank.pressure [Pa]", tank.state.pressure),
+            ("tank.temperature [degK]", tank.state.temp),
             ("tank.density [kg/m^3]", tank.state.density),
             ("tank.sp_inenergy [J/kg]", tank.state.sp_inenergy),
             ("tank.sp_enthalpy [J/kg]", tank.state.sp_enthalpy),

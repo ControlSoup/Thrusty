@@ -22,6 +22,11 @@ class IntensiveState():
         self.__fluid = fluid
         self.__update_state()
 
+    def from_pt(pressure: float, temperature: float, fluid: str):
+        check_float(pressure)
+        check_float(temperature)
+        return IntensiveState("P", pressure, "T", temperature, fluid)
+
     def __update_state(self):
         # Lookup common properties
         self.__pressure = self.lookup("P")
@@ -32,9 +37,10 @@ class IntensiveState():
         self.__sp_entropy = self.lookup("SMASS")
         self.__cp = self.lookup("CPMASS")
         self.__cv = self.lookup("CVMASS")
+        self.__gamma = self.lookup("ISENTROPIC_EXPANSION_COEFFICIENT")
 
     @property
-    def presure(self):
+    def pressure(self):
         return self.__pressure
 
     @property
@@ -64,6 +70,10 @@ class IntensiveState():
     @property
     def cv(self):
         return self.__cv
+
+    @property
+    def gamma(self):
+        return self.__gamma
 
     def lookup(self, prop: str) -> float:
         ''' Lookup a property from the current state
@@ -129,7 +139,7 @@ class IntensiveState():
         self.__value_2 = temperature
         self.__update_state()
 
-    def istentropic(self, prop: str, value: float):
+    def isentropic(self, prop: str, value: float):
         ''' Returns a new state under istentropic conditions
         '''
         check_str(prop)
@@ -137,7 +147,8 @@ class IntensiveState():
 
         return IntensiveState(
             prop, value,
-            'SMASS',self.__sp_entropy
+            'SMASS',self.__sp_entropy,
+            self.__fluid
         )
 
     def isothermal(self, prop: str, value: float):
@@ -148,7 +159,8 @@ class IntensiveState():
 
         return IntensiveState(
             prop, value,
-            'T', self.__temp
+            'T', self.__temp,
+            self.__fluid
         )
 
     def isenthalpic(self, prop: str, value: str):
@@ -158,5 +170,6 @@ class IntensiveState():
         check_float(value)
         return IntensiveState(
             prop, value,
-            'HMSAS', self.__sp_enthalpy
+            'HMASS', self.__sp_enthalpy,
+            self.__fluid
         )

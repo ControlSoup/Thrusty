@@ -1,4 +1,3 @@
-import numpy as np
 from dataclasses import dataclass
 from .intensive_state import IntensiveState
 from ..errors import check_float, check_str

@@ -4,3 +4,4 @@ from .runtimes import *
 from .units import *
 from .integration import *
 from .errors import *
+from .geometry import *

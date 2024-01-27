@@ -15,6 +15,6 @@ setup(
     author='Some Joe',
     author_email='joe.burge.iii@gmail.com',
     description='Thrust Modeling',
-    packages=find_packages(exclude=("projects",)),
+    packages=find_packages(exclude=("projects","tests")),
     install_requires=REQ_LINES,
 )

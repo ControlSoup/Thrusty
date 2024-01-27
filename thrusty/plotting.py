@@ -30,6 +30,9 @@ def graph_by_key(
     if show_fig:
         fig.show()
 
+    if export_path:
+        fig.write_html(export_path)
+
 
 def graph_datadict(
     datadict: str,

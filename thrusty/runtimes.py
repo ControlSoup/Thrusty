@@ -84,4 +84,10 @@ class DataStorage():
             show_fig=show_fig
         )
 
+    def reset(self, confirm=False):
+        if confirm:
+            self.__init__(self.dt_s, self.max_time_s, self.name)
+        else:
+            print("WARNING| Please confirm you want to reset data (confirm=True)")
+
 
