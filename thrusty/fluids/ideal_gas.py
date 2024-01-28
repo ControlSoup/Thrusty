@@ -1,3 +1,4 @@
+from __future__ import annotations
 import numpy as np
 from ..units import convert
 from .intensive_state import IntensiveState
@@ -41,7 +42,7 @@ def ideal_orifice_mdot(
     upstream: IntensiveState,
     downstream_pressure: float,
     verbose_return: bool =  False
-):
+) -> float | [float, bool]:
     '''
     Source:
         https://en.wikipedia.org/wiki/Orifice_plate
@@ -50,7 +51,7 @@ def ideal_orifice_mdot(
     # No flow under very low dp
     if upstream.pressure - downstream_pressure < 0.1:
         if verbose_return:
-            return [0.0, False]
+            return 0.0, False
         return 0.0
 
     if  ideal_is_choked(upstream.pressure, upstream.gamma, downstream_pressure):
@@ -72,6 +73,6 @@ def ideal_orifice_mdot(
         is_choked = False
 
     if verbose_return:
-        return [mdot_kgps, is_choked]
+        return mdot_kgps, is_choked
 
     return mdot_kgps

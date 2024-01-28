@@ -1,3 +1,4 @@
+from __future__ import annotations
 import numpy as np
 from CoolProp.CoolProp import PropsSI
 
@@ -22,12 +23,12 @@ def real_orifice_mdot(
     upstream: IntensiveState,
     downstream_pressure: float,
     verbose_return: bool = False
-):
+) -> float | [float, bool]:
 
     # Ignore low dp
     if upstream.pressure - downstream_pressure <= 0.1:
         if verbose_return:
-            return [0.0, False]
+            return 0.0, False
         return 0.0
 
     # Flow is choked under very high presure ratios
@@ -79,7 +80,7 @@ def real_orifice_mdot(
         mdot = mdot_equation(throat.density, cda, throat_vel)
 
     if verbose_return:
-        return [mdot, is_choked]
+        return mdot, is_choked
 
     return mdot
 

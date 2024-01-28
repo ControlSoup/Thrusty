@@ -10,7 +10,7 @@ data = DataStorage(
 
 # 1/4" fitting blowing out a tank
 orifice_diameter_in = 0.25
-tank_pressure_psia = 1000.0
+tank_pressure_psia = 300.0
 tank_volume_gal = 1.0
 
 cd = 0.7
