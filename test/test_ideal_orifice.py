@@ -16,7 +16,6 @@ class Test(unittest.TestCase):
             upstrm_temp_K,
             fluid
         )
-        print(upstream.__dict__)
 
         # Ensure inputs are choked
         self.assertTrue(

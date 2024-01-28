@@ -39,7 +39,8 @@ def ideal_is_choked(
 def ideal_orifice_mdot(
     cda: float,
     upstream: IntensiveState,
-    downstream_pressure: float
+    downstream_pressure: float,
+    verbose_return: bool =  False
 ):
     '''
     Source:
@@ -48,6 +49,8 @@ def ideal_orifice_mdot(
 
     # No flow under very low dp
     if upstream.pressure - downstream_pressure < 0.1:
+        if verbose_return:
+            return [0.0, False]
         return 0.0
 
     if  ideal_is_choked(upstream.pressure, upstream.gamma, downstream_pressure):
@@ -56,6 +59,7 @@ def ideal_orifice_mdot(
         mdot_kgps = cda * np.sqrt(
             upstream.gamma * upstream.density * upstream.pressure * gamma_choked_comp
         )
+        is_choked = True
     else:
         # UnChoked flow equation
         gamma_UNchoked_comp = (upstream.gamma / (upstream.gamma - 1))
@@ -65,5 +69,9 @@ def ideal_orifice_mdot(
             2 * upstream.density * upstream.pressure * gamma_UNchoked_comp *
             (pressure_ideal1 - pressure_ideal2)
         )
+        is_choked = False
+
+    if verbose_return:
+        return [mdot_kgps, is_choked]
 
     return mdot_kgps

@@ -4,7 +4,7 @@ import plotly.graph_objects as go
 from tqdm import tqdm
 
 data = DataStorage(
-    1e-2,
+    1e-3,
     40.0
 )
 
@@ -30,14 +30,14 @@ tank: fluids.BasicStaticVolume = fluids.BasicStaticVolume.from_ptv(
 for t in tqdm(data.time_array_s):
 
     # Mass flow given dp across fitting
-    mdot = -fluids.ideal_orifice_mdot(cda, tank.state, STD_ATM_PA)
+    mdot = fluids.ideal_orifice_mdot(cda, tank.state, STD_ATM_PA)
 
     # Stop if no flow
     if mdot == 0.0:
         break
 
     # Integrate mdot
-    new_mass = np_rk4([mdot, tank.mass], data.dt_s)
+    new_mass = np_rk4([-mdot, tank.mass], data.dt_s)
 
     # Calc new density
     new_density = new_mass / tank.volume
@@ -85,14 +85,14 @@ tank: fluids.BasicStaticVolume = fluids.BasicStaticVolume.from_ptv(
 for t in tqdm(data.time_array_s):
 
     # Mass flow given dp across fitting
-    mdot = -fluids.ideal_orifice_mdot(cda, tank.state, STD_ATM_PA)
+    mdot = fluids.ideal_orifice_mdot(cda, tank.state, STD_ATM_PA)
 
     # Stop if no flow
     if mdot == 0.0:
         break
 
     # Integrate mdot
-    new_mass = np_rk4([mdot, tank.mass], data.dt_s)
+    new_mass = np_rk4([-mdot, tank.mass], data.dt_s)
 
     # Calc new density
     new_density = new_mass / tank.volume
@@ -140,14 +140,14 @@ tank: fluids.BasicStaticVolume = fluids.BasicStaticVolume.from_ptv(
 for t in tqdm(data.time_array_s):
 
     # Mass flow given dp across fitting
-    mdot = -fluids.ideal_orifice_mdot(cda, tank.state, STD_ATM_PA)
+    mdot = fluids.ideal_orifice_mdot(cda, tank.state, STD_ATM_PA)
 
     # Stop if no flow
     if mdot == 0.0:
         break
 
     # Integrate mdot
-    new_mass = np_rk4([mdot, tank.mass], data.dt_s)
+    new_mass = np_rk4([-mdot, tank.mass], data.dt_s)
 
     # Calc new density
     new_density = new_mass / tank.volume
@@ -195,7 +195,7 @@ tank: fluids.BasicStaticVolume = fluids.BasicStaticVolume.from_ptv(
 for t in tqdm(data.time_array_s):
 
     # Mass flow given dp across fitting
-    mdot = -fluids.ideal_orifice_mdot(cda, tank.state, STD_ATM_PA)
+    mdot = fluids.ideal_orifice_mdot(cda, tank.state, STD_ATM_PA)
 
     # Stop if no flow
     if mdot == 0.0:
@@ -205,8 +205,8 @@ for t in tqdm(data.time_array_s):
     udot = mdot * tank.state.sp_enthalpy
 
     # Integrate mdot and udto
-    new_mass = np_rk4([mdot, tank.mass], data.dt_s)
-    new_energy = np_rk4([udot, tank.inenergy], data.dt_s)
+    new_mass = np_rk4([-mdot, tank.mass], data.dt_s)
+    new_energy = np_rk4([-udot, tank.inenergy], data.dt_s)
 
     # try a new state lookup
     try:

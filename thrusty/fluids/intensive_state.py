@@ -38,6 +38,7 @@ class IntensiveState():
         self.__cp = self.lookup("CPMASS")
         self.__cv = self.lookup("CVMASS")
         self.__gamma = self.lookup("ISENTROPIC_EXPANSION_COEFFICIENT")
+        self.__speed_of_sound = self.lookup("A")
 
     @property
     def pressure(self):
@@ -74,6 +75,14 @@ class IntensiveState():
     @property
     def gamma(self):
         return self.__gamma
+
+    @property
+    def speed_of_sound(self):
+        return self.__speed_of_sound
+
+    @property
+    def fluid(self):
+        return self.__fluid
 
     def lookup(self, prop: str) -> float:
         ''' Lookup a property from the current state
