@@ -127,7 +127,7 @@ for t in tqdm(data.time_array_s):
     )
     data.next_cycle()
 
-data.export_to_csv("results/real.csv")
+data.export_to_csv("results/ideal.csv")
 ideal = data.datadict
 
 # Combine all data
