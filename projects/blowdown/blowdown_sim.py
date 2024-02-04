@@ -1,5 +1,5 @@
-from thrusty import *
-from thrusty import fluids
+from gaslighter import *
+from gaslighter import fluids
 import plotly.graph_objects as go
 from tqdm import tqdm
 
@@ -24,7 +24,7 @@ tank: fluids.BasicStaticVolume = fluids.BasicStaticVolume.from_ptv(
     pressure = convert(tank_pressure_psia, 'psia', 'Pa'),
     temp = STD_ATM_K,
     volume = convert(tank_volume_gal, 'gal', 'm^3'),
-    fluid = "nitrogen"
+    fluid = "N2O"
 )
 
 for t in tqdm(data.time_array_s):

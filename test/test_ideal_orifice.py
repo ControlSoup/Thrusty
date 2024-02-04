@@ -1,6 +1,6 @@
 import unittest
-from thrusty.fluids.ideal_gas import *
-from thrusty.fluids import IntensiveState
+from gaslighter.fluids.ideal_gas import *
+from gaslighter.fluids import IntensiveState
 
 class Test(unittest.TestCase):
     def test_ideal_orifice(self):

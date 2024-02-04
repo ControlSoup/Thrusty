@@ -2,8 +2,8 @@ import faulthandler
 
 faulthandler.enable()
 
-from thrusty import *
-from thrusty import fluids
+from gaslighter import *
+from gaslighter import fluids
 
 data = DataStorage(
     1e-3,

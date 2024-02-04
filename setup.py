@@ -9,7 +9,7 @@ for i in REQ_LINES:
     i += ','
 
 setup(
-    name= 'gasligher',
+    name= 'gaslighter',
     version='0.0.1',
     url='',
     author='Some Joe',
