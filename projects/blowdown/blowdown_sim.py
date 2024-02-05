@@ -4,13 +4,13 @@ import plotly.graph_objects as go
 from tqdm import tqdm
 
 data = DataStorage(
-    1e-2,
+    1e-3,
     40.0
 )
 
 # 1/4" fitting blowing out a tank
-orifice_diameter_in = 0.25
-tank_pressure_psia = 4000.0
+orifice_diameter_in = 0.125
+tank_pressure_psia = 1000.0
 tank_volume_gal = 1.0
 
 cd = 0.7
@@ -272,3 +272,4 @@ plotting.graph_datadict(
     show_fig=False,
     export_path="results/blowdown.html"
 )
+fig.show()

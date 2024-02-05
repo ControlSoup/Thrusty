@@ -5,3 +5,4 @@ from .units import *
 from .integration import *
 from .errors import *
 from .geometry import *
+from .rpe_equations import *
