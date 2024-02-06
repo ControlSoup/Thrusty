@@ -5,3 +5,4 @@ pint>=0.23
 plotly>=5.18.0
 tqdm>=4.64.1
 setuptools>=66.1.1
+rocketcea>=1.1.34

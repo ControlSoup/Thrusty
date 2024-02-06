@@ -4,19 +4,27 @@ from .file_hanlding import datadict_to_csv
 from .plotting import graph_datadict
 
 class DataStorage():
-    def __init__(self, dt_s, max_time_s, name: str = ""):
+    def __init__(self, dt_s, max_time_s, name: str = "", alternate_time_array = None, time_key = 'time [s]'):
 
         self.name = name
 
         # Setup how time will be tracked
         self.__max_time_s = max_time_s
         self.__dt_s = dt_s
-        self.__time_array_s = np.arange(0, self.__max_time_s, self.__dt_s)
-        self.__time_key = 'time [s]'
+
+        if alternate_time_array is None:
+            self.__time_array_s = np.arange(0, self.__max_time_s, self.__dt_s)
+        else:
+            self.__time_array_s = alternate_time_array
+
+        self.__time_key = time_key
 
         # Setup data storage
         self.__datadict = {}
         self.__index = 0
+
+    def from_linspace(start, end, increments, time_key: str, name =""):
+        return DataStorage(1, end, name, np.linspace(start, end, increments), time_key=time_key)
 
     @property
     def max_time_s(self):

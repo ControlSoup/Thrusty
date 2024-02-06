@@ -1,3 +1,4 @@
+import numpy as np
 import plotly.graph_objects as go
 
 # TODO Add titles
@@ -38,7 +39,7 @@ def graph_datadict(
     datadict: str,
     x_key: str,
     title: str,
-    export_path: bool = None,
+    export_path: str = None,
     show_fig = True,
     fig = None
 ):
@@ -53,3 +54,36 @@ def graph_datadict(
         show_fig=show_fig,
         fig=fig
     )
+
+# def graph_countour(
+#     datadict,
+#     x_key,
+#     y_key,
+#     z_title,
+#     z_data,
+#     title: str = "" ,
+#     export_path: bool = None,
+#     show_fig = True,
+#     fig = None
+# ):
+
+
+#     if fig is None:
+#         fig = go.Figure()
+
+#     fig.data=[go.Surface(z=z_data, x=_x, y=_y)]
+
+#     fig.update_layout(
+#         scene=dict(
+#             title=title,
+#             xaxis_title=x_key,
+#             yaxis_title=y_key,
+#             zaxis_title=z_title
+#         )
+#     )
+
+#     if show_fig:
+#         fig.show()
+
+#     if export_path:
+#         fig.write_html(export_path)
