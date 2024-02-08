@@ -1,8 +1,8 @@
 import numpy as np
 from rocketcea.cea_obj_w_units import CEA_Obj
 import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 from ..runtimes import DataStorage
-from .intensive_state import IntensiveState
 from CoolProp.CoolProp import PropsSI
 
 # Propellants: https://rocketcea.readthedocs.io/en/latest/propellants.html#propellants-link
@@ -136,7 +136,7 @@ class RocketChamber():
 
         return data.datadict
 
-    def mix_study(self, start_mix_ratio_ratio = 0.1, end_mix_ratio_ratio = 3, name=""):
+    def mix_study(self, start_mix_ratio_ratio = 0.1, end_mix_ratio_ratio = 5, name=""):
         data: DataStorage = DataStorage.from_linspace(start=start_mix_ratio_ratio, end=end_mix_ratio_ratio, increments=100, time_key='Mix Ratio [-]', name=name)
         for mr in data.time_array_s:
             cea = RocketChamber(self.ox, self.fuel, self.__chamber_pressure, mr, self.__eps, self.__frozen, self.__frozen_throat)
@@ -157,30 +157,37 @@ class RocketChamber():
 
         return data.datadict
 
-    def pressure_mix_contour(self, parameter: str,start_pressure, end_pressure, start_mix_ratio = 0.2, end_mix_ratio = 0.8):
+    def pressure_mix_contour(self, parameters: list[str], start_pressure, end_pressure, start_mix_ratio=0.2, end_mix_ratio=0.8, export_path=None):
 
-        pressure =  np.linspace(start_pressure, end_pressure, 10)
+        pressure = np.linspace(start_pressure, end_pressure, 10)
         mix = np.linspace(start_mix_ratio, end_mix_ratio, 10)
 
-        row =[]
-        for p in pressure:
-            col = []
-            for m in mix:
-                cea = RocketChamber(self.__ox, self.__fuel, p, m, self.__eps, self.__frozen, self.__frozen_throat)
-                col.append(getattr(cea, parameter))
-            row.append(col)
+        fig = make_subplots(rows=len(parameters), cols=1, subplot_titles=parameters, specs=[[{'type': 'scene'}] for _ in parameters])
 
+        for i, parameter in enumerate(parameters, start=1):
+            row = []
+            for p in pressure:
+                col = []
+                for m in mix:
+                    cea = RocketChamber(self.__ox, self.__fuel, p, m, self.__eps, self.__frozen, self.__frozen_throat)
+                    col.append(getattr(cea, parameter))
+                row.append(col)
 
+            fig.add_trace(go.Surface(z=np.array(row), x=pressure, y=mix, colorbar=dict(title=parameter, tickvals=[], ticktext=[])), row=i, col=1)
 
-        fig = go.Figure()
-        fig.add_trace(go.Surface(z = np.array(row), x = pressure, y = mix))
+            fig.update_scenes(
+                xaxis_title="Pressure [Pa]",
+                yaxis_title="Mix Ratio [-]",
+                zaxis_title=parameter,
+                row=i, col=1
+            )
 
         fig.update_layout(
-            xaxis_title="Pressure [Pa]",
-            yaxis_title="Mix Ratio [-]"
+            title_text="Chamber Pressure and Mix Ratio Contour Plots",
+            height=600 * len(parameters)  # Adjust the height as needed
         )
 
         fig.show()
 
-
-
+        if export_path is not None:
+            fig.write_html(export_path)
