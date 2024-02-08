@@ -183,7 +183,7 @@ class RocketChamber():
             )
 
         fig.update_layout(
-            title_text=f"|{self.fuel} + {self.ox}",
+            title_text=f"|{self.fuel} + {self.ox}|",
             height=600 * len(parameters)  # Adjust the height as needed
         )
 
