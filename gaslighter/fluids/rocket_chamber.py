@@ -157,7 +157,7 @@ class RocketChamber():
 
         return data.datadict
 
-    def pressure_mix_contour(self, parameters: list[str], start_pressure, end_pressure, start_mix_ratio=0.2, end_mix_ratio=0.8, export_path=None):
+    def pressure_mix_contour(self, parameters: list[str], start_pressure, end_pressure, start_mix_ratio=0.2, end_mix_ratio=3, export_path=None):
 
         pressure = np.linspace(start_pressure, end_pressure, 10)
         mix = np.linspace(start_mix_ratio, end_mix_ratio, 10)
@@ -183,7 +183,7 @@ class RocketChamber():
             )
 
         fig.update_layout(
-            title_text="Chamber Pressure and Mix Ratio Contour Plots",
+            title_text=f"|{self.fuel} + {self.ox}",
             height=600 * len(parameters)  # Adjust the height as needed
         )
 
