@@ -1,7 +1,8 @@
+from __future__ import annotations
+import os
 import numpy as np
 from rocketcea.cea_obj_w_units import CEA_Obj
 import plotly.graph_objects as go
-from plotly.subplots import make_subplots
 from ..runtimes import DataStorage
 from CoolProp.CoolProp import PropsSI
 
@@ -157,37 +158,42 @@ class RocketChamber():
 
         return data.datadict
 
-    def pressure_mix_contour(self, parameters: list[str], start_pressure, end_pressure, start_mix_ratio=0.2, end_mix_ratio=3, export_path=None):
+    def pressure_mix_contour(self, parameter: str | list, start_pressure, end_pressure, start_mix_ratio = 0.1, end_mix_ratio = 3, export = False):
 
-        pressure = np.linspace(start_pressure, end_pressure, 10)
+        pressure =  np.linspace(start_pressure, end_pressure, 10)
         mix = np.linspace(start_mix_ratio, end_mix_ratio, 10)
 
-        fig = make_subplots(rows=len(parameters), cols=1, subplot_titles=parameters, specs=[[{'type': 'scene'}] for _ in parameters])
+        if not isinstance(parameter, list):
+            parameter = [parameter]
 
-        for i, parameter in enumerate(parameters, start=1):
-            row = []
-            for p in pressure:
+        for parm in parameter:
+
+            row =[]
+            for m in mix:
                 col = []
-                for m in mix:
+                for p in pressure:
                     cea = RocketChamber(self.__ox, self.__fuel, p, m, self.__eps, self.__frozen, self.__frozen_throat)
-                    col.append(getattr(cea, parameter))
+                    col.append(getattr(cea, parm))
                 row.append(col)
 
-            fig.add_trace(go.Surface(z=np.array(row), x=pressure, y=mix, colorbar=dict(title=parameter, tickvals=[], ticktext=[])), row=i, col=1)
 
-            fig.update_scenes(
-                xaxis_title="Pressure [Pa]",
-                yaxis_title="Mix Ratio [-]",
-                zaxis_title=parameter,
-                row=i, col=1
+            fig = go.Figure()
+            fig.add_trace(go.Surface(z = np.array(row), x = pressure, y = mix))
+
+            fig.update_layout(
+                title=f"|{self.fuel} and {self.ox}|",
+                scene=dict(
+                    xaxis_title = "Pressure [Pa]",
+                    yaxis_title = "Mix Ratio [-]",
+                    zaxis_title = parm
+                )
             )
 
-        fig.update_layout(
-            title_text=f"|{self.fuel} + {self.ox}|",
-            height=600 * len(parameters)  # Adjust the height as needed
-        )
+            if export:
+                fig.write_html(os.path.join(export_path, f"{parm}.html"))
+            else:
+                fig.show()
 
-        fig.show()
 
-        if export_path is not None:
-            fig.write_html(export_path)
+
+

@@ -26,5 +26,5 @@ chamber.pressure_mix_contour(
     ['chamber_temp','isp','cstar'],
     convert(10, 'psia', 'Pa'),
     convert(100, 'psia', 'Pa'),
-    export_path="contours.html"
+    export=False
 )
