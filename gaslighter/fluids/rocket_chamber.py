@@ -107,6 +107,10 @@ class RocketChamber():
         return self.cea_obj.get_Enthalpies(self.__chamber_pressure, self.__mix_ratio, self.__eps, self.__frozen, self.__frozen_throat)[2]
 
     @property
+    def throat_vel(self):
+        return np.sqrt(2 * (self.chamber_sp_enthalpy - self.throat_sp_enthalpy))
+
+    @property
     def cf(self):
         return self.cea_obj.get_PambCf(self.__chamber_pressure, self.__mix_ratio, self.__eps)[0]
 
@@ -131,6 +135,7 @@ class RocketChamber():
             data.record_data("Chamber Specific Enthalpy [J/kg]", cea.chamber_sp_enthalpy)
             data.record_data("Throat Specific Enthalpy [J/kg]", cea.throat_sp_enthalpy)
             data.record_data("Exit Specific Enthalpy [J/gk]", cea.exit_sp_enthalpy)
+            data.record_data("Throat Velocity [m/s]", cea.throat_vel)
             data.record_data("CF [-]", cea.cf)
             data.record_data("Mix Ratio [-]", cea.mix_ratio)
             data.next_cycle()
@@ -153,12 +158,13 @@ class RocketChamber():
             data.record_data("Chamber Specific Enthalpy [J/kg]", cea.chamber_sp_enthalpy)
             data.record_data("Throat Specific Enthalpy [J/kg]", cea.throat_sp_enthalpy)
             data.record_data("Exit Specific Enthalpy [J/gk]", cea.exit_sp_enthalpy)
+            data.record_data("Throat Velocity [m/s]", cea.throat_vel)
             data.record_data("CF [-]", cea.cf)
             data.next_cycle()
 
         return data.datadict
 
-    def pressure_mix_contour(self, parameter: str | list, start_pressure, end_pressure, start_mix_ratio = 0.1, end_mix_ratio = 3, export = False):
+    def pressure_mix_contour(self, parameter: str | list, start_pressure, end_pressure, start_mix_ratio = 0.1, end_mix_ratio = 3, export_path = None):
 
         pressure =  np.linspace(start_pressure, end_pressure, 10)
         mix = np.linspace(start_mix_ratio, end_mix_ratio, 10)
@@ -176,7 +182,6 @@ class RocketChamber():
                     col.append(getattr(cea, parm))
                 row.append(col)
 
-
             fig = go.Figure()
             fig.add_trace(go.Surface(z = np.array(row), x = pressure, y = mix))
 
@@ -189,7 +194,7 @@ class RocketChamber():
                 )
             )
 
-            if export:
+            if export_path is not None:
                 fig.write_html(os.path.join(export_path, f"{parm}.html"))
             else:
                 fig.show()

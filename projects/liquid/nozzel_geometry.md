@@ -5,6 +5,7 @@ Requirments:
 Starting Guess:
 - ~150 psia chamber pressure
 - 0.15 kg/s mdot total
+- MR of 1.5 
 
 Need:
 - Expansition ratio
