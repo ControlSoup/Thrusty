@@ -107,8 +107,8 @@ class RocketChamber():
         return self.cea_obj.get_Enthalpies(self.__chamber_pressure, self.__mix_ratio, self.__eps, self.__frozen, self.__frozen_throat)[2]
 
     @property
-    def throat_vel(self):
-        return np.sqrt(2 * (self.chamber_sp_enthalpy - self.throat_sp_enthalpy))
+    def exit_velocity(self):
+        return np.sqrt(2 * (self.throat_sp_enthalpy - self.exit_sp_enthalpy))
 
     @property
     def cf(self):
@@ -117,6 +117,7 @@ class RocketChamber():
     @property
     def mix_ratio(self):
         return self.__mix_ratio
+    
 
     def pressure_study(self,start_pressure: float, end_pressure: float, name=""):
 
@@ -124,20 +125,7 @@ class RocketChamber():
         data: DataStorage = DataStorage.from_linspace(start_pressure, end_pressure, 100, time_key='Chamber Pressure [Pa]', name=name)
         for pressure in data.time_array_s:
             cea = RocketChamber(self.ox, self.fuel, pressure, self.__mix_ratio, self.__eps, self.__frozen, self.__frozen_throat)
-            data.record_data("Isp [s]", cea.isp)
-            data.record_data("Cstar [m/s]", cea.cstar)
-            data.record_data("Chamber Temp [degK]", cea.chamber_temp)
-            data.record_data("Throat Temp [degK]", cea.throat_temp)
-            data.record_data("Exit Temp [degK]", cea.exit_temp)
-            data.record_data("Chamber Density [kg/m^3]", cea.chamber_density)
-            data.record_data("Throat Density [kg/m^3]", cea.throat_density)
-            data.record_data("Exit Density [kg/m^3]", cea.exit_density)
-            data.record_data("Chamber Specific Enthalpy [J/kg]", cea.chamber_sp_enthalpy)
-            data.record_data("Throat Specific Enthalpy [J/kg]", cea.throat_sp_enthalpy)
-            data.record_data("Exit Specific Enthalpy [J/gk]", cea.exit_sp_enthalpy)
-            data.record_data("Throat Velocity [m/s]", cea.throat_vel)
-            data.record_data("CF [-]", cea.cf)
-            data.record_data("Mix Ratio [-]", cea.mix_ratio)
+            record_rocketchamber_data(cea, data)
             data.next_cycle()
 
         return data.datadict
@@ -146,20 +134,7 @@ class RocketChamber():
         data: DataStorage = DataStorage.from_linspace(start=start_mix_ratio_ratio, end=end_mix_ratio_ratio, increments=100, time_key='Mix Ratio [-]', name=name)
         for mr in data.time_array_s:
             cea = RocketChamber(self.ox, self.fuel, self.__chamber_pressure, mr, self.__eps, self.__frozen, self.__frozen_throat)
-            data.record_data("Isp [s]", cea.isp)
-            data.record_data("Cstar [m/s]", cea.cstar)
-            data.record_data("Chamber Pressure [Pa]", cea.chamber_pressure)
-            data.record_data("Chamber Temp [degK]", cea.chamber_temp)
-            data.record_data("Throat Temp [degK]", cea.throat_temp)
-            data.record_data("Exit Temp [degK]", cea.exit_temp)
-            data.record_data("Chamber Density [kg/m^3]", cea.chamber_density)
-            data.record_data("Throat Density [kg/m^3]", cea.throat_density)
-            data.record_data("Exit Density [kg/m^3]", cea.exit_density)
-            data.record_data("Chamber Specific Enthalpy [J/kg]", cea.chamber_sp_enthalpy)
-            data.record_data("Throat Specific Enthalpy [J/kg]", cea.throat_sp_enthalpy)
-            data.record_data("Exit Specific Enthalpy [J/gk]", cea.exit_sp_enthalpy)
-            data.record_data("Throat Velocity [m/s]", cea.throat_vel)
-            data.record_data("CF [-]", cea.cf)
+            record_rocketchamber_data(cea, data)
             data.next_cycle()
 
         return data.datadict
@@ -200,5 +175,20 @@ class RocketChamber():
                 fig.show()
 
 
+def record_rocketchamber_data(cea: RocketChamber, data: DataStorage):
+    data.record_data("Isp [s]", cea.isp)
+    data.record_data("Cstar [m/s]", cea.cstar)
+    data.record_data("Chamber Temp [degK]", cea.chamber_temp)
+    data.record_data("Throat Temp [degK]", cea.throat_temp)
+    data.record_data("Exit Temp [degK]", cea.exit_temp)
+    data.record_data("Chamber Density [kg/m^3]", cea.chamber_density)
+    data.record_data("Throat Density [kg/m^3]", cea.throat_density)
+    data.record_data("Exit Density [kg/m^3]", cea.exit_density)
+    data.record_data("Chamber Specific Enthalpy [J/kg]", cea.chamber_sp_enthalpy)
+    data.record_data("Throat Specific Enthalpy [J/kg]", cea.throat_sp_enthalpy)
+    data.record_data("Exit Specific Enthalpy [J/gk]", cea.exit_sp_enthalpy)
+    data.record_data("Exit Velocity [m/s]", cea.exit_velocity)
+    data.record_data("CF [-]", cea.cf)
+    data.record_data("Mix Ratio [-]", cea.mix_ratio)
 
 

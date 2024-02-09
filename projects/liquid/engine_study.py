@@ -3,7 +3,7 @@ from gaslighter import *
 
 # Make a base chamber
 chamber = fluids.RocketChamber(
-    'N2O', 'IPA', convert(150, 'psia', 'Pa'), MR=1.5
+    'N2O', 'IPA', convert(150, 'psia', 'Pa'), MR=2.5
 )
 
 # Get Pressure data
@@ -28,3 +28,14 @@ chamber.pressure_mix_contour(
     convert(100, 'psia', 'Pa'),
     export_path = "plots/"
 )
+
+current_thrust = thrust(0.15, chamber.exit_velocity)
+
+data = DataStorage(1e-3, 10.0, "Current Engine")
+# Current Results
+print(f"Current Thrust [N]: {current_thrust}")
+print(f"Current Thrust [lbf]: {convert(current_thrust, 'N', 'lbf')}")
+
+fluids.record_rocketchamber_data(chamber, data)
+data.next_cycle()
+data.print()

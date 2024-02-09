@@ -98,4 +98,9 @@ class DataStorage():
         else:
             print("WARNING| Please confirm you want to reset data (confirm=True)")
 
+    def print(self):
+        datadict = self.datadict
+
+        for key in datadict:
+            print(f"|{key}| = {datadict[key][self.__index - 1]}")
 
