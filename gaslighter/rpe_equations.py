@@ -5,13 +5,18 @@ def thrust(mdot: float, velocity: float):
 
     return mdot * velocity
 
-def exit_velocity(gamma: float, sp_R: float, chamber_pressure: float, chamber_temp: float, exit_pressure: float):
-    ''' Eq 3-15b/16, Pg 52
+def exit_velocity(gamma: float, sp_R: float, chamber_pressure: float, combustion_temp: float, exit_pressure: float):
+    ''' Eq 3-15b/16
     '''
     return np.sqrt(
-        (2 * gamma / (gamma - 1)) * sp_R * chamber_temp
+        (2 * gamma / (gamma - 1)) * sp_R * combustion_temp
         * (1 - (exit_pressure / chamber_pressure)**((gamma - 1) / gamma))
     )
+
+def throat_area(cstar, chamber_pressure, mdot):
+    ''' Eq 2-16
+    '''
+    return mdot * cstar / chamber_pressure
 
 def half_angle_rad(throat_diameter: float, exit_length: float, exit_diameter: float):
     oppsite = (exit_diameter / 2.0) - (throat_diameter / 2.0)

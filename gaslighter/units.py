@@ -27,7 +27,7 @@ def convert(value: float, in_units: str, out_units: str):
     Compatible Strings: https://github.com/hgrecco/pint/blob/master/pint/default_en.txt
     '''
     if in_units == out_units:
-        return out_units
+        return value
 
     _u = ureg.Quantity(
         value,

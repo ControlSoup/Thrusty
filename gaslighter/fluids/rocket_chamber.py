@@ -4,7 +4,7 @@ import numpy as np
 from rocketcea.cea_obj_w_units import CEA_Obj
 import plotly.graph_objects as go
 from ..runtimes import DataStorage
-from gaslighter import circle_area_from_diameter, circle_diameter_from_area, pretty_dict
+from gaslighter import circle_area_from_diameter, circle_diameter_from_area, pretty_dict, R_JPDEGK_MOL, convert, exit_velocity, STD_ATM_PA
 
 # Propellants: https://rocketcea.readthedocs.io/en/latest/propellants.html#propellants-link
 
@@ -55,29 +55,6 @@ class RocketChamber():
         self.__frozen_throat = frozen_throat
         self.__exit_area = self.__throat_area * eps
         self.__exit_diameter = circle_diameter_from_area(self.__exit_area)
-
-    def from_nozzel_geometry(
-        ox: str,
-        fuel: str,
-        chamber_pressure: float,
-        throat_diameter: float,
-        exit_diameter: float,
-        MR = 1.0,
-        frozen = 0.0,
-        frozen_throat = 0.0
-    ):
-        eps = circle_area_from_diameter(exit_diameter) / circle_area_from_diameter(throat_diameter)
-        print(eps)
-        return RocketChamber(
-            ox,
-            fuel,
-            chamber_pressure,
-            throat_diameter,
-            MR,
-            eps,
-            frozen,
-            frozen_throat
-        )
 
     @property
     def throat_diameter(self):
@@ -152,8 +129,104 @@ class RocketChamber():
         return self.cea_obj.get_Enthalpies(self.__chamber_pressure, self.__mix_ratio, self.__eps, self.__frozen, self.__frozen_throat)[2]
 
     @property
-    def exit_velocity(self):
+    def chamber_exit_pratio(self):
+        return self.cea_obj.get_PcOvPe(self.__chamber_pressure, self.__mix_ratio, self.__eps, self.__frozen, self.__frozen_throat)
+
+    @property
+    def exit_pressure(self):
+        return self.__chamber_pressure / self.chamber_exit_pratio
+
+    @property
+    def chamber_thermal_conductivity(self):
+        return convert(
+            self.cea_obj.get_Chamber_Transport(self.__chamber_pressure, self.__mix_ratio, self.__eps, self.__frozen)[2],
+            'mcal/(cm*degK*s)',
+            'watt/(m*degK)'
+        )
+
+    @property
+    def throat_thermal_conductivity(self):
+        return convert(
+            self.cea_obj.get_Throat_Transport(self.__chamber_pressure, self.__mix_ratio, self.__eps, self.__frozen)[2],
+            'mcal/(cm*degK*s)',
+            'watt/(m*degK)'
+        )
+
+    @property
+    def exit_thermal_conductivity(self):
+        return convert(
+            self.cea_obj.get_Exit_Transport(self.__chamber_pressure, self.__mix_ratio, self.__eps, self.__frozen)[2],
+            'mcal/(cm*degK*s)',
+            'watt/(m*degK)'
+        )
+
+    @property
+    def chamber_molecular_weight(self):
+        return self.cea_obj.get_Chamber_MolWt_gamma(self.__chamber_pressure, self.__mix_ratio, self.__eps)[0] / 1000
+
+    @property
+    def throat_molecular_weight(self):
+        return self.cea_obj.get_Throat_MolWt_gamma(self.__chamber_pressure, self.__mix_ratio, self.__eps)[0] / 1000
+
+    @property
+    def exit_molecular_weight(self):
+        return self.cea_obj.get_exit_MolWt_gamma(self.__chamber_pressure, self.__mix_ratio, self.__eps)[0] / 1000
+
+    @property
+    def chamber_sp_R(self):
+        return R_JPDEGK_MOL / self.chamber_molecular_weight
+
+    @property
+    def throat_sp_R(self):
+        return R_JPDEGK_MOL / self.chamber_molecular_weight
+
+    @property
+    def exit_sp_R(self):
+        return R_JPDEGK_MOL / self.exit_molecular_weight
+
+    @property
+    def chamber_gamma(self):
+        return self.cea_obj.get_Chamber_MolWt_gamma(self.__chamber_pressure, self.__mix_ratio, self.__eps)[1]
+
+    @property
+    def throat_gamma(self):
+        return self.cea_obj.get_Throat_MolWt_gamma(self.__chamber_pressure, self.__mix_ratio, self.__eps)[1]
+
+    @property
+    def exit_gamma(self):
+        return self.cea_obj.get_exit_MolWt_gamma(self.__chamber_pressure, self.__mix_ratio, self.__eps)[1]
+
+    @property
+    def throat_to_exit_velocity(self):
         return np.sqrt(2 * (self.throat_sp_enthalpy - self.exit_sp_enthalpy))
+
+    @property
+    def chamber_to_exit_velocity(self):
+        return np.sqrt(2 * (self.chamber_sp_enthalpy - self.exit_sp_enthalpy))
+
+    @property
+    def exit_mach(self):
+        return self.cea_obj.get_MachNumber(self.__chamber_pressure, self.__mix_ratio, self.__eps, self.__frozen, self.__frozen_throat)
+
+    @property
+    def chamber_sos(self):
+        return self.cea_obj.get_SonicVelocities(self.__chamber_pressure, self.__mix_ratio, self.__eps, self.__frozen, self.__frozen_throat)[0]
+
+    @property
+    def throat_sos(self):
+        return self.cea_obj.get_SonicVelocities(self.__chamber_pressure, self.__mix_ratio, self.__eps, self.__frozen, self.__frozen_throat)[1]
+
+    @property
+    def exit_sos(self):
+        return self.cea_obj.get_SonicVelocities(self.__chamber_pressure, self.__mix_ratio, self.__eps, self.__frozen, self.__frozen_throat)[2]
+
+    @property
+    def throat_velocity(self):
+        return self.throat_sos
+
+    @property
+    def exit_velocity(self):
+        return self.exit_mach * self.exit_sos
 
     @property
     def mix_ratio(self):
@@ -165,25 +238,66 @@ class RocketChamber():
         # Use the data storage to create some easy recorind... dt_s is limtiing lol
         data: DataStorage = DataStorage.from_linspace(start_pressure, end_pressure, 100, time_key='Chamber Pressure [Pa]', name=name)
         for pressure in data.time_array_s:
-            cea = RocketChamber(self.ox, self.fuel, pressure, self.__mix_ratio, self.__eps, self.__frozen, self.__frozen_throat)
+            cea = RocketChamber(
+                ox = self.ox,
+                fuel = self.fuel,
+                chamber_pressure = pressure,
+                throat_diameter = self.__throat_diameter,
+                MR = self.__mix_ratio,
+                eps = self.__eps,
+                frozen = self.__frozen,
+                frozen_throat = self.__frozen_throat
+            )
+            data.record_data('Atmospheric Pressure [Pa]', STD_ATM_PA)
             record_rocketchamber_data(cea, data)
             data.next_cycle()
 
         return data.datadict
 
     def mix_study(self, start_mix_ratio_ratio = 0.1, end_mix_ratio_ratio = 5, name=""):
-        data: DataStorage = DataStorage.from_linspace(start=start_mix_ratio_ratio, end=end_mix_ratio_ratio, increments=100, time_key='Mix Ratio [-]', name=name)
+        data: DataStorage = DataStorage.from_linspace(start=start_mix_ratio_ratio, end=end_mix_ratio_ratio, increments=500, time_key='Mix Ratio [-]', name=name)
         for mr in data.time_array_s:
-            cea = RocketChamber(self.ox, self.fuel, self.__chamber_pressure, mr, self.__eps, self.__frozen, self.__frozen_throat)
+            cea = RocketChamber(
+                ox = self.ox,
+                fuel = self.fuel,
+                chamber_pressure = self.__chamber_pressure,
+                throat_diameter = self.__throat_diameter,
+                MR = mr,
+                eps = self.__eps,
+                frozen = self.__frozen,
+                frozen_throat = self.__frozen_throat
+            )
+            data.record_data('Atmospheric Pressure [Pa]', STD_ATM_PA)
             record_rocketchamber_data(cea, data)
             data.next_cycle()
 
+
         return data.datadict
 
-    def pressure_mix_contour(self, parameter: str | list, start_pressure, end_pressure, start_mix_ratio = 0.1, end_mix_ratio = 3, export_path = None):
+    def eps_study(self, start_eps = 1.1, end_eps = 60, name=""):
+        data: DataStorage = DataStorage.from_linspace(start=start_eps, end=end_eps, increments=500, time_key='Area Expansion Ratio [-]', name=name)
+        for eps in data.time_array_s:
+            cea = RocketChamber(
+                ox = self.ox,
+                fuel = self.fuel,
+                chamber_pressure = self.__chamber_pressure,
+                throat_diameter = self.__throat_diameter,
+                MR = self.__mix_ratio,
+                eps = eps,
+                frozen = self.__frozen,
+                frozen_throat = self.__frozen_throat
+            )
+            data.record_data('Atmospheric Pressure [Pa]', STD_ATM_PA)
+            record_rocketchamber_data(cea, data)
+            data.next_cycle()
 
-        pressure =  np.linspace(start_pressure, end_pressure, 10)
-        mix = np.linspace(start_mix_ratio, end_mix_ratio, 10)
+
+        return data.datadict
+
+    def pressure_mix_contour(self, parameter: str | list, start_pressure, end_pressure, start_mix_ratio = 0.1, end_mix_ratio = 3, show_plot = True, export_path = None):
+
+        pressure =  np.linspace(start_pressure, end_pressure, 30)
+        mix = np.linspace(start_mix_ratio, end_mix_ratio, 30)
 
         if not isinstance(parameter, list):
             parameter = [parameter]
@@ -194,7 +308,16 @@ class RocketChamber():
             for m in mix:
                 col = []
                 for p in pressure:
-                    cea = RocketChamber(self.__ox, self.__fuel, p, m, self.__eps, self.__frozen, self.__frozen_throat)
+                    cea = RocketChamber(
+                        ox = self.__ox,
+                        fuel = self.__fuel,
+                        chamber_pressure = p,
+                        MR = m,
+                        throat_diameter = self.throat_diameter,
+                        eps = self.__eps,
+                        frozen = self.__frozen,
+                        frozen_throat = self.__frozen_throat
+                    )
                     col.append(getattr(cea, parm))
                 row.append(col)
 
@@ -204,15 +327,61 @@ class RocketChamber():
             fig.update_layout(
                 title=f"|{self.fuel} and {self.ox}|",
                 scene=dict(
-                    xaxis_title = "Pressure [Pa]",
+                    xaxis_title = "Chamber Pressure [Pa]",
                     yaxis_title = "Mix Ratio [-]",
                     zaxis_title = parm
                 )
             )
 
             if export_path is not None:
-                fig.write_html(os.path.join(export_path, f"{parm}.html"))
-            else:
+                fig.write_html(os.path.join(export_path, f"pressure_mix_{parm}.html"))
+
+            if show_plot:
+                fig.show()
+
+    def pressure_eps_contour(self, parameter: str | list, start_pressure, end_pressure, start_eps = 1.1, end_eps = 40, show_plot = True, export_path = None):
+
+        pressure =  np.linspace(start_pressure, end_pressure, 30)
+        eps = np.linspace(start_eps, end_eps, 30)
+
+        if not isinstance(parameter, list):
+            parameter = [parameter]
+
+        for parm in parameter:
+
+            row =[]
+            for e in eps:
+                col = []
+                for p in pressure:
+                    cea = RocketChamber(
+                        ox = self.__ox,
+                        fuel = self.__fuel,
+                        chamber_pressure = p,
+                        MR = self.__mix_ratio,
+                        throat_diameter = self.throat_diameter,
+                        eps = e,
+                        frozen = self.__frozen,
+                        frozen_throat = self.__frozen_throat
+                    )
+                    col.append(getattr(cea, parm))
+                row.append(col)
+
+            fig = go.Figure()
+            fig.add_trace(go.Surface(z = np.array(row), x = pressure, y = eps))
+
+            fig.update_layout(
+                title=f"|{self.fuel} and {self.ox}|",
+                scene=dict(
+                    xaxis_title = "Chamber Pressure [Pa]",
+                    yaxis_title = "Area Expansion Ratio [-]",
+                    zaxis_title = parm
+                )
+            )
+
+            if export_path is not None:
+                fig.write_html(os.path.join(export_path, f"pressure_eps_{parm}.html"))
+
+            if show_plot:
                 fig.show()
 
     @property
@@ -233,27 +402,44 @@ class RocketChamber():
             "Chamber Specific Enthalpy [J/kg]": self.chamber_sp_enthalpy,
             "Throat Specific Enthalpy [J/kg]": self.throat_sp_enthalpy,
             "Exit Specific Enthalpy [J/kg]": self.exit_sp_enthalpy,
+            "Exit Pressure [Pa]": self.exit_pressure,
+            "Throat to Exit Velocity [m/s]": self.throat_to_exit_velocity,
+            "Chamber to Exit Velocity [m/s]": self.chamber_to_exit_velocity,
+            "Mix Ratio [-]": self.mix_ratio,
+            "Chamber Exit Pressure Ratio [Pa]": self.chamber_exit_pratio,
+            "Chamber Thermal Conductivity [watt/(m*degK)]": self.chamber_thermal_conductivity,
+            "Throat Thermal Conductivity [watt/(m*degK)]": self.throat_thermal_conductivity,
+            "Exit Thermal Conductivity [watt/(m*degK)]": self.exit_thermal_conductivity,
+            "Chamber Molecular Weight [kg/mol]": self.chamber_molecular_weight,
+            "Throat Molecular Weight [kg/mol]": self.throat_molecular_weight,
+            "Exit Molecular Weight [kg/mol]": self.exit_molecular_weight,
+            "Chamber Specific Gas Constant [J/(kg * degK)]": self.chamber_sp_R,
+            "Throat Specific Gas Constant [J/(kg * degK)]": self.throat_sp_R,
+            "Chamber Specific Gas Constant [J/(kg * degK)]": self.exit_sp_R,
+            "Exit Mach [-]": self.exit_mach,
+            "Chamber Speed of Sound [m/s]": self.chamber_sos,
+            "Throat Speed of Sound [m/s]": self.throat_sos,
+            "Exit Speed of Sound [m/s]": self.exit_sos,
+            "Throat Velocity [m/s]": self.throat_velocity,
             "Exit Velocity [m/s]": self.exit_velocity,
-            "Mix Ratio [-]": self.mix_ratio
+            "Chamber Gamma [-]": self.chamber_gamma,
+            "Throat Gamma [-]": self.throat_gamma,
+            "Exit Gamma [-]": self.exit_gamma,
         }
 
-    def print(self):
-        print(pretty_dict(self.dict))
+    def string(self, round_places=3):
+        return pretty_dict(self.dict, round_places=round_places)
 
 
 def record_rocketchamber_data(cea: RocketChamber, data: DataStorage):
-    data.record_data("Isp [s]", cea.isp)
-    data.record_data("Cstar [m/s]", cea.cstar)
-    data.record_data("Chamber Temp [degK]", cea.chamber_temp)
-    data.record_data("Throat Temp [degK]", cea.throat_temp)
-    data.record_data("Exit Temp [degK]", cea.exit_temp)
-    data.record_data("Chamber Density [kg/m^3]", cea.chamber_density)
-    data.record_data("Throat Density [kg/m^3]", cea.throat_density)
-    data.record_data("Exit Density [kg/m^3]", cea.exit_density)
-    data.record_data("Chamber Specific Enthalpy [J/kg]", cea.chamber_sp_enthalpy)
-    data.record_data("Throat Specific Enthalpy [J/kg]", cea.throat_sp_enthalpy)
-    data.record_data("Exit Specific Enthalpy [J/kg]", cea.exit_sp_enthalpy)
-    data.record_data("Exit Velocity [m/s]", cea.exit_velocity)
-    data.record_data("Mix Ratio [-]", cea.mix_ratio)
+    for key, value in cea.dict.items():
+        data.record_data(key, value)
+    data.record_data("Sutton Velocity [m/s]", exit_velocity(
+        gamma=cea.chamber_gamma,
+        sp_R=cea.chamber_sp_R,
+        chamber_pressure=cea.chamber_pressure,
+        combustion_temp=cea.chamber_temp,
+        exit_pressure=cea.exit_pressure
+    ))
 
 
