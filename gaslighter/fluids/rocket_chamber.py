@@ -4,7 +4,7 @@ import numpy as np
 from rocketcea.cea_obj_w_units import CEA_Obj
 import plotly.graph_objects as go
 from ..runtimes import DataStorage
-from gaslighter import R_JPDEGK_MOL, pretty_key_val, rpe_equations, STD_ATM_PA, convert
+from gaslighter import pretty_key_val, circle_area_from_diameter, circle_diameter_from_area
 
 # Propellants: https://rocketcea.readthedocs.io/en/latest/propellants.html#propellants-link
 
@@ -37,12 +37,15 @@ class RocketChamber():
         ox: str,
         fuel: str,
         chamber_pressure: float,
+        throat_diameter: float,
         MR = 1.0,
         eps = 40.0,
         frozen = 0.0,
         frozen_throat = 0.0
     ):
         self.cea_obj = CEA_SI(ox, fuel)
+        self.__throat_diameter = throat_diameter
+        self.__throat_area = circle_area_from_diameter(self.__throat_diameter)
         self.__chamber_pressure = chamber_pressure
         self.__ox = ox
         self.__fuel = fuel
@@ -50,6 +53,47 @@ class RocketChamber():
         self.__eps = eps
         self.__frozen = frozen
         self.__frozen_throat = frozen_throat
+        self.__exit_area = self.__throat_area * eps
+        self.__exit_diameter = circle_diameter_from_area(self.__exit_area)
+
+    def from_nozzel_geometry(
+        ox: str,
+        fuel: str,
+        chamber_pressure: float,
+        throat_diameter: float,
+        exit_diameter: float,
+        MR = 1.0,
+        frozen = 0.0,
+        frozen_throat = 0.0
+    ):
+        eps = circle_area_from_diameter(exit_diameter) / circle_area_from_diameter(throat_diameter)
+        print(eps)
+        return RocketChamber(
+            ox,
+            fuel,
+            chamber_pressure,
+            throat_diameter,
+            MR,
+            eps,
+            frozen,
+            frozen_throat
+        )
+
+    @property
+    def throat_diameter(self):
+        return self.__throat_diameter
+
+    @property
+    def throat_area(self):
+        return self.__throat_area
+
+    @property
+    def exit_diameter(self):
+        return self.__exit_diameter
+
+    @property
+    def  exit_area(self):
+        return self.__exit_area
 
     @property
     def ox(self):
@@ -112,10 +156,6 @@ class RocketChamber():
         return np.sqrt(2 * (self.throat_sp_enthalpy - self.exit_sp_enthalpy))
 
     @property
-    def cf(self):
-        return self.cea_obj.get_PambCf(self.__chamber_pressure, self.__mix_ratio, self.__eps)[0]
-
-    @property
     def mix_ratio(self):
         return self.__mix_ratio
 
@@ -176,6 +216,10 @@ class RocketChamber():
                 fig.show()
 
     def print(self):
+        print(pretty_key_val("Throat Diameter [m]", self.throat_diameter))
+        print(pretty_key_val("Throat Area [m^2]",self.throat_area))
+        print(pretty_key_val("Exit Diameter [m]", self.exit_diameter))
+        print(pretty_key_val("Exit Area [m^2]", self.exit_area))
         print(pretty_key_val("Isp [s]", self.isp))
         print(pretty_key_val("Cstar [m/s]", self.cstar))
         print(pretty_key_val("Chamber Temp [degK]", self.chamber_temp))
@@ -188,7 +232,6 @@ class RocketChamber():
         print(pretty_key_val("Throat Specific Enthalpy [J/kg]", self.throat_sp_enthalpy))
         print(pretty_key_val("Exit Specific Enthalpy [J/gk]", self.exit_sp_enthalpy))
         print(pretty_key_val("Exit Velocity [m/s]", self.exit_velocity))
-        print(pretty_key_val("CF [-]", self.cf))
         print(pretty_key_val("Mix Ratio [-]", self.mix_ratio))
 
 
@@ -206,7 +249,6 @@ def record_rocketchamber_data(cea: RocketChamber, data: DataStorage):
     data.record_data("Throat Specific Enthalpy [J/kg]", cea.throat_sp_enthalpy)
     data.record_data("Exit Specific Enthalpy [J/gk]", cea.exit_sp_enthalpy)
     data.record_data("Exit Velocity [m/s]", cea.exit_velocity)
-    data.record_data("CF [-]", cea.cf)
     data.record_data("Mix Ratio [-]", cea.mix_ratio)
 
 

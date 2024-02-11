@@ -1,5 +1,5 @@
 import numpy as np
-from geometry import circle_radius_from_area, circle_area_from_diameter
+from gaslighter import circle_radius_from_area, circle_area_from_diameter
 
 def thrust(mdot: float, velocity: float):
 
@@ -13,7 +13,7 @@ def exit_velocity(gamma: float, sp_R: float, chamber_pressure: float, chamber_te
         * (1 - (exit_pressure / chamber_pressure)**((gamma - 1) / gamma))
     )
 
-def half_angle(throat_diameter: float, exit_length: float, exit_diameter: float):
+def half_angle_rad(throat_diameter: float, exit_length: float, exit_diameter: float):
     oppsite = (exit_diameter / 2.0) - (throat_diameter / 2.0)
     return np.arctan(oppsite / exit_length)
 

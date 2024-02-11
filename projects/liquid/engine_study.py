@@ -3,8 +3,12 @@ from gaslighter import *
 
 # Make a base chamber
 chamber = fluids.RocketChamber(
-    'N2O', 'IPA', convert(150, 'psia', 'Pa'), MR=2.5
+    'N2O', 'IPA',
+    convert(150, 'psia', 'Pa'),
+    throat_diameter=convert(0.25, 'in', 'm'),
+    MR=2.5,
 )
+
 
 # Get Pressure data
 pressure_data = chamber.pressure_study(
@@ -31,4 +35,5 @@ chamber.pressure_mix_contour(
 
 current_thrust = thrust(0.15, chamber.exit_velocity)
 print(pretty_key_val("Thrust [N]", current_thrust))
+print(pretty_key_val("Exit Length [m]", exit_length(chamber.throat_diameter, np.deg2rad(15), chamber.exit_diameter)))
 chamber.print()
