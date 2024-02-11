@@ -30,12 +30,5 @@ chamber.pressure_mix_contour(
 )
 
 current_thrust = thrust(0.15, chamber.exit_velocity)
-
-data = DataStorage(1e-3, 10.0, "Current Engine")
-# Current Results
-print(f"Current Thrust [N]: {current_thrust}")
-print(f"Current Thrust [lbf]: {convert(current_thrust, 'N', 'lbf')}")
-
-fluids.record_rocketchamber_data(chamber, data)
-data.next_cycle()
-data.print()
+print(pretty_key_val("Thrust [N]", current_thrust))
+chamber.print()

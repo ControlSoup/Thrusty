@@ -5,9 +5,10 @@ Requirments:
 Starting Guess:
 - ~150 psia chamber pressure
 - 0.15 kg/s mdot total
-- MR of 1.5 
+- MR of 1.5
 
 Need:
+- Chamber Area must be 4 x Throat Area [Pg 72 RPE, Sutton]
 - Expansition ratio
 - Throat Area
 - Chamber length
