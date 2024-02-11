@@ -8,3 +8,9 @@ def pretty_key_val(key: str, value, round_places: int = 3):
         val = value
 
     return f"|{key}| = {val}"
+
+def pretty_dict(dict, round_places: int = 3):
+    string = ""
+    for key in dict:
+        string += pretty_key_val(key, dict[key], round_places) + "\n"
+    return string

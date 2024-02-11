@@ -4,7 +4,7 @@ import numpy as np
 from rocketcea.cea_obj_w_units import CEA_Obj
 import plotly.graph_objects as go
 from ..runtimes import DataStorage
-from gaslighter import pretty_key_val, circle_area_from_diameter, circle_diameter_from_area
+from gaslighter import circle_area_from_diameter, circle_diameter_from_area, pretty_dict
 
 # Propellants: https://rocketcea.readthedocs.io/en/latest/propellants.html#propellants-link
 
@@ -215,25 +215,30 @@ class RocketChamber():
             else:
                 fig.show()
 
-    def print(self):
-        print(pretty_key_val("Throat Diameter [m]", self.throat_diameter))
-        print(pretty_key_val("Throat Area [m^2]",self.throat_area))
-        print(pretty_key_val("Exit Diameter [m]", self.exit_diameter))
-        print(pretty_key_val("Exit Area [m^2]", self.exit_area))
-        print(pretty_key_val("Isp [s]", self.isp))
-        print(pretty_key_val("Cstar [m/s]", self.cstar))
-        print(pretty_key_val("Chamber Temp [degK]", self.chamber_temp))
-        print(pretty_key_val("Throat Temp [degK]", self.throat_temp))
-        print(pretty_key_val("Exit Temp [degK]", self.exit_temp))
-        print(pretty_key_val("Chamber Density [kg/m^3]", self.chamber_density))
-        print(pretty_key_val("Throat Density [kg/m^3]", self.throat_density))
-        print(pretty_key_val("Exit Density [kg/m^3]", self.exit_density))
-        print(pretty_key_val("Chamber Specific Enthalpy [J/kg]", self.chamber_sp_enthalpy))
-        print(pretty_key_val("Throat Specific Enthalpy [J/kg]", self.throat_sp_enthalpy))
-        print(pretty_key_val("Exit Specific Enthalpy [J/gk]", self.exit_sp_enthalpy))
-        print(pretty_key_val("Exit Velocity [m/s]", self.exit_velocity))
-        print(pretty_key_val("Mix Ratio [-]", self.mix_ratio))
+    @property
+    def dict(self):
+        return {
+            "Throat Diameter [m]": self.throat_diameter,
+            "Throat Area [m^2]":self.throat_area,
+            "Exit Diameter [m]": self.exit_diameter,
+            "Exit Area [m^2]": self.exit_area,
+            "Isp [s]": self.isp,
+            "Cstar [m/s]": self.cstar,
+            "Chamber Temp [degK]": self.chamber_temp,
+            "Throat Temp [degK]": self.throat_temp,
+            "Exit Temp [degK]": self.exit_temp,
+            "Chamber Density [kg/m^3]": self.chamber_density,
+            "Throat Density [kg/m^3]": self.throat_density,
+            "Exit Density [kg/m^3]": self.exit_density,
+            "Chamber Specific Enthalpy [J/kg]": self.chamber_sp_enthalpy,
+            "Throat Specific Enthalpy [J/kg]": self.throat_sp_enthalpy,
+            "Exit Specific Enthalpy [J/kg]": self.exit_sp_enthalpy,
+            "Exit Velocity [m/s]": self.exit_velocity,
+            "Mix Ratio [-]": self.mix_ratio
+        }
 
+    def print(self):
+        print(pretty_dict(self.dict))
 
 
 def record_rocketchamber_data(cea: RocketChamber, data: DataStorage):
@@ -247,7 +252,7 @@ def record_rocketchamber_data(cea: RocketChamber, data: DataStorage):
     data.record_data("Exit Density [kg/m^3]", cea.exit_density)
     data.record_data("Chamber Specific Enthalpy [J/kg]", cea.chamber_sp_enthalpy)
     data.record_data("Throat Specific Enthalpy [J/kg]", cea.throat_sp_enthalpy)
-    data.record_data("Exit Specific Enthalpy [J/gk]", cea.exit_sp_enthalpy)
+    data.record_data("Exit Specific Enthalpy [J/kg]", cea.exit_sp_enthalpy)
     data.record_data("Exit Velocity [m/s]", cea.exit_velocity)
     data.record_data("Mix Ratio [-]", cea.mix_ratio)
 
