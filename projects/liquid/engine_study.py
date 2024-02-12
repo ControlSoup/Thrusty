@@ -56,10 +56,10 @@ output = pretty_key_val("Exit Length [m]", current_exit_length, round_places=8)
 output += chamber.string(round_places=8)
 
 print(output)
-to_file(output, 'current_results.md')
+to_file(output, 'results/current_results.md', file_name="Current Engine Results")
 
 output_imperial = pretty_key_val("Exit Length [in]", convert(current_exit_length, 'm', 'in'), round_places=4)
 output_imperial += chamber.imperial_string(round_places=8)
 
 print(output_imperial)
-to_file(output_imperial, 'current_results_imperial.md')
+to_file(output_imperial, 'results/current_results_imperial.md', file_name="Current Engine Results")

@@ -21,6 +21,8 @@ def csv_to_datadict(file_path: str) -> dict[str, np.array]:
 
     return dict
 
-def to_file(string: str, file_path: str):
+def to_file(string: str, file_path: str, file_name=""):
     with open(file_path, 'w') as f:
+        if file_name is not None:
+            f.write(f'==================== {file_name} ====================\n')
         f.write(string)
