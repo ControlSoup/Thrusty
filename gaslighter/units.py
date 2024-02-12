@@ -1,4 +1,7 @@
+from __future__ import annotations
+import re
 from pint import UnitRegistry
+import numpy as np
 # ------------------------------------------------------------------------------
 # Unit Conversion wrapper
 # ------------------------------------------------------------------------------
@@ -8,6 +11,7 @@ STD_G_MPS2 = 9.80665
 STD_ATM_PA = 101_325
 STD_ATM_K = 288.15
 FP_ORIFICE_CD = 0.65
+R_JPDEGK_MOL = 8.31446261815324
 
 ureg = UnitRegistry()
 ureg.define('psia = psi')
@@ -23,7 +27,7 @@ def convert(value: float, in_units: str, out_units: str):
     Compatible Strings: https://github.com/hgrecco/pint/blob/master/pint/default_en.txt
     '''
     if in_units == out_units:
-        return out_units
+        return value
 
     _u = ureg.Quantity(
         value,

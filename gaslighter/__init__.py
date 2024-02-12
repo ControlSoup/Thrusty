@@ -6,3 +6,4 @@ from .integration import *
 from .errors import *
 from .geometry import *
 from .rpe_equations import *
+from .pretty_print import *

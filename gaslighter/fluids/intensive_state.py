@@ -2,7 +2,6 @@ from CoolProp.CoolProp import PropsSI
 import sys
 from ..errors import check_float, check_str
 
-
 class IntensiveState():
     def __init__(
         self,
