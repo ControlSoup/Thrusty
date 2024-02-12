@@ -51,9 +51,15 @@ chamber.pressure_eps_contour(
     export_path = "plots/",
     show_plot=False
 )
-
-output = pretty_key_val("Exit Length [m]", exit_length(chamber.throat_diameter, np.deg2rad(15), chamber.exit_diameter), round_places=8)
+current_exit_length = exit_length(chamber.throat_diameter, np.deg2rad(15), chamber.exit_diameter)
+output = pretty_key_val("Exit Length [m]", current_exit_length, round_places=8)
 output += chamber.string(round_places=8)
 
 print(output)
 to_file(output, 'current_results.md')
+
+output_imperial = pretty_key_val("Exit Length [in]", convert(current_exit_length, 'm', 'in'), round_places=4)
+output_imperial += chamber.imperial_string(round_places=8)
+
+print(output_imperial)
+to_file(output_imperial, 'current_results_imperial.md')

@@ -4,7 +4,7 @@ import numpy as np
 from rocketcea.cea_obj_w_units import CEA_Obj
 import plotly.graph_objects as go
 from ..runtimes import DataStorage
-from gaslighter import circle_area_from_diameter, circle_diameter_from_area, pretty_dict, R_JPDEGK_MOL, convert, exit_velocity, throat_area, STD_ATM_PA
+from gaslighter import circle_area_from_diameter, circle_diameter_from_area, pretty_dict, R_JPDEGK_MOL, convert, exit_velocity, throat_area, STD_ATM_PA, imperial_dictionary
 
 # Propellants: https://rocketcea.readthedocs.io/en/latest/propellants.html#propellants-link
 
@@ -461,6 +461,13 @@ class RocketChamber():
 
     def string(self, round_places=3):
         return pretty_dict(self.dict, round_places=round_places)
+
+    @property
+    def imperial_dict(self):
+        return imperial_dictionary(self.dict)
+
+    def imperial_string(self, round_places=3):
+        return pretty_dict(self.imperial_dict, round_places)
 
 
 def record_rocketchamber_data(cea: RocketChamber, data: DataStorage):
