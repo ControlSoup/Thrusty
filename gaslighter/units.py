@@ -101,6 +101,6 @@ def imperial_dictionary(dictionary: dict[str, np.array]):
         try:
             imperial[new_key] = convert(value, current_units, new_units)
         except:
-            print(f"{value}, {current_units}, {new_units}")
+            raise ValueError(f" CANT CONVERT: {value}, {current_units} to {new_units}")
 
     return imperial
