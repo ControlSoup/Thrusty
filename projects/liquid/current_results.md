@@ -1,5 +1,5 @@
 |Exit Length [m]| = 0.01441983
-|Thrust [N]| = 237.82963391
+|Ideal Thrust [N]| = 237.82963391
 |mdot [kg/s]| = 0.15
 |Throat Diameter [m]| = 0.01515307
 |Throat Area [m^2]| = 0.00018034
