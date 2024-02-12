@@ -4,7 +4,7 @@ import numpy as np
 from rocketcea.cea_obj_w_units import CEA_Obj
 import plotly.graph_objects as go
 from ..runtimes import DataStorage
-from gaslighter import circle_area_from_diameter, circle_diameter_from_area, pretty_dict, R_JPDEGK_MOL, convert, exit_velocity, STD_ATM_PA
+from gaslighter import circle_area_from_diameter, circle_diameter_from_area, pretty_dict, R_JPDEGK_MOL, convert, exit_velocity, throat_area, STD_ATM_PA
 
 # Propellants: https://rocketcea.readthedocs.io/en/latest/propellants.html#propellants-link
 
@@ -37,24 +37,35 @@ class RocketChamber():
         ox: str,
         fuel: str,
         chamber_pressure: float,
-        throat_diameter: float,
+        mdot: float,
         MR = 1.0,
         eps = 40.0,
         frozen = 0.0,
         frozen_throat = 0.0
     ):
         self.cea_obj = CEA_SI(ox, fuel)
-        self.__throat_diameter = throat_diameter
-        self.__throat_area = circle_area_from_diameter(self.__throat_diameter)
         self.__chamber_pressure = chamber_pressure
+        self.__mdot = mdot
         self.__ox = ox
         self.__fuel = fuel
         self.__mix_ratio = MR
         self.__eps = eps
         self.__frozen = frozen
         self.__frozen_throat = frozen_throat
+
+        # Use Sutton for throat area, use thraot area for other params
+        self.__throat_area = throat_area(self.cstar, self.chamber_pressure, self.mdot)
+        self.__throat_diameter = circle_diameter_from_area(self.__throat_area)
         self.__exit_area = self.__throat_area * eps
         self.__exit_diameter = circle_diameter_from_area(self.__exit_area)
+
+    @property
+    def thrust(self):
+        return self.__mdot * self.exit_velocity
+
+    @property
+    def mdot(self):
+        return self.__mdot
 
     @property
     def throat_diameter(self):
@@ -242,7 +253,7 @@ class RocketChamber():
                 ox = self.ox,
                 fuel = self.fuel,
                 chamber_pressure = pressure,
-                throat_diameter = self.__throat_diameter,
+                mdot = self.__mdot,
                 MR = self.__mix_ratio,
                 eps = self.__eps,
                 frozen = self.__frozen,
@@ -261,7 +272,7 @@ class RocketChamber():
                 ox = self.ox,
                 fuel = self.fuel,
                 chamber_pressure = self.__chamber_pressure,
-                throat_diameter = self.__throat_diameter,
+                mdot = self.__mdot,
                 MR = mr,
                 eps = self.__eps,
                 frozen = self.__frozen,
@@ -281,7 +292,7 @@ class RocketChamber():
                 ox = self.ox,
                 fuel = self.fuel,
                 chamber_pressure = self.__chamber_pressure,
-                throat_diameter = self.__throat_diameter,
+                mdot = self.__mdot,
                 MR = self.__mix_ratio,
                 eps = eps,
                 frozen = self.__frozen,
@@ -291,6 +302,25 @@ class RocketChamber():
             record_rocketchamber_data(cea, data)
             data.next_cycle()
 
+
+        return data.datadict
+
+    def mdot_study(self, start_mdot = 0.1, end_mdot = 10, name=""):
+        data: DataStorage = DataStorage.from_linspace(start=start_mdot, end=end_mdot, increments=500, time_key='mdot [kg/s]', name=name)
+        for mdot in data.time_array_s:
+            cea = RocketChamber(
+                ox = self.ox,
+                fuel = self.fuel,
+                chamber_pressure = self.__chamber_pressure,
+                mdot = mdot,
+                MR = self.__mix_ratio,
+                eps = self.__eps,
+                frozen = self.__frozen,
+                frozen_throat = self.__frozen_throat
+            )
+            data.record_data('Atmospheric Pressure [Pa]', STD_ATM_PA)
+            record_rocketchamber_data(cea, data)
+            data.next_cycle()
 
         return data.datadict
 
@@ -313,7 +343,7 @@ class RocketChamber():
                         fuel = self.__fuel,
                         chamber_pressure = p,
                         MR = m,
-                        throat_diameter = self.throat_diameter,
+                        mdot = self.__mdot,
                         eps = self.__eps,
                         frozen = self.__frozen,
                         frozen_throat = self.__frozen_throat
@@ -358,7 +388,7 @@ class RocketChamber():
                         fuel = self.__fuel,
                         chamber_pressure = p,
                         MR = self.__mix_ratio,
-                        throat_diameter = self.throat_diameter,
+                        mdot = self.__mdot,
                         eps = e,
                         frozen = self.__frozen,
                         frozen_throat = self.__frozen_throat
@@ -387,11 +417,13 @@ class RocketChamber():
     @property
     def dict(self):
         return {
+            "Ideal Thrust [N]": self.thrust,
+            "mdot [kg/s]": self.mdot,
             "Throat Diameter [m]": self.throat_diameter,
             "Throat Area [m^2]":self.throat_area,
             "Exit Diameter [m]": self.exit_diameter,
             "Exit Area [m^2]": self.exit_area,
-            "Isp [s]": self.isp,
+            "Isp Vac [s]": self.isp,
             "Cstar [m/s]": self.cstar,
             "Chamber Temp [degK]": self.chamber_temp,
             "Throat Temp [degK]": self.throat_temp,

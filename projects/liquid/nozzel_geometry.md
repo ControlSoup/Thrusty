@@ -9,6 +9,7 @@ Starting Guess:
 
 Need:
 - Chamber Area must be 4 x Throat Area [Pg 72 RPE, Sutton]
+- L* of roughly 20in should be used as a basline (HalfCat's sucessful engine number)
 - Expansition ratio
 - Throat Area
 - Chamber length

@@ -13,7 +13,7 @@ def exit_velocity(gamma: float, sp_R: float, chamber_pressure: float, combustion
         * (1 - (exit_pressure / chamber_pressure)**((gamma - 1) / gamma))
     )
 
-def throat_area(cstar, chamber_pressure, mdot):
+def throat_area(cstar: float, chamber_pressure: float, mdot: float):
     ''' Eq 2-16
     '''
     return mdot * cstar / chamber_pressure
