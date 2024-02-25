@@ -41,7 +41,7 @@ def real_orifice_mdot(
 
     # Assume unchoked is plausable
     else:
-        # Isentropic expansion, matching downstream pressure
+        # Isentropic expansion, matching downstream conditions 
         throat = Throat(upstream.sp_entropy, downstream_pressure, upstream.fluid)
 
         throat_vel = gas_velocity(upstream.sp_enthalpy, throat.sp_enthalpy)
