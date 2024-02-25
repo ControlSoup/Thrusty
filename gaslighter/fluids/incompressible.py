@@ -74,7 +74,6 @@ def incompressible_orifice_mdot(
 
 def incompressible_orifice_dp(
     cda: float,
-    upstream_pressure: float,
     upstream_density: float,
     mdot: float,
     beta_ratio: float = np.inf,
