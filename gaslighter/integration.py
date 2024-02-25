@@ -1,9 +1,11 @@
 import numpy as np
 
+
 def np_derivative(array: np.array):
     new_array = np.roll(array, 1)
     new_array[0] = 0.0
     return new_array
+
 
 def np_rk4(states: np.array, dt: float):
 
@@ -24,4 +26,3 @@ def np_rk4(states: np.array, dt: float):
         return new_values
     else:
         return new_values[0]
-

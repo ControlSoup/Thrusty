@@ -1,12 +1,10 @@
-from gaslighter import *
-from gaslighter import fluids
 import plotly.graph_objects as go
 from tqdm import tqdm
 
-data = DataStorage(
-    1e-3,
-    40.0
-)
+from gaslighter import *
+from gaslighter import fluids
+
+data = DataStorage(1e-3, 40.0)
 
 # 1/4" fitting blowing out a tank
 orifice_diameter_in = 0.125
@@ -14,17 +12,17 @@ tank_pressure_psia = 1000.0
 tank_volume_gal = 1.0
 
 cd = 0.7
-orifice_diameter = convert(orifice_diameter_in, 'in', "m")
+orifice_diameter = convert(orifice_diameter_in, "in", "m")
 cda = cd * circle_area_from_diameter(orifice_diameter)
 
 # -----------------------------------------------------------------------------
 # Pure Isentropic Example
 # -----------------------------------------------------------------------------
 tank: fluids.BasicStaticVolume = fluids.BasicStaticVolume.from_ptv(
-    pressure = convert(tank_pressure_psia, 'psia', 'Pa'),
-    temp = STD_ATM_K,
-    volume = convert(tank_volume_gal, 'gal', 'm^3'),
-    fluid = "N2O"
+    pressure=convert(tank_pressure_psia, "psia", "Pa"),
+    temp=STD_ATM_K,
+    volume=convert(tank_volume_gal, "gal", "m^3"),
+    fluid="N2O",
 )
 
 for t in tqdm(data.time_array_s):
@@ -53,7 +51,7 @@ for t in tqdm(data.time_array_s):
     tank.update_mu(new_mass, new_tank_state.sp_inenergy * new_mass)
 
     # Record Results
-    data.record_list(
+    data.record_from_list(
         [
             ("isentropic_mdot [kg/s]", mdot),
             ("isentropic_tank.mass [kg]", tank.mass),
@@ -76,10 +74,10 @@ data.reset(confirm=True)
 # Pure Isothermal Example
 # -----------------------------------------------------------------------------
 tank: fluids.BasicStaticVolume = fluids.BasicStaticVolume.from_ptv(
-    pressure = convert(tank_pressure_psia, 'psia', 'Pa'),
-    temp = STD_ATM_K,
-    volume = convert(tank_volume_gal, 'gal', 'm^3'),
-    fluid = "nitrogen"
+    pressure=convert(tank_pressure_psia, "psia", "Pa"),
+    temp=STD_ATM_K,
+    volume=convert(tank_volume_gal, "gal", "m^3"),
+    fluid="nitrogen",
 )
 
 for t in tqdm(data.time_array_s):
@@ -108,7 +106,7 @@ for t in tqdm(data.time_array_s):
     tank.update_mu(new_mass, new_tank_state.sp_inenergy * new_mass)
 
     # Record Results
-    data.record_list(
+    data.record_from_list(
         [
             ("isothermal_mdot [kg/s]", mdot),
             ("isothermal_tank.mass [kg]", tank.mass),
@@ -131,10 +129,10 @@ data.reset(confirm=True)
 # Pure Isenthalpic Example
 # -----------------------------------------------------------------------------
 tank: fluids.BasicStaticVolume = fluids.BasicStaticVolume.from_ptv(
-    pressure = convert(tank_pressure_psia, 'psia', 'Pa'),
-    temp = STD_ATM_K,
-    volume = convert(tank_volume_gal, 'gal', 'm^3'),
-    fluid = "nitrogen"
+    pressure=convert(tank_pressure_psia, "psia", "Pa"),
+    temp=STD_ATM_K,
+    volume=convert(tank_volume_gal, "gal", "m^3"),
+    fluid="nitrogen",
 )
 
 for t in tqdm(data.time_array_s):
@@ -163,7 +161,7 @@ for t in tqdm(data.time_array_s):
     tank.update_mu(new_mass, new_tank_state.sp_inenergy * new_mass)
 
     # Record Results
-    data.record_list(
+    data.record_from_list(
         [
             ("isenthalpic_mdot [kg/s]", mdot),
             ("isenthalpic_tank.mass [kg]", tank.mass),
@@ -186,10 +184,10 @@ data.reset(confirm=True)
 # Conservation of Mass and Energy Example
 # -----------------------------------------------------------------------------
 tank: fluids.BasicStaticVolume = fluids.BasicStaticVolume.from_ptv(
-    pressure = convert(tank_pressure_psia, 'psia', 'Pa'),
-    temp = STD_ATM_K,
-    volume = convert(tank_volume_gal, 'gal', 'm^3'),
-    fluid = "nitrogen"
+    pressure=convert(tank_pressure_psia, "psia", "Pa"),
+    temp=STD_ATM_K,
+    volume=convert(tank_volume_gal, "gal", "m^3"),
+    fluid="nitrogen",
 )
 
 for t in tqdm(data.time_array_s):
@@ -216,7 +214,7 @@ for t in tqdm(data.time_array_s):
         break
 
     # Record Results
-    data.record_list(
+    data.record_from_list(
         [
             ("conservation_mdot [kg/s]", mdot),
             ("conservation_tank.mass [kg]", tank.mass),
@@ -243,7 +241,7 @@ plotting.graph_by_key(
     fig=fig,
     title="Compare Mdot, Pressure and Temp",
     datadict=results,
-    x_key='time [s]',
+    x_key="time [s]",
     key_list=[
         "isentropic_mdot [kg/s]",
         "isentropic_tank.pressure [Pa]",
@@ -259,7 +257,7 @@ plotting.graph_by_key(
         "conservation_tank.temperature [degK]",
     ],
     show_fig=False,
-    export_path="results/mdot_p_t_comparision.html"
+    export_path="results/mdot_p_t_comparision.html",
 )
 
 # Plot all
@@ -268,8 +266,8 @@ plotting.graph_datadict(
     fig=fig,
     title="Blowdown",
     datadict=results,
-    x_key='time [s]',
+    x_key="time [s]",
     show_fig=False,
-    export_path="results/blowdown.html"
+    export_path="results/blowdown.html",
 )
 fig.show()
