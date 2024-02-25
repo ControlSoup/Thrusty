@@ -1,5 +1,4 @@
 import numpy as np
-
 from gaslighter import circle_area_from_diameter, circle_radius_from_area
 
 

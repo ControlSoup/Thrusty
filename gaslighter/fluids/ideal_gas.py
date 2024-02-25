@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import numpy as np
 
 from ..units import convert
@@ -33,8 +35,11 @@ def ideal_is_choked(upstream_presure, upstream_gamma, downstream_pressure):
 
 
 def ideal_orifice_mdot(
-    cda: float, upstream: IntensiveState, downstream_pressure: float
-):
+    cda: float,
+    upstream: IntensiveState,
+    downstream_pressure: float,
+    verbose_return: bool = False,
+) -> float | tuple[float, bool]:
     """
     Source:
         https://en.wikipedia.org/wiki/Orifice_plate
@@ -44,6 +49,8 @@ def ideal_orifice_mdot(
     if upstream.pressure - downstream_pressure < 0.1:
         return 0.0
 
+    is_choked = False
+
     if ideal_is_choked(upstream.pressure, upstream.gamma, downstream_pressure):
         # Choked flow equation
         gamma_choked_comp = (2 / (upstream.gamma + 1)) ** (
@@ -52,6 +59,8 @@ def ideal_orifice_mdot(
         mdot_kgps = cda * np.sqrt(
             upstream.gamma * upstream.density * upstream.pressure * gamma_choked_comp
         )
+
+        is_choked = True
     else:
         # UnChoked flow equation
         gamma_UNchoked_comp = upstream.gamma / (upstream.gamma - 1)
@@ -68,5 +77,7 @@ def ideal_orifice_mdot(
             * gamma_UNchoked_comp
             * (pressure_ideal1 - pressure_ideal2)
         )
-
-    return mdot_kgps
+    if verbose_return:
+        return mdot_kgps, is_choked
+    else:
+        return mdot_kgps
