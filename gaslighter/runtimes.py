@@ -1,10 +1,20 @@
-import numpy as np
 from copy import deepcopy
+
+import numpy as np
+
 from .file_hanlding import datadict_to_csv
 from .plotting import graph_datadict
 
-class DataStorage():
-    def __init__(self, dt_s, max_time_s, name: str = "", alternate_time_array = None, time_key = 'time [s]'):
+
+class DataStorage:
+    def __init__(
+        self,
+        dt_s,
+        max_time_s,
+        name: str = "",
+        alternate_time_array=None,
+        time_key="time [s]",
+    ):
 
         self.name = name
 
@@ -23,8 +33,10 @@ class DataStorage():
         self.__datadict = {}
         self.__index = 0
 
-    def from_linspace(start, end, increments, time_key: str, name =""):
-        return DataStorage(1, end, name, np.linspace(start, end, increments), time_key=time_key)
+    def from_linspace(start, end, increments, time_key: str, name=""):
+        return DataStorage(
+            1, end, name, np.linspace(start, end, increments), time_key=time_key
+        )
 
     @property
     def max_time_s(self):
@@ -50,8 +62,8 @@ class DataStorage():
 
     def __trim_data(self):
         for key in self.__datadict:
-            self.__datadict[key] = self.__datadict[key][0:self.__index]
-            self.__time_array_s = self.__time_array_s[0:self.__index]
+            self.__datadict[key] = self.__datadict[key][0 : self.__index]
+            self.__time_array_s = self.__time_array_s[0 : self.__index]
 
     def next_cycle(self):
         self.__index += 1
@@ -72,14 +84,18 @@ class DataStorage():
         else:
             self.__datadict[key][self.__index] = value
 
-    def record_list(self, list: [str, float]):
+    def record_from_list(self, list: [str, float]):
         for key, val in list:
+            self.record_data(key, val)
+
+    def record_from_dict(self, dict: dict[str, float]):
+        for key, val in dict.items():
             self.record_data(key, val)
 
     def export_to_csv(self, file_name: str):
         datadict_to_csv(self.datadict, file_name)
 
-    def plot_all(self, export_path = None, show_fig=True, title = None):
+    def plot_all(self, export_path=None, show_fig=True, title=None):
 
         if title is None:
             title = self.name
@@ -89,7 +105,7 @@ class DataStorage():
             title=title,
             x_key=self.__time_key,
             export_path=export_path,
-            show_fig=show_fig
+            show_fig=show_fig,
         )
 
     def reset(self, confirm=False):
@@ -103,4 +119,3 @@ class DataStorage():
 
         for key in datadict:
             print(f"|{key}| = {datadict[key][self.__index - 1]}")
-

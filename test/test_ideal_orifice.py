@@ -1,6 +1,8 @@
 import unittest
-from gaslighter.fluids.ideal_gas import *
+
 from gaslighter.fluids import IntensiveState
+from gaslighter.fluids.ideal_gas import *
+
 
 class Test(unittest.TestCase):
     def test_ideal_orifice(self):
@@ -9,37 +11,23 @@ class Test(unittest.TestCase):
         upstrm_press_Pa = 300000
         upstrm_temp_K = 320
         downstrm_press_Pa = 101000
-        fluid = 'nitrogen'
+        fluid = "nitrogen"
 
         upstream: IntensiveState = IntensiveState.from_pt(
-            upstrm_press_Pa,
-            upstrm_temp_K,
-            fluid
+            upstrm_press_Pa, upstrm_temp_K, fluid
         )
-        print(upstream.__dict__)
 
         # Ensure inputs are choked
         self.assertTrue(
-            ideal_is_choked(
-                upstream.pressure,
-                upstream.gamma,
-                downstrm_press_Pa
-            )
+            ideal_is_choked(upstream.pressure, upstream.gamma, downstrm_press_Pa)
         )
-
 
         mdot_kgps = ideal_orifice_mdot(
-            Cd * orifice_area_m2,
-            upstream,
-            downstrm_press_Pa
+            Cd * orifice_area_m2, upstream, downstrm_press_Pa
         )
 
-        self.assertAlmostEqual(
-            mdot_kgps,
-            16.679131378034153,
-            delta=1e-4
-        )
-        print("YA")
+        self.assertAlmostEqual(mdot_kgps, 16.679131378034153, delta=1e-4)
+
 
 if __name__ == "__main__":
     unittest.main()

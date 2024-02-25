@@ -1,10 +1,11 @@
 from dataclasses import dataclass
-from .intensive_state import IntensiveState
+
 from ..errors import check_float, check_str
+from .intensive_state import IntensiveState
 
 
 # Very bare bones data containter for volume
-class BasicStaticVolume():
+class BasicStaticVolume:
 
     def __init__(self, mass: float, volume: float, inenergy: float, fluid: str):
 
@@ -17,9 +18,11 @@ class BasicStaticVolume():
         self.__volume = volume
         self.__inenergy = inenergy
         self.state = IntensiveState(
-            "D", self.__mass / self.__volume,
-            "UMASS", self.__inenergy / self.__mass,
-            fluid
+            "D",
+            self.__mass / self.__volume,
+            "UMASS",
+            self.__inenergy / self.__mass,
+            fluid,
         )
 
     @property
@@ -42,12 +45,7 @@ class BasicStaticVolume():
         check_str(fluid)
         state = IntensiveState("P", pressure, "T", temp, fluid)
         mass = state.density * volume
-        return BasicStaticVolume(
-            mass,
-            volume,
-            state.sp_inenergy * mass,
-            fluid
-        )
+        return BasicStaticVolume(mass, volume, state.sp_inenergy * mass, fluid)
 
     def update_mu(self, mass: float, inenergy: float):
 
@@ -58,10 +56,5 @@ class BasicStaticVolume():
         self.__inenergy = inenergy
 
         self.state.update_from_du(
-            self.__mass / self.__volume,
-            self.__inenergy / self.__mass
+            self.__mass / self.__volume, self.__inenergy / self.__mass
         )
-
-
-
-
