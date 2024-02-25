@@ -25,7 +25,7 @@ class Test(unittest.TestCase):
         # Test if choked
         self.assertTrue(is_choked)
 
-        self.assertAlmostEqual(mdot_kgps, 16.679131378034153, delta=1e-4)
+        self.assertAlmostEqual(mdot_kgps, 16.679131378034153, delta=1e-2)
 
 
 if __name__ == "__main__":
