@@ -74,6 +74,10 @@ class IntensiveState:
     def gamma(self):
         return self.__gamma
 
+    @property
+    def fluid(self):
+        return self.__fluid
+
     def lookup(self, prop: str) -> float:
         """Lookup a property from the current state"""
         check_str(prop)
