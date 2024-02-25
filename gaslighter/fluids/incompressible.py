@@ -70,3 +70,13 @@ def incompressible_orifice_mdot(
         / (np.sqrt(1 - beta_ratio**4))
         * np.sqrt(2 * upstream_density * (upstream_pressure - downstream_pressure))
     )
+
+
+def incompressible_orifice_dp(
+    cda: float,
+    upstream_pressure: float,
+    upstream_density: float,
+    mdot: float,
+    beta_ratio: float = np.inf,
+):
+    return (mdot * (np.sqrt(1 - beta_ratio**4)) / cda) ** 2 / (2.0 * upstream_density)

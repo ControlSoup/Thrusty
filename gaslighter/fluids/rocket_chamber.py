@@ -6,9 +6,17 @@ import numpy as np
 import plotly.graph_objects as go
 from rocketcea.cea_obj_w_units import CEA_Obj
 
-from gaslighter import (R_JPDEGK_MOL, STD_ATM_PA, circle_area_from_diameter,
-                        circle_diameter_from_area, convert, exit_velocity,
-                        imperial_dictionary, pretty_dict, throat_area)
+from gaslighter import (
+    R_JPDEGK_MOL,
+    STD_ATM_PA,
+    circle_area_from_diameter,
+    circle_diameter_from_area,
+    convert,
+    exit_velocity,
+    imperial_dictionary,
+    pretty_dict,
+    throat_area,
+)
 
 from ..runtimes import DataStorage
 
