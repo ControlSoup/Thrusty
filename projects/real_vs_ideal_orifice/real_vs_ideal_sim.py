@@ -1,13 +1,13 @@
 import plotly.graph_objects as go
-from thrusty import *
-from thrusty import fluids
+from gaslighter import *
+from gaslighter import fluids
 from tqdm import tqdm
 
-data = DataStorage(1e-3, 40.0)
+data = DataStorage(1e-3, 100.0)
 
 # 1/4" fitting blowing out a tank
-orifice_diameter_in = 0.75
-tank_pressure_psia = 1e6
+orifice_diameter_in = 0.25
+tank_pressure_psia = 10000
 tank_volume_gal = 1.0
 
 cd = 0.7

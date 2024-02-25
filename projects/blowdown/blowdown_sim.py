@@ -1,8 +1,7 @@
 import plotly.graph_objects as go
-from tqdm import tqdm
-
 from gaslighter import *
 from gaslighter import fluids
+from tqdm import tqdm
 
 data = DataStorage(1e-3, 40.0)
 
