@@ -2,6 +2,8 @@ import plotly.graph_objects as go
 from gaslighter import *
 from gaslighter import fluids
 from tqdm import tqdm
+# Constants
+FLUID = "helium"
 
 data = DataStorage(1e-3, 100.0)
 
@@ -21,7 +23,7 @@ tank: fluids.BasicStaticVolume = fluids.BasicStaticVolume.from_ptv(
     pressure=convert(tank_pressure_psia, "psia", "Pa"),
     temp=STD_ATM_K,
     volume=convert(tank_volume_gal, "gal", "m^3"),
-    fluid="helium",
+    fluid=FLUID,
 )
 
 for t in tqdm(data.time_array_s):
@@ -46,8 +48,13 @@ for t in tqdm(data.time_array_s):
     new_mass = np_rk4([-mdot, tank.mass], data.dt_s)
     new_energy = np_rk4([-udot, tank.inenergy], data.dt_s)
 
-    # New state lookup from mass and (extensive) internal energy
-    new_tank_state = tank.update_mu(new_mass, new_energy)
+
+    # try a new state lookup
+    try:
+        new_tank_state = tank.update_mu(new_mass, new_energy)
+    except ValueError as e:
+        print(e)
+        break
 
     # Record Results
     data.record_from_dict(
@@ -78,7 +85,7 @@ tank: fluids.BasicStaticVolume = fluids.BasicStaticVolume.from_ptv(
     pressure=convert(tank_pressure_psia, "psia", "Pa"),
     temp=STD_ATM_K,
     volume=convert(tank_volume_gal, "gal", "m^3"),
-    fluid="nitrogen",
+    fluid=FLUID,
 )
 
 for t in tqdm(data.time_array_s):
@@ -107,21 +114,19 @@ for t in tqdm(data.time_array_s):
         break
 
     # Record Results
-    data.record_from_list(
-        [
-            ("ideal_mdot [kg/s]", mdot),
-            ("ideal_is_choked [-]", is_choked),
-            ("ideal_tank.mass [kg]", tank.mass),
-            ("ideal_tank.volume [m^3]", tank.volume),
-            ("ideal_tank.inenergy [J]", tank.inenergy),
-            ("ideal_tank.pressure [Pa]", tank.state.pressure),
-            ("ideal_tank.temperature [degK]", tank.state.temp),
-            ("ideal_tank.density [kg/m^3]", tank.state.density),
-            ("ideal_tank.sp_inenergy [J/kg]", tank.state.sp_inenergy),
-            ("ideal_tank.sp_enthalpy [J/kg]", tank.state.sp_enthalpy),
-            ("atmospheric.pressure [Pa]", STD_ATM_PA),
-        ]
-    )
+    data.record_from_dict({
+        "ideal_mdot [kg/s]": mdot,
+        "ideal_is_choked [-]": is_choked,
+        "ideal_tank.mass [kg]": tank.mass,
+        "ideal_tank.volume [m^3]": tank.volume,
+        "ideal_tank.inenergy [J]": tank.inenergy,
+        "ideal_tank.pressure [Pa]": tank.state.pressure,
+        "ideal_tank.temperature [degK]": tank.state.temp,
+        "ideal_tank.density [kg/m^3]": tank.state.density,
+        "ideal_tank.sp_inenergy [J/kg]": tank.state.sp_inenergy,
+        "ideal_tank.sp_enthalpy [J/kg]": tank.state.sp_enthalpy,
+        "atmospheric.pressure [Pa]": STD_ATM_PA,
+    })
     data.next_cycle()
 
 data.export_to_csv("results/ideal.csv")
@@ -131,6 +136,11 @@ ideal = data.datadict
 # Plotting
 fig = go.Figure()
 results = real | ideal
+
+
+results['mdot_error [kg/s]'] = np.zeros_like(results['real_mdot [kg/s]'])
+for i,real in enumerate(results['real_mdot [kg/s]']):
+   results['mdot_error [kg/s]'][i] = real - results['ideal_mdot [kg/s]'][i]
 
 plotting.graph_by_key(
     fig=fig,
@@ -144,6 +154,7 @@ plotting.graph_by_key(
         "real_mdot [kg/s]",
         "real_tank.pressure [Pa]",
         "real_tank.temperature [degK]",
+        "mdot_error [kg/s]"
     ],
     show_fig=False,
     export_path="results/real_vs_ideal_ptm_comparision.html",

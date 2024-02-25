@@ -47,6 +47,8 @@ def ideal_orifice_mdot(
 
     # No flow under very low dp
     if upstream.pressure - downstream_pressure < 0.1:
+        if verbose_return:
+            return 0.0, False
         return 0.0
 
     is_choked = False
@@ -77,7 +79,8 @@ def ideal_orifice_mdot(
             * gamma_UNchoked_comp
             * (pressure_ideal1 - pressure_ideal2)
         )
+
     if verbose_return:
         return mdot_kgps, is_choked
-    else:
-        return mdot_kgps
+        
+    return mdot_kgps
