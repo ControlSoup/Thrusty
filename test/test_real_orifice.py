@@ -1,7 +1,7 @@
 import unittest
 
-from gaslighter.fluids import IntensiveState
-from gaslighter.fluids.ideal_gas import *
+from gaslighter import *
+from gaslighter.fluids import IntensiveState, real_orifice_mdot
 
 
 class Test(unittest.TestCase):
@@ -17,14 +17,13 @@ class Test(unittest.TestCase):
             upstrm_press_Pa, upstrm_temp_K, fluid
         )
 
-        # Ensure inputs are choked
-        self.assertTrue(
-            ideal_is_choked(upstream.pressure, upstream.gamma, downstrm_press_Pa)
+        # Calc mdot with information on if its choked or not
+        mdot_kgps, is_choked = real_orifice_mdot(
+            Cd * orifice_area_m2, upstream, downstrm_press_Pa, verbose_return=True
         )
 
-        mdot_kgps = ideal_orifice_mdot(
-            Cd * orifice_area_m2, upstream, downstrm_press_Pa
-        )
+        # Test if choked
+        self.assertTrue(is_choked)
 
         self.assertAlmostEqual(mdot_kgps, 16.679131378034153, delta=1e-4)
 

@@ -1,5 +1,6 @@
 import numpy as np
 
+
 def pretty_key_val(key: str, value, round_places: int = 3):
 
     if isinstance(value, float) or isinstance(value, np.ndarray):
@@ -8,6 +9,7 @@ def pretty_key_val(key: str, value, round_places: int = 3):
         val = value
 
     return f"|{key}| = {val}\n"
+
 
 def pretty_dict(dict, round_places: int = 3):
     string = ""

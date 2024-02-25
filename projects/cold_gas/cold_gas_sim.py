@@ -5,17 +5,13 @@ faulthandler.enable()
 from gaslighter import *
 from gaslighter import fluids
 
-data = DataStorage(
-    1e-3,
-    100.0,
-    name="Cold Gas Thruster"
-)
+data = DataStorage(1e-3, 100.0, name="Cold Gas Thruster")
 
 tank: fluids.BasicStaticVolume = fluids.BasicStaticVolume.from_ptv(
-    pressure = convert(200.0, 'psia', 'Pa'),
-    temp = STD_ATM_K,
-    volume = convert(1.0, 'gal', 'm^3'),
-    fluid = "air"
+    pressure=convert(200.0, "psia", "Pa"),
+    temp=STD_ATM_K,
+    volume=convert(1.0, "gal", "m^3"),
+    fluid="air",
 )
 
 for t in data.time_array_s:
@@ -42,9 +38,8 @@ for t in data.time_array_s:
         print(e)
         break
 
-
     # Record Results
-    data.record_list(
+    data.record_from_list(
         [
             ("mdot [kg/s]", mdot),
             ("udot [J/s]", udot),
