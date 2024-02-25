@@ -82,5 +82,5 @@ def ideal_orifice_mdot(
 
     if verbose_return:
         return mdot_kgps, is_choked
-        
+
     return mdot_kgps
