@@ -1,7 +1,7 @@
 import numpy as np
-from gaslighter import fluids
-from gaslighter import DataStorage
-from tqdm import tqdm 
+from tqdm import tqdm
+
+from gaslighter import DataStorage, fluids
 
 data: DataStorage = DataStorage.from_geomspace(
     2000, 5000, 10000, time_key="Reynolds Number [-]"
@@ -16,7 +16,7 @@ for Re in tqdm(data.time_array_s):
     data.next_cycle()
 
 data.plot_all(
-    y_axis_tile="Friction Factor [-]", 
+    y_axis_tile="Friction Factor [-]",
     export_path="results/moody_transition_diagram.html",
-    log_x=True
+    log_x=True,
 )

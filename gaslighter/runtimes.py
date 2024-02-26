@@ -35,20 +35,16 @@ class DataStorage:
 
     def from_linspace(start, end, increments, time_key: str, name=""):
         return DataStorage(
-            1, 
-            end, 
-            name, 
-            np.linspace(start, end, increments), 
-            time_key=time_key
+            1, end, name, np.linspace(start, end, increments), time_key=time_key
         )
 
     def from_geomspace(start, end, increments, time_key: str, name=""):
         return DataStorage(
-            1, 
-            end, 
-            name, 
-            np.geomspace(start, end, num=increments, endpoint=True), 
-            time_key=time_key
+            1,
+            end,
+            name,
+            np.geomspace(start, end, num=increments, endpoint=True),
+            time_key=time_key,
         )
 
     @property
@@ -109,12 +105,7 @@ class DataStorage:
         datadict_to_csv(self.datadict, file_name)
 
     def plot_all(
-        self, 
-        export_path=None, 
-        show_fig=True, 
-        title=None, 
-        y_axis_tile=None, 
-        log_x=False
+        self, export_path=None, show_fig=True, title=None, y_axis_tile=None, log_x=False
     ):
 
         if title is None:
@@ -127,7 +118,7 @@ class DataStorage:
             export_path=export_path,
             show_fig=show_fig,
             yaxis_title=y_axis_tile,
-            log_x=log_x
+            log_x=log_x,
         )
 
     def reset(self, confirm=False):
