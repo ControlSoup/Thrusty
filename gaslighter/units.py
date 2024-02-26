@@ -9,20 +9,14 @@ from pint import UnitRegistry
 # Unit Conversion wrapper
 # ------------------------------------------------------------------------------
 
-# Source:https://en.wikipedia.org/wiki/Standard_temperature_and_pressure
-STD_G_MPS2 = 9.80665
-STD_ATM_PA = 101_325
-STD_ATM_K = 288.15
-FP_ORIFICE_CD = 0.65
-R_JPDEGK_MOL = 8.31446261815324
-
 ureg = UnitRegistry()
 ureg.define("psia = psi")
 ureg.define("psid = psi")
+ureg.define("gpm = gal/min")
 ureg.define("lbm = lb")
-ureg.define(f"Cv = Cda / 38")
 ureg.define(f"Cda_in2 = in^2")
 ureg.define(f"Cda_m2 = m^2")
+ureg.define(f"Cv = Cda_in2 / 38")
 
 
 def convert(value: float, in_units: str, out_units: str):
@@ -105,3 +99,20 @@ def imperial_dictionary(dictionary: dict[str, np.array]):
             raise ValueError(f" CANT CONVERT: {value}, {current_units} to {new_units}")
 
     return imperial
+
+
+# ------------------------------------------------------------------------------
+# Constants
+# ------------------------------------------------------------------------------
+
+# Source:https://en.wikipedia.org/wiki/Standard_temperature_and_pressure
+STD_G_MPS2 = 9.80665
+STD_ATM_PA = 101_325
+STD_ATM_K = 288.15
+FP_ORIFICE_CD = 0.65
+R_JPDEGK_MOL = 8.31446261815324
+
+
+STD_G_INPS2 = convert(STD_G_MPS2, "m/s^2", "in/s^2")
+STD_ATM_PSIA = convert(STD_ATM_PA, "Pa", "psia")
+STD_ATM_F = convert(STD_ATM_K, "degK", "degF")
