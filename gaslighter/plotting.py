@@ -1,6 +1,7 @@
 import numpy as np
 import plotly.graph_objects as go
 
+
 def graph_by_key(
     datadict: str,
     key_list: list[str],
@@ -10,7 +11,7 @@ def graph_by_key(
     show_fig=True,
     fig=None,
     yaxis_title="",
-    log_x=False
+    log_x=False,
 ):
     if fig == None:
         fig = go.Figure()
@@ -18,26 +19,19 @@ def graph_by_key(
     for y_key in key_list:
         fig.add_trace(
             go.Scatter(
-                x=datadict[x_key], 
-                y=datadict[y_key], 
-                name=y_key, 
+                x=datadict[x_key],
+                y=datadict[y_key],
+                name=y_key,
                 mode="lines",
             )
         )
 
     if log_x:
         fig.update_layout(
-            title=title, 
-            xaxis_title=x_key, 
-            xaxis_type="log", 
-            yaxis_title=yaxis_title
+            title=title, xaxis_title=x_key, xaxis_type="log", yaxis_title=yaxis_title
         )
     else:
-        fig.update_layout(
-            title=title, 
-            xaxis_title=x_key, 
-            yaxis_title=yaxis_title
-        )
+        fig.update_layout(title=title, xaxis_title=x_key, yaxis_title=yaxis_title)
 
     if show_fig:
         fig.show()
@@ -53,8 +47,8 @@ def graph_datadict(
     export_path: str = None,
     show_fig=True,
     fig=None,
-    yaxis_title = "",
-    log_x=False
+    yaxis_title="",
+    log_x=False,
 ):
     key_list = [key for key in datadict if key != x_key]
 
@@ -67,7 +61,7 @@ def graph_datadict(
         show_fig=show_fig,
         fig=fig,
         yaxis_title=yaxis_title,
-        log_x=log_x
+        log_x=log_x,
     )
 
 

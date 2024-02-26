@@ -7,14 +7,23 @@ Sources:
     - Critical Reynolds / turblant transition was bassically made up idk man
 """
 
+
+def jain_forumulation(reynolds: float, relative_roughness: float):
+    """Jain Forumulation of the colebrook equation (within 3% of colebrook)"""
+    return (2 * np.log10((relative_roughness / 3.7) + (6.97 / reynolds))) ** -2
+
+
 def colebrook_solution(reynolds: float, relative_roughness: float):
 
     def colebrook(ff: float):
-        return (-2 * np.log10((2.51/(reynolds * np.sqrt(ff))) + (relative_roughness/3.71))) - 1.0/np.sqrt(ff)
+        return (
+            -2
+            * np.log10((2.51 / (reynolds * np.sqrt(ff))) + (relative_roughness / 3.71))
+        ) - 1.0 / np.sqrt(ff)
 
     ff_root_result = root_scalar(
         colebrook,
-        x0= 64 / reynolds,  # Laminar guess
+        x0=jain_forumulation(reynolds, relative_roughness),  # Use jain as first guess
         method="secant",
         xtol=1e-6,
         maxiter=300,
@@ -26,15 +35,12 @@ def colebrook_solution(reynolds: float, relative_roughness: float):
     return ff_root_result.root
 
 
-
 def friction_factor(
-    reynolds: float, 
-    relative_roughness: float, 
-    suppress_warning: bool = False
+    reynolds: float, relative_roughness: float, suppress_warning: bool = False
 ):
 
     laminar_re = 2320
-    turbulant_re = 3500 
+    turbulant_re = 3500
 
     # Laminar Solution
     if reynolds <= laminar_re:
@@ -53,7 +59,7 @@ def friction_factor(
         ff_turbulant = colebrook_solution(reynolds, relative_roughness)
 
         ratio = (reynolds - laminar_re) / (turbulant_re - laminar_re)
-        
+
         return (ff_laminar * (1 - ratio)) + (ff_turbulant * ratio)
 
 
