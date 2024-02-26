@@ -9,7 +9,7 @@ Sources:
 
 
 def jain_forumulation(reynolds: float, relative_roughness: float):
-    """Jain Forumulation of the colebrook equation (within 3% of colebrook)"""
+    """Jain Forumulation of the colebrook equation (within 3%)"""
     return (2 * np.log10((relative_roughness / 3.7) + (6.97 / reynolds))) ** -2
 
 
