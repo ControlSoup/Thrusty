@@ -7,13 +7,12 @@ Sources:
     - Critical Reynolds / turblant transition was bassically made up idk man
 """
 
+
 def reynolds(
-    denisty: float, 
-    velocity: float, 
-    char_length: float, 
-    dynamic_viscosity: float
+    denisty: float, velocity: float, char_length: float, dynamic_viscosity: float
 ):
     return denisty * velocity * char_length / dynamic_viscosity
+
 
 def jain_forumulation(reynolds: float, relative_roughness: float):
     """Jain Forumulation of the colebrook equation (within 3%)"""
@@ -97,9 +96,7 @@ def incompressible_orifice_mdot(
     if beta_ratio is not None:
         beta_comp = np.sqrt(1 - beta_ratio**4)
 
-    return cda * np.sqrt(
-        2 * upstream_density * (upstream_press - downstream_pressure)
-    )
+    return cda * np.sqrt(2 * upstream_density * (upstream_press - downstream_pressure))
 
 
 def incompressible_orifice_dp(
