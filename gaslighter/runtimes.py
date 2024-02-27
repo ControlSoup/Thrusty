@@ -38,6 +38,15 @@ class DataStorage:
             1, end, name, np.linspace(start, end, increments), time_key=time_key
         )
 
+    def from_geomspace(start, end, increments, time_key: str, name=""):
+        return DataStorage(
+            1,
+            end,
+            name,
+            np.geomspace(start, end, num=increments, endpoint=True),
+            time_key=time_key,
+        )
+
     @property
     def max_time_s(self):
         return self.__max_time_s
@@ -95,7 +104,9 @@ class DataStorage:
     def export_to_csv(self, file_name: str):
         datadict_to_csv(self.datadict, file_name)
 
-    def plot_all(self, export_path=None, show_fig=True, title=None):
+    def plot_all(
+        self, export_path=None, show_fig=True, title=None, y_axis_tile=None, log_x=False
+    ):
 
         if title is None:
             title = self.name
@@ -106,6 +117,8 @@ class DataStorage:
             x_key=self.__time_key,
             export_path=export_path,
             show_fig=show_fig,
+            yaxis_title=y_axis_tile,
+            log_x=log_x,
         )
 
     def reset(self, confirm=False):
