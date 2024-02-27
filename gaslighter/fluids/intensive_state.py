@@ -7,7 +7,12 @@ from ..errors import check_float, check_str
 
 class IntensiveState:
     def __init__(
-        self, prop_1: str, value_1: float, prop_2: str, value_2: float, fluid: str
+        self, 
+        prop_1: str, 
+        value_1: float, 
+        prop_2: str, 
+        value_2: float, 
+        fluid: str
     ):
         check_str(prop_1)
         check_str(prop_2)
