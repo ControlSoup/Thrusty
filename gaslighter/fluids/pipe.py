@@ -6,7 +6,7 @@ from .incompressible import (friction_factor, incompressible_orifice_mdot,
                              incompressible_pipe_dp, reynolds)
 
 
-class Pipe:
+class IncompressiblePipe:
     def __init__(self, diameter: float, roughness: float, length: float, fluid: str):
         self.__diameter = diameter
         self.__area = circle_area_from_diameter(diameter)
@@ -18,7 +18,11 @@ class Pipe:
     def from_relative_roughness(
         self, hydraulic_diameter: float, relative_roughness: float, length: float
     ):
-        return Pipe(hydraulic_diameter, hydraulic_diameter * relative_roughness, length)
+        return IncompressiblePipe(
+            hydraulic_diameter, 
+            hydraulic_diameter * relative_roughness, 
+            length
+        )
 
     @property
     def diameter(self):
@@ -54,7 +58,10 @@ class Pipe:
 
         # Fluid State
         density, dyn_viscosity = PropsSI(
-            ["D", "V"], "P", upstream_press, "T", upstream_temp, self.__fluid
+            ["D", "V"], 
+            "P", upstream_press, 
+            "T", upstream_temp, 
+            self.__fluid
         )
 
         velocity = (mdot / density) * self.area
@@ -73,12 +80,18 @@ class Pipe:
         )
 
     def mdot(
-        self, upstream_press: float, upstream_temp: float, downstream_press: float
+        self, 
+        upstream_press: float, 
+        upstream_temp: float, 
+        downstream_press: float
     ):
 
         # Fluid State
-        density, dyn_viscosity = PropsSI(
-            ["D", "V"], "P", upstream_press, "T", upstream_temp, self.__fluid
+        density = PropsSI(
+            "D", 
+            "P", upstream_press, 
+            "T", upstream_temp, 
+            self.__fluid
         )
 
         # Root solve for mdot that makes dp error 0
