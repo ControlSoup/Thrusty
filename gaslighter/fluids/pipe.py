@@ -16,17 +16,10 @@ class IncompressiblePipe:
         self.__fluid = fluid
 
     def from_relative_roughness(
-        self, 
-        hydraulic_diameter: float, 
-        relative_roughness: float, 
-        length: float,
-        fluid
+        self, hydraulic_diameter: float, relative_roughness: float, length: float, fluid
     ):
         return IncompressiblePipe(
-            hydraulic_diameter, 
-            hydraulic_diameter * relative_roughness, 
-            length,
-            fluid
+            hydraulic_diameter, hydraulic_diameter * relative_roughness, length, fluid
         )
 
     @property
@@ -63,10 +56,7 @@ class IncompressiblePipe:
 
         # Fluid State
         density, dyn_viscosity = PropsSI(
-            ["D", "V"], 
-            "P", upstream_press, 
-            "T", upstream_temp, 
-            self.__fluid
+            ["D", "V"], "P", upstream_press, "T", upstream_temp, self.__fluid
         )
 
         velocity = (mdot / density) * self.area
@@ -85,19 +75,11 @@ class IncompressiblePipe:
         )
 
     def mdot(
-        self, 
-        upstream_press: float, 
-        upstream_temp: float, 
-        downstream_press: float
+        self, upstream_press: float, upstream_temp: float, downstream_press: float
     ):
 
         # Fluid State
-        density = PropsSI(
-            "D", 
-            "P", upstream_press, 
-            "T", upstream_temp, 
-            self.__fluid
-        )
+        density = PropsSI("D", "P", upstream_press, "T", upstream_temp, self.__fluid)
 
         # Root solve for mdot that makes dp error 0
         def dp_error(mdot):
