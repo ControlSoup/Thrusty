@@ -4,11 +4,17 @@ import os
 
 import numpy as np
 import plotly.graph_objects as go
+from gaslighter import (
+    R_JPDEGK_MOL,
+    STD_ATM_PA,
+    circle_diameter_from_area,
+    convert,
+    exit_velocity,
+    imperial_dictionary,
+    pretty_dict,
+    throat_area,
+)
 from rocketcea.cea_obj_w_units import CEA_Obj
-
-from gaslighter import (R_JPDEGK_MOL, STD_ATM_PA, circle_area_from_diameter,
-                        circle_diameter_from_area, convert, exit_velocity,
-                        imperial_dictionary, pretty_dict, throat_area)
 
 from ..runtimes import DataStorage
 
@@ -593,6 +599,7 @@ class RocketChamber:
             "Chamber Temp [degK]": self.chamber_temp,
             "Throat Temp [degK]": self.throat_temp,
             "Exit Temp [degK]": self.exit_temp,
+            "Chamber Pressure [Pa]": self.chamber_pressure,
             "Chamber Density [kg/m^3]": self.chamber_density,
             "Throat Density [kg/m^3]": self.throat_density,
             "Exit Density [kg/m^3]": self.exit_density,
