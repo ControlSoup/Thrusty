@@ -14,17 +14,15 @@ class IncompressibleOrifice:
         self.__fluid = fluid
         self.__beta_ratio = beta_ratio
 
-    def from_cda(
-        self, cda: float, fluid: str, cd: float = 0.65, beta_ratio: float = None
-    ):
+    def from_cda(cda: float, fluid: str, cd: float = 0.65, beta_ratio: float = None):
         return IncompressibleOrifice(cd, cda / cd, fluid, beta_ratio)
 
-    def from_cv(
-        self, cv: float, fluid: str, cd: float = 0.65, beta_ratio: float = None
-    ):
+    def from_cv(cv: float, fluid: str, cd: float = 0.65, beta_ratio: float = None):
         cda = convert(cv, "Cv", "Cda_m2")
 
-        return IncompressibleOrifice.from_cda(cda, fluid, cd, beta_ratio)
+        return IncompressibleOrifice.from_cda(
+            cda=cda, fluid=fluid, cd=cd, beta_ratio=beta_ratio
+        )
 
     @property
     def cd(self):
