@@ -1,5 +1,6 @@
 from ..units import convert
 from .incompressible import incompressible_orifice_dp, incompressible_orifice_mdot
+from CoolProp.CoolProp import PropsSI
 
 class IncompressibleOrifice():
     def __init__(
@@ -90,7 +91,7 @@ class IncompressibleOrifice():
 
         return incompressible_orifice_dp(
             self.__cda,
-            self.density,
+            density,
             mdot,
             self.__beta_ratio 
         )

@@ -16,12 +16,17 @@ class IncompressiblePipe:
         self.__fluid = fluid
 
     def from_relative_roughness(
-        self, hydraulic_diameter: float, relative_roughness: float, length: float
+        self, 
+        hydraulic_diameter: float, 
+        relative_roughness: float, 
+        length: float,
+        fluid
     ):
         return IncompressiblePipe(
             hydraulic_diameter, 
             hydraulic_diameter * relative_roughness, 
-            length
+            length,
+            fluid
         )
 
     @property
