@@ -1,6 +1,6 @@
 import unittest
 
-from gaslighter import STD_ATM_PA
+from gaslighter import STD_ATM_PA, convert
 from gaslighter.fluids import IncompressibleOrifice, IncompressiblePipe
 
 
@@ -14,7 +14,7 @@ class Test(unittest.TestCase):
         RELATIVE_ROUGHNESS = 0.001
 
         pipe = IncompressiblePipe.from_relative_roughness(
-            self, PIPE_D_M, RELATIVE_ROUGHNESS, PIPE_LENGTH_M, "water"
+            PIPE_D_M, RELATIVE_ROUGHNESS, PIPE_LENGTH_M, "water"
         )
 
         upstream_press = 10 * STD_ATM_PA
@@ -43,7 +43,12 @@ class Test(unittest.TestCase):
 
         OR_D_M = 0.01
 
-        orifice = IncompressibleOrifice.from_cda(self, cda=0.01, fluid="water")
+        orifice = IncompressibleOrifice.from_cda(cda=0.01, fluid="water")
+        orifice2 = IncompressibleOrifice.from_cv(
+            cv=convert(0.01, "m^2", "in^2") * 38, fluid="water"
+        )
+
+        self.assertAlmostEqual(orifice.cda, orifice2.cda)
 
         upstream_press = 10 * STD_ATM_PA
         upstream_temp = 280
