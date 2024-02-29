@@ -6,3 +6,4 @@ from .orifice import IncompressibleOrifice
 from .pipe import IncompressiblePipe
 from .real_gas import *
 from .rocket_chamber import *
+from .system_curve import *
