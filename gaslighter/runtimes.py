@@ -32,13 +32,37 @@ class DataStorage:
         # Setup data storage
         self.__datadict = {}
         self.__index = 0
+    
+    def from_arange(
+        start: float, 
+        end: float, 
+        increments: float, 
+        time_key: str, 
+        name=""
+    ):
+        return DataStorage(
+            1, end, name, np.arange(start, end, increments),time_key=time_key
+        )
 
-    def from_linspace(start, end, increments, time_key: str, name=""):
+
+    def from_linspace(
+        start: float, 
+        end: float, 
+        increments: float, 
+        time_key: str, 
+        name=""
+    ):
         return DataStorage(
             1, end, name, np.linspace(start, end, increments), time_key=time_key
         )
 
-    def from_geomspace(start, end, increments, time_key: str, name=""):
+    def from_geomspace(
+        start: float, 
+        end: float, 
+        increments: float, 
+        time_key: str, 
+        name=""
+    ):
         return DataStorage(
             1,
             end,
@@ -105,7 +129,12 @@ class DataStorage:
         datadict_to_csv(self.datadict, file_name)
 
     def plot_all(
-        self, export_path=None, show_fig=True, title=None, y_axis_tile=None, log_x=False
+        self, 
+        export_path=None, 
+        show_fig=True, 
+        title=None, 
+        y_axis_tile=None, 
+        log_x=False
     ):
 
         if title is None:

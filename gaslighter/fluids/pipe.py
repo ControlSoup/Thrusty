@@ -4,6 +4,7 @@ from scipy.optimize import root_scalar
 from ..geometry import circle_area_from_diameter
 from .incompressible import (friction_factor, incompressible_orifice_mdot,
                              incompressible_pipe_dp, reynolds)
+from .. import MIN_RESONABLE_DP_PA, MIN_RESONABLE_PRESSURE_PA
 
 
 class IncompressiblePipe:
@@ -54,6 +55,9 @@ class IncompressiblePipe:
         suppress_warning: bool = False,
     ):
 
+        if upstream_press <= MIN_RESONABLE_PRESSURE_PA:
+            return upstream_press
+
         # Fluid State
         density, dyn_viscosity = PropsSI(
             ["D", "V"], "P", upstream_press, "T", upstream_temp, self.__fluid
@@ -70,13 +74,22 @@ class IncompressiblePipe:
             suppress_warning=suppress_warning,
         )
 
-        return incompressible_pipe_dp(
+        dp = incompressible_pipe_dp(
             self.__length, self.__diameter, density, velocity, ff
         )
+
+        if dp > upstream_press:
+            print("WARNING| Dp is greater than upstream pressure")
+            return upstream_press
+        
+        return dp
 
     def mdot(
         self, upstream_press: float, upstream_temp: float, downstream_press: float
     ):
+
+        if upstream_press <= MIN_RESONABLE_DP_PA:
+            return 0.0 
 
         # Fluid State
         density = PropsSI("D", "P", upstream_press, "T", upstream_temp, self.__fluid)
