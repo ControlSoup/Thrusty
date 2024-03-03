@@ -33,36 +33,23 @@ class DataStorage:
         # Setup data storage
         self.__datadict = {}
         self.__index = 0
-    
+
     def from_arange(
-        start: float, 
-        end: float, 
-        increments: float, 
-        time_key: str, 
-        name=""
+        start: float, end: float, increments: float, time_key: str, name=""
     ):
         return DataStorage(
-            1, end, name, np.arange(start, end, increments),time_key=time_key
+            1, end, name, np.arange(start, end, increments), time_key=time_key
         )
 
-
     def from_linspace(
-        start: float, 
-        end: float, 
-        increments: float, 
-        time_key: str, 
-        name=""
+        start: float, end: float, increments: float, time_key: str, name=""
     ):
         return DataStorage(
             1, end, name, np.linspace(start, end, increments), time_key=time_key
         )
 
     def from_geomspace(
-        start: float, 
-        end: float, 
-        increments: float, 
-        time_key: str, 
-        name=""
+        start: float, end: float, increments: float, time_key: str, name=""
     ):
         return DataStorage(
             1,
@@ -93,7 +80,7 @@ class DataStorage:
         datadict[self.__time_key] = self.__time_array_s
 
         return datadict
-    
+
     @property
     def datadict_imperial(self):
         datadict = self.datadict
@@ -135,12 +122,7 @@ class DataStorage:
         datadict_to_csv(self.datadict, file_name)
 
     def plot_all(
-        self, 
-        export_path=None, 
-        show_fig=True, 
-        title=None, 
-        y_axis_tile=None, 
-        log_x=False
+        self, export_path=None, show_fig=True, title=None, y_axis_tile=None, log_x=False
     ):
 
         if title is None:
@@ -157,12 +139,7 @@ class DataStorage:
         )
 
     def plot_imperial(
-        self, 
-        export_path=None, 
-        show_fig=True, 
-        title=None, 
-        y_axis_tile=None, 
-        log_x=False
+        self, export_path=None, show_fig=True, title=None, y_axis_tile=None, log_x=False
     ):
 
         if title is None:

@@ -1,11 +1,12 @@
 from CoolProp.CoolProp import PropsSI
 from scipy.optimize import root_scalar
 
-from ..geometry import circle_area_from_diameter
-from .incompressible import (friction_factor, incompressible_orifice_mdot,
-                             incompressible_pipe_dp, reynolds, is_incompressible)
-from .general import velocity_from_mdot
 from .. import MIN_RESONABLE_DP_PA, MIN_RESONABLE_PRESSURE_PA
+from ..geometry import circle_area_from_diameter
+from .general import velocity_from_mdot
+from .incompressible import (friction_factor, incompressible_orifice_mdot,
+                             incompressible_pipe_dp, is_incompressible,
+                             reynolds)
 
 
 class IncompressiblePipe:
@@ -65,12 +66,13 @@ class IncompressiblePipe:
             ["D", "V", "A"], "P", upstream_press, "T", upstream_temp, self.__fluid
         )
 
-        velocity = velocity_from_mdot(mdot, density, self.area) 
+        velocity = velocity_from_mdot(mdot, density, self.area)
 
         if not is_incompressible(velocity, sos):
             if not suppress_warnings:
-                print(f"WARNING| Fluid conditions may not be incompressible MACH: [{velocity / sos}] > 0.3")
-
+                print(
+                    f"WARNING| Fluid conditions may not be incompressible MACH: [{velocity / sos}] > 0.3"
+                )
 
         re = reynolds(density, velocity, self.__diameter, dyn_viscosity)
 
@@ -87,25 +89,29 @@ class IncompressiblePipe:
 
         if dp > upstream_press:
             if not suppress_warnings:
-                print(f"WARNING| Dp is greater than upstream pressure [{dp} > {upstream_press}]")
+                print(
+                    f"WARNING| Dp is greater than upstream pressure [{dp} > {upstream_press}]"
+                )
             return upstream_press
-        
+
         return dp
 
     def mdot(
-        self, 
-        upstream_press: float, 
-        upstream_temp: float, 
-        downstream_press: float, 
-        suppress_warnings: bool = False
+        self,
+        upstream_press: float,
+        upstream_temp: float,
+        downstream_press: float,
+        suppress_warnings: bool = False,
     ):
         """mdot across the pipe"""
 
         if upstream_press <= MIN_RESONABLE_DP_PA:
-            return 0.0 
+            return 0.0
 
         # Fluid State
-        density, sos = PropsSI(["D", "A"], "P", upstream_press, "T", upstream_temp, self.__fluid)
+        density, sos = PropsSI(
+            ["D", "A"], "P", upstream_press, "T", upstream_temp, self.__fluid
+        )
 
         # Root solve for mdot that makes dp error 0
         def dp_error(mdot):
@@ -133,14 +139,12 @@ class IncompressiblePipe:
 
         if not is_incompressible(velocity, sos):
             if not suppress_warnings:
-                print(f"WARNING| Fluid conditions may not be incompressible MACH: [{velocity / sos}] > 0.3")
+                print(
+                    f"WARNING| Fluid conditions may not be incompressible MACH: [{velocity / sos}] > 0.3"
+                )
 
         return mdot
 
-    def velocity(
-        self,
-        density: float,
-        mdot: float
-    ):
+    def velocity(self, density: float, mdot: float):
         """Constant cross section velocity"""
         return velocity_from_mdot(mdot, density, self.__area)

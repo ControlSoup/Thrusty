@@ -1,4 +1,5 @@
 from .basic_volume import *
+from .general import *
 from .ideal_gas import *
 from .incompressible import *
 from .intensive_state import *
@@ -7,4 +8,3 @@ from .pipe import IncompressiblePipe
 from .real_gas import *
 from .rocket_chamber import *
 from .system_curve import *
-from .general import *
