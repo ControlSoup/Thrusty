@@ -4,11 +4,8 @@ import numpy as np
 from CoolProp.CoolProp import PropsSI
 from scipy.optimize import root_scalar
 
+from .general import mdot_equation
 from .intensive_state import IntensiveState
-
-
-def mdot_equation(density: float, area: float, velocity: float):
-    return density * area * velocity
 
 
 def gas_velocity(sp_enthalpy_1: float, sp_enthalpy_2: float):

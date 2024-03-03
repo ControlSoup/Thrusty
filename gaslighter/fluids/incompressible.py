@@ -8,12 +8,29 @@ Sources:
 """
 
 
+def is_incompressible(velocity: float, sos: float):
+    """https://courses.ansys.com/wp-content/uploads/2020/12/Compressible-Flow-regimes-Lesson-4-Handout.pdf"""
+    mach_number = velocity / sos
+
+    if mach_number < 0.3:
+        return True
+
+    return False
+
+
+def reynolds(
+    denisty: float, velocity: float, char_length: float, dynamic_viscosity: float
+):
+    return denisty * velocity * char_length / dynamic_viscosity
+
+
 def jain_forumulation(reynolds: float, relative_roughness: float):
     """Jain Forumulation of the colebrook equation (within 3%)"""
     return (2 * np.log10((relative_roughness / 3.7) + (6.97 / reynolds))) ** -2
 
 
 def colebrook_solution(reynolds: float, relative_roughness: float):
+    """Returns a colebrook friction factor using the secant method"""
 
     def colebrook(ff: float):
         return (
@@ -36,8 +53,9 @@ def colebrook_solution(reynolds: float, relative_roughness: float):
 
 
 def friction_factor(
-    reynolds: float, relative_roughness: float, suppress_warning: bool = False
+    reynolds: float, relative_roughness: float, suppress_warnings: bool = False
 ):
+    """Returns a friction factor depending on flow regieme"""
 
     laminar_re = 2320
     turbulant_re = 3500
@@ -52,7 +70,7 @@ def friction_factor(
 
     # Transition Zone
     else:
-        if not suppress_warning:
+        if not suppress_warnings:
             print("WARNING| Friction factor is in transition zone")
 
         ff_laminar = 64 / reynolds
@@ -70,29 +88,28 @@ def incompressible_pipe_dp(
     flow_velocity: float,
     friciton_factor: float,
 ):
-    # Darcy Weibech head loss, converted to pressure drop
-    return (
-        length * friciton_factor * density * flow_velocity**2 / (2 * hydraulic_diameter)
+    """Darcy Weibech head loss, converted to pressure drop"""
+
+    return (length * friciton_factor * density * flow_velocity**2) / (
+        2 * hydraulic_diameter
     )
 
 
 def incompressible_orifice_mdot(
     cda: float,
-    upstream_pressure: float,
+    upstream_press: float,
     upstream_density: float,
     downstream_pressure: float,
     beta_ratio: float = None,
 ):
-
+    """Incompressible Cda Orifice Flow Equation"""
     # Beta correction factor formula
     beta_comp = 1
 
     if beta_ratio is not None:
         beta_comp = np.sqrt(1 - beta_ratio**4)
 
-    return cda * np.sqrt(
-        2 * upstream_density * (upstream_pressure - downstream_pressure)
-    )
+    return cda * np.sqrt(2 * upstream_density * (upstream_press - downstream_pressure))
 
 
 def incompressible_orifice_dp(
@@ -101,6 +118,7 @@ def incompressible_orifice_dp(
     mdot: float,
     beta_ratio: float = None,
 ):
+    """Incompressible Cda Orifice flow equation, solved for Dp"""
     # Beta correction factor formula
     beta_comp = 1
 

@@ -116,3 +116,6 @@ R_JPDEGK_MOL = 8.31446261815324
 STD_G_INPS2 = convert(STD_G_MPS2, "m/s^2", "in/s^2")
 STD_ATM_PSIA = convert(STD_ATM_PA, "Pa", "psia")
 STD_ATM_F = convert(STD_ATM_K, "degK", "degF")
+
+MIN_RESONABLE_DP_PA = 10
+MIN_RESONABLE_PRESSURE_PA = 25
