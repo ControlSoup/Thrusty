@@ -4,6 +4,7 @@ import numpy as np
 
 from .file_hanlding import datadict_to_csv
 from .plotting import graph_datadict
+from .units import imperial_dictionary, string_to_imperial
 
 
 class DataStorage:
@@ -92,6 +93,11 @@ class DataStorage:
         datadict[self.__time_key] = self.__time_array_s
 
         return datadict
+    
+    @property
+    def datadict_imperial(self):
+        datadict = self.datadict
+        return imperial_dictionary(datadict)
 
     def __trim_data(self):
         for key in self.__datadict:
@@ -144,6 +150,28 @@ class DataStorage:
             datadict=self.datadict,
             title=title,
             x_key=self.__time_key,
+            export_path=export_path,
+            show_fig=show_fig,
+            yaxis_title=y_axis_tile,
+            log_x=log_x,
+        )
+
+    def plot_imperial(
+        self, 
+        export_path=None, 
+        show_fig=True, 
+        title=None, 
+        y_axis_tile=None, 
+        log_x=False
+    ):
+
+        if title is None:
+            title = self.name
+
+        graph_datadict(
+            datadict=self.datadict_imperial,
+            title=title,
+            x_key=string_to_imperial(self.__time_key),
             export_path=export_path,
             show_fig=show_fig,
             yaxis_title=y_axis_tile,
