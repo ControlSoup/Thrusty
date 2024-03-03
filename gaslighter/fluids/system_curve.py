@@ -1,8 +1,8 @@
 import numpy as np
 from CoolProp.CoolProp import PropsSI
 
-from gaslighter import DataStorage, STD_ATM_PA, graph_datadict
-from gaslighter.fluids import IncompressibleOrifice, IncompressiblePipe, reynolds
+from gaslighter import DataStorage
+from .general import velocity_from_mdot
 
 def system_curve_incompressible(
     flow_obj_dict: dict[str, object],
@@ -12,7 +12,7 @@ def system_curve_incompressible(
     mdot_end: float,
     increments: float = 1e-3
 ) -> DataStorage:      
-    ''' Generates 
+    ''' Generates a system curve for incompressible objects
     '''
     
     data: DataStorage = DataStorage.from_arange(
@@ -40,12 +40,16 @@ def system_curve_incompressible(
 
             upstream_press = total_source_pressure - total_pressure_drop
 
+            if upstream_press > 0:
+                density = PropsSI("D", "P", upstream_press, "T", total_source_temperature, fluid)
+            else:
+                density = 0
+
             component_dp = flow_obj.dp(
                 mdot,
                 upstream_press,
-                total_source_temperature,
+                total_source_temperature
             )
-
 
             data.record_data(
                 f"{name}.upstream_presure [Pa]", 
@@ -57,12 +61,21 @@ def system_curve_incompressible(
                 component_dp   
             )
 
+            data.record_data(
+                f"{name}.velocity [m/s]", 
+                velocity_from_mdot(mdot, density, flow_obj.area)
+            )
+
             total_pressure_drop += component_dp
 
 
         data.record_data(
             f"System Pressure Drop [dPa]",
             total_pressure_drop 
+        )
+        data.record_data(
+            f"System Outlet Pressure [dPa]",
+            total_source_pressure - total_pressure_drop 
         )
         data.next_cycle()
     

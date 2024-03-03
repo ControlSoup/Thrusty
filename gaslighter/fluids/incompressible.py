@@ -1,7 +1,6 @@
 import numpy as np
 from scipy.optimize import root_scalar
 
-from .general import velocity_from_mdot
 
 """
 Sources:
@@ -53,7 +52,7 @@ def colebrook_solution(reynolds: float, relative_roughness: float):
 
 
 def friction_factor(
-    reynolds: float, relative_roughness: float, suppress_warning: bool = False
+    reynolds: float, relative_roughness: float, suppress_warnings: bool = False
 ):
     """Returns a friction factor depending on flow regieme"""
 
@@ -70,7 +69,7 @@ def friction_factor(
 
     # Transition Zone
     else:
-        if not suppress_warning:
+        if not suppress_warnings:
             print("WARNING| Friction factor is in transition zone")
 
         ff_laminar = 64 / reynolds

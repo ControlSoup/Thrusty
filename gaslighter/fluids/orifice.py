@@ -6,6 +6,7 @@ from .incompressible import (
     incompressible_orifice_mdot, 
     is_incompressible
 )
+from .general import velocity_from_mdot
 from .. import MIN_RESONABLE_DP_PA, MIN_RESONABLE_PRESSURE_PA
 
 class IncompressibleOrifice:
@@ -56,7 +57,7 @@ class IncompressibleOrifice:
         mdot: float, 
         upstream_press: float, 
         upstream_temp: float, 
-        suppress_warning=False
+        suppress_warnings=False
     ):
 
         if upstream_press <= MIN_RESONABLE_DP_PA:
@@ -68,22 +69,33 @@ class IncompressibleOrifice:
         dp = incompressible_orifice_dp(self.__cda, density, mdot, self.__beta_ratio)
 
         if dp > upstream_press:
-            if not suppress_warning:
+            if not suppress_warnings:
                 print(f"WARNING| Dp is greater than upstream pressure [{dp} > {upstream_press}]")
             return upstream_press
         
         return dp
 
     def mdot(
-        self, upstream_press: float, upstream_temp: float, downstream_press: float
+        self, 
+        upstream_press: float, 
+        upstream_temp: float, 
+        downstream_press: float,
+        suppress_warnings: bool = False
     ):
 
         if upstream_press <= MIN_RESONABLE_PRESSURE_PA:
             return 0.0 
 
         # Fluid State
-        density = PropsSI("D", "P", upstream_press, "T", upstream_temp, self.__fluid)
+        density, sos = PropsSI(["D","A"], "P", upstream_press, "T", upstream_temp, self.__fluid)
 
-        return incompressible_orifice_mdot(
+        mdot =  incompressible_orifice_mdot(
             self.__cda, upstream_press, density, downstream_press, self.__beta_ratio
         )
+        velocity = velocity_from_mdot(mdot, density, self.area)
+
+        if not is_incompressible(velocity, sos):
+            if not suppress_warnings:
+                print(f"WARNING| Fluid conditions may not be incompressible MACH: [{velocity / sos}] > 0.3")
+
+        return mdot
