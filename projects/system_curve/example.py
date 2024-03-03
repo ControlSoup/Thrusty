@@ -1,26 +1,26 @@
-from gaslighter.fluids import IncompressibleOrifice, IncompressiblePipe, system_curve_isothermal_incompressible
-from gaslighter import STD_ATM_PA
+from gaslighter.fluids import IncompressibleOrifice, IncompressiblePipe, system_curve_incompressible
+from gaslighter import STD_ATM_PA, convert 
 
 
+PIPE_LENGTH_M = 1
+PIPE_D_M = 0.01
+DENSITY_KGPM3 = 1000
 
 pipe_list = {
-    "Cv 0.5": IncompressibleOrifice.from_cv(1, "water"),
-    "Cv 1.0": IncompressibleOrifice.from_cv(0.5, "water"),
-    "Pipe 3m": IncompressiblePipe.from_relative_roughness(
-        0.00001,
-        0.00000001,
-        3,
-        'water'
+    "Pipe 3m": IncompressiblePipe(
+        diameter=0.01,
+        roughness=0.01,
+        length = 1,
+        fluid='water'
     ),
 }
 
-data = system_curve_isothermal_incompressible(
+data = system_curve_incompressible(
     pipe_list,
-    100 * STD_ATM_PA,
-    280,
-    0.1,
-    5,
-    0.001
+    total_source_pressure=100 * STD_ATM_PA,
+    total_source_temperature=280,
+    mdot_start = 0.1,
+    mdot_end = 5
 )
 
 data.plot_all()

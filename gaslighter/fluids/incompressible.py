@@ -1,12 +1,22 @@
 import numpy as np
 from scipy.optimize import root_scalar
 
+from .general import velocity_from_mdot
+
 """
 Sources:
     - Pipe Flow [Donald C. Rennels]
     - Critical Reynolds / turblant transition was bassically made up idk man
 """
 
+def is_incompressible(velocity: float, sos: float):
+    """https://courses.ansys.com/wp-content/uploads/2020/12/Compressible-Flow-regimes-Lesson-4-Handout.pdf"""
+    mach_number = velocity / sos
+
+    if mach_number < 0.3:
+        return True
+
+    return False
 
 def reynolds(
     denisty: float, velocity: float, char_length: float, dynamic_viscosity: float
@@ -20,6 +30,7 @@ def jain_forumulation(reynolds: float, relative_roughness: float):
 
 
 def colebrook_solution(reynolds: float, relative_roughness: float):
+    """Returns a colebrook friction factor using the secant method"""
 
     def colebrook(ff: float):
         return (
@@ -44,6 +55,7 @@ def colebrook_solution(reynolds: float, relative_roughness: float):
 def friction_factor(
     reynolds: float, relative_roughness: float, suppress_warning: bool = False
 ):
+    """Returns a friction factor depending on flow regieme"""
 
     laminar_re = 2320
     turbulant_re = 3500
@@ -76,9 +88,10 @@ def incompressible_pipe_dp(
     flow_velocity: float,
     friciton_factor: float,
 ):
-    # Darcy Weibech head loss, converted to pressure drop
+    """Darcy Weibech head loss, converted to pressure drop"""
+
     return (
-        length * friciton_factor * density * flow_velocity**2 / (2 * hydraulic_diameter)
+        (length * friciton_factor * density * flow_velocity**2) / (2 * hydraulic_diameter)
     )
 
 
@@ -89,7 +102,7 @@ def incompressible_orifice_mdot(
     downstream_pressure: float,
     beta_ratio: float = None,
 ):
-
+    """Incompressible Cda Orifice Flow Equation"""
     # Beta correction factor formula
     beta_comp = 1
 
@@ -105,6 +118,7 @@ def incompressible_orifice_dp(
     mdot: float,
     beta_ratio: float = None,
 ):
+    """Incompressible Cda Orifice flow equation, solved for Dp"""
     # Beta correction factor formula
     beta_comp = 1
 

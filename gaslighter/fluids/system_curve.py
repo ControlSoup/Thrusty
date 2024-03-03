@@ -1,16 +1,16 @@
 import numpy as np
+from CoolProp.CoolProp import PropsSI
 
 from gaslighter import DataStorage, STD_ATM_PA, graph_datadict
+from gaslighter.fluids import IncompressibleOrifice, IncompressiblePipe, reynolds
 
-from gaslighter.fluids import IncompressibleOrifice, IncompressiblePipe
-
-def system_curve_isothermal_incompressible(
+def system_curve_incompressible(
     flow_obj_dict: dict[str, object],
     total_source_pressure: float, 
     total_source_temperature: float,
     mdot_start: float,
     mdot_end: float,
-    increments: float
+    increments: float = 1e-3
 ) -> DataStorage:      
     ''' Generates 
     '''
@@ -45,6 +45,7 @@ def system_curve_isothermal_incompressible(
                 upstream_press,
                 total_source_temperature,
             )
+
 
             data.record_data(
                 f"{name}.upstream_presure [Pa]", 
