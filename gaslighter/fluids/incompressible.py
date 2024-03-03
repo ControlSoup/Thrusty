@@ -1,12 +1,12 @@
 import numpy as np
 from scipy.optimize import root_scalar
 
-
 """
 Sources:
     - Pipe Flow [Donald C. Rennels]
     - Critical Reynolds / turblant transition was bassically made up idk man
 """
+
 
 def is_incompressible(velocity: float, sos: float):
     """https://courses.ansys.com/wp-content/uploads/2020/12/Compressible-Flow-regimes-Lesson-4-Handout.pdf"""
@@ -16,6 +16,7 @@ def is_incompressible(velocity: float, sos: float):
         return True
 
     return False
+
 
 def reynolds(
     denisty: float, velocity: float, char_length: float, dynamic_viscosity: float
@@ -89,8 +90,8 @@ def incompressible_pipe_dp(
 ):
     """Darcy Weibech head loss, converted to pressure drop"""
 
-    return (
-        (length * friciton_factor * density * flow_velocity**2) / (2 * hydraulic_diameter)
+    return (length * friciton_factor * density * flow_velocity**2) / (
+        2 * hydraulic_diameter
     )
 
 

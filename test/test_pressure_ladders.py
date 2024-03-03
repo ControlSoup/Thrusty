@@ -20,16 +20,16 @@ class Test(unittest.TestCase):
         upstream_press = 1000 * STD_ATM_PA
         upstream_temp = 280
 
-        dp_1 = pipe.dp(1, upstream_press, upstream_temp)
-        dp_2 = pipe.dp(10, upstream_press, upstream_temp)
-        dp_3 = pipe.dp(100, upstream_press, upstream_temp)
+        dp_1 = pipe.dp(1e-1, upstream_press, upstream_temp)
+        dp_2 = pipe.dp(1e-2, upstream_press, upstream_temp)
+        dp_3 = pipe.dp(1e-3, upstream_press, upstream_temp)
         mdot_1 = pipe.mdot(upstream_press, upstream_temp, upstream_press - dp_1)
         mdot_2 = pipe.mdot(upstream_press, upstream_temp, upstream_press - dp_2)
         mdot_3 = pipe.mdot(upstream_press, upstream_temp, upstream_press - dp_3)
 
-        self.assertAlmostEqual(mdot_1, 1, delta=1e-5)
-        self.assertAlmostEqual(mdot_2, 10, delta=1e-5)
-        self.assertAlmostEqual(mdot_3, 100, delta=1e-5)
+        self.assertAlmostEqual(mdot_1, 1e-1, delta=1e-5)
+        self.assertAlmostEqual(mdot_2, 1e-2, delta=1e-5)
+        self.assertAlmostEqual(mdot_3, 1e-3, delta=1e-5)
 
     def test_oirifce(self):
         # Tests for fidelty are done on the functions
