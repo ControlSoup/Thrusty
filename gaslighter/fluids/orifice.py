@@ -1,8 +1,11 @@
 from CoolProp.CoolProp import PropsSI
 
 from ..units import convert
-from .incompressible import (incompressible_orifice_dp,
-                             incompressible_orifice_mdot)
+from .incompressible import (
+    incompressible_orifice_dp,
+    incompressible_orifice_mdot, 
+    is_incompressible
+)
 from .. import MIN_RESONABLE_DP_PA, MIN_RESONABLE_PRESSURE_PA
 
 class IncompressibleOrifice:
@@ -48,9 +51,15 @@ class IncompressibleOrifice:
     def fluid(self):
         return self.__fluid
 
-    def dp(self, mdot: float, upstream_press: float, upstream_temp: float, suppress_warning=False):
+    def dp(
+        self, 
+        mdot: float, 
+        upstream_press: float, 
+        upstream_temp: float, 
+        suppress_warning=False
+    ):
 
-        if upstream_press <= MIN_RESONABLE_PRESSURE_PA:
+        if upstream_press <= MIN_RESONABLE_DP_PA:
             return upstream_press
 
         # Fluid State
@@ -60,7 +69,7 @@ class IncompressibleOrifice:
 
         if dp > upstream_press:
             if not suppress_warning:
-                print("WARNING| Dp is greater than upstream pressure")
+                print(f"WARNING| Dp is greater than upstream pressure [{dp} > {upstream_press}]")
             return upstream_press
         
         return dp
@@ -69,7 +78,7 @@ class IncompressibleOrifice:
         self, upstream_press: float, upstream_temp: float, downstream_press: float
     ):
 
-        if upstream_press <= MIN_RESONABLE_DP_PA:
+        if upstream_press <= MIN_RESONABLE_PRESSURE_PA:
             return 0.0 
 
         # Fluid State
