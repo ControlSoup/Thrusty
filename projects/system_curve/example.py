@@ -1,6 +1,9 @@
 from gaslighter import STD_ATM_PA, convert
-from gaslighter.fluids import (IncompressibleOrifice, IncompressiblePipe,
-                               system_curve_incompressible)
+from gaslighter.fluids import (
+    IncompressibleOrifice,
+    IncompressiblePipe,
+    system_curve_incompressible,
+)
 
 pipe_list = {
     "Sump": IncompressibleOrifice(

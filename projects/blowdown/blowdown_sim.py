@@ -4,7 +4,11 @@ from tqdm import tqdm
 from gaslighter import *
 from gaslighter import fluids
 
-data = DataStorage(1e-3, 40.0)
+data = DataStorage.from_arange(
+    start = 0.0, 
+    end = 40.0,
+    dx = 1e-3
+)
 
 # 1/4" fitting blowing out a tank
 orifice_diameter_in = 0.125
@@ -22,10 +26,10 @@ tank: fluids.BasicStaticVolume = fluids.BasicStaticVolume.from_ptv(
     pressure=convert(tank_pressure_psia, "psia", "Pa"),
     temp=STD_ATM_K,
     volume=convert(tank_volume_gal, "gal", "m^3"),
-    fluid="N2O",
+    fluid="nitrogen",
 )
 
-for t in tqdm(data.time_array_s):
+for t in tqdm(data.data_array):
 
     # Mass flow given dp across fitting
     mdot = -fluids.ideal_orifice_mdot(cda, tank.state, STD_ATM_PA)
@@ -35,7 +39,7 @@ for t in tqdm(data.time_array_s):
         break
 
     # Integrate mdot
-    new_mass = np_rk4([mdot, tank.mass], data.dt_s)
+    new_mass = np_rk4([mdot, tank.mass], data.dx)
 
     # Calc new density
     new_density = new_mass / tank.volume
@@ -51,24 +55,22 @@ for t in tqdm(data.time_array_s):
     tank.update_mu(new_mass, new_tank_state.sp_inenergy * new_mass)
 
     # Record Results
-    data.record_from_list(
-        [
-            ("isentropic_mdot [kg/s]", mdot),
-            ("isentropic_tank.mass [kg]", tank.mass),
-            ("isentropic_tank.volume [m^3]", tank.volume),
-            ("isentropic_tank.inenergy [J]", tank.inenergy),
-            ("isentropic_tank.pressure [Pa]", tank.state.pressure),
-            ("isentropic_tank.temperature [degK]", tank.state.temp),
-            ("isentropic_tank.density [kg/m^3]", tank.state.density),
-            ("isentropic_tank.sp_inenergy [J/kg]", tank.state.sp_inenergy),
-            ("isentropic_tank.sp_enthalpy [J/kg]", tank.state.sp_enthalpy),
-        ]
-    )
+    data.record_from_dict({
+        "isentropic_mdot [kg/s]": mdot,
+        "isentropic_tank.mass [kg]": tank.mass,
+        "isentropic_tank.volume [m^3]": tank.volume,
+        "isentropic_tank.inenergy [J]": tank.inenergy,
+        "isentropic_tank.pressure [Pa]": tank.state.pressure,
+        "isentropic_tank.temperature [degK]": tank.state.temp,
+        "isentropic_tank.density [kg/m^3]": tank.state.density,
+        "isentropic_tank.sp_inenergy [J/kg]": tank.state.sp_inenergy,
+        "isentropic_tank.sp_enthalpy [J/kg]": tank.state.sp_enthalpy,
+    })
     data.next_cycle()
 
 data.export_to_csv("results/isentropic.csv")
 isentropic = data.datadict
-data.reset(confirm=True)
+data.reset()
 
 # -----------------------------------------------------------------------------
 # Pure Isothermal Example
@@ -80,7 +82,7 @@ tank: fluids.BasicStaticVolume = fluids.BasicStaticVolume.from_ptv(
     fluid="nitrogen",
 )
 
-for t in tqdm(data.time_array_s):
+for t in tqdm(data.data_array):
 
     # Mass flow given dp across fitting
     mdot = -fluids.ideal_orifice_mdot(cda, tank.state, STD_ATM_PA)
@@ -90,7 +92,7 @@ for t in tqdm(data.time_array_s):
         break
 
     # Integrate mdot
-    new_mass = np_rk4([mdot, tank.mass], data.dt_s)
+    new_mass = np_rk4([mdot, tank.mass], data.dx)
 
     # Calc new density
     new_density = new_mass / tank.volume
@@ -123,7 +125,7 @@ for t in tqdm(data.time_array_s):
 
 data.export_to_csv("results/isothermal.csv")
 isothermal = data.datadict
-data.reset(confirm=True)
+data.reset()
 
 # -----------------------------------------------------------------------------
 # Pure Isenthalpic Example
@@ -135,7 +137,7 @@ tank: fluids.BasicStaticVolume = fluids.BasicStaticVolume.from_ptv(
     fluid="nitrogen",
 )
 
-for t in tqdm(data.time_array_s):
+for t in tqdm(data.data_array):
 
     # Mass flow given dp across fitting
     mdot = -fluids.ideal_orifice_mdot(cda, tank.state, STD_ATM_PA)
@@ -145,7 +147,7 @@ for t in tqdm(data.time_array_s):
         break
 
     # Integrate mdot
-    new_mass = np_rk4([mdot, tank.mass], data.dt_s)
+    new_mass = np_rk4([mdot, tank.mass], data.dx)
 
     # Calc new density
     new_density = new_mass / tank.volume
@@ -178,7 +180,7 @@ for t in tqdm(data.time_array_s):
 
 data.export_to_csv("results/isenthalpic.csv")
 isenthalpic = data.datadict
-data.reset(confirm=True)
+data.reset()
 
 # -----------------------------------------------------------------------------
 # Conservation of Mass and Energy Example
@@ -190,7 +192,7 @@ tank: fluids.BasicStaticVolume = fluids.BasicStaticVolume.from_ptv(
     fluid="nitrogen",
 )
 
-for t in tqdm(data.time_array_s):
+for t in tqdm(data.data_array):
 
     # Mass flow given dp across fitting
     mdot = -fluids.ideal_orifice_mdot(cda, tank.state, STD_ATM_PA)
@@ -203,8 +205,8 @@ for t in tqdm(data.time_array_s):
     udot = mdot * tank.state.sp_enthalpy
 
     # Integrate mdot and udto
-    new_mass = np_rk4([mdot, tank.mass], data.dt_s)
-    new_energy = np_rk4([udot, tank.inenergy], data.dt_s)
+    new_mass = np_rk4([mdot, tank.mass], data.dx)
+    new_energy = np_rk4([udot, tank.inenergy], data.dx)
 
     # try a new state lookup
     try:

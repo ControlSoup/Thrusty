@@ -3,8 +3,11 @@ from CoolProp.CoolProp import PropsSI
 from .. import MIN_RESONABLE_DP_PA, MIN_RESONABLE_PRESSURE_PA
 from ..units import convert
 from .general import velocity_from_mdot
-from .incompressible import (incompressible_orifice_dp,
-                             incompressible_orifice_mdot, is_incompressible)
+from .incompressible import (
+    incompressible_orifice_dp,
+    incompressible_orifice_mdot,
+    is_incompressible,
+)
 
 
 class IncompressibleOrifice:

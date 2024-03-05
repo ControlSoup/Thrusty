@@ -7,7 +7,11 @@ from gaslighter import fluids
 # Constants
 FLUID = "helium"
 
-data = DataStorage(1e-3, 100.0)
+data = DataStorage.from_arange(
+    start = 0.0,
+    end = 100.0,
+    dx = 1e-3 
+)
 
 # 1/4" fitting blowing out a tank
 orifice_diameter_in = 0.25
@@ -28,7 +32,7 @@ tank: fluids.BasicStaticVolume = fluids.BasicStaticVolume.from_ptv(
     fluid=FLUID,
 )
 
-for t in tqdm(data.time_array_s):
+for t in tqdm(data.data_array):
 
     # Mass flow given dp across fitting
     try:
@@ -47,8 +51,8 @@ for t in tqdm(data.time_array_s):
     udot = mdot * tank.state.sp_enthalpy
 
     # Integrate mdot and udot
-    new_mass = np_rk4([-mdot, tank.mass], data.dt_s)
-    new_energy = np_rk4([-udot, tank.inenergy], data.dt_s)
+    new_mass = np_rk4([-mdot, tank.mass], data.dx)
+    new_energy = np_rk4([-udot, tank.inenergy], data.dx)
 
     # try a new state lookup
     try:
@@ -89,7 +93,7 @@ tank: fluids.BasicStaticVolume = fluids.BasicStaticVolume.from_ptv(
     fluid=FLUID,
 )
 
-for t in tqdm(data.time_array_s):
+for t in tqdm(data.data_array):
 
     # Mass flow given dp across fitting
     mdot, is_choked = fluids.ideal_orifice_mdot(
@@ -104,8 +108,8 @@ for t in tqdm(data.time_array_s):
     udot = mdot * tank.state.sp_enthalpy
 
     # Integrate mdot and udot
-    new_mass = np_rk4([-mdot, tank.mass], data.dt_s)
-    new_energy = np_rk4([-udot, tank.inenergy], data.dt_s)
+    new_mass = np_rk4([-mdot, tank.mass], data.dx)
+    new_energy = np_rk4([-udot, tank.inenergy], data.dx)
 
     # try a new state lookup
     try:
