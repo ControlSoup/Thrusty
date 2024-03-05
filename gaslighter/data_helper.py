@@ -21,7 +21,6 @@ class DataStorage:
 
         # Precompute dx
         self.__dx_array = np.concatenate([np.zeros(1), np.diff(self.__data_array)])
-
         self.__data_key = data_key
 
         # Setup data storage
