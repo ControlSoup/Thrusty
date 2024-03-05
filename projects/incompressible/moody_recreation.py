@@ -4,7 +4,7 @@ from tqdm import tqdm
 from gaslighter import DataStorage, fluids
 
 data: DataStorage = DataStorage.from_geomspace(
-    start=1000, end=10e6, icrements=10000, data_key="Reynolds Number [-]"
+    start=1000, end=10e6, increments=10000, data_key="Reynolds Number [-]"
 )
 
 relative_roughness = np.geomspace(0.05, 0.000002, num=28, endpoint=True)

@@ -29,10 +29,10 @@ class DataStorage:
         self.__index = 0
 
     def from_arange(
-        start: float, end: float, increments: int, data_key: str, name: str = ""
+        start: float, end: float, dx: float, data_key: str = "time [s]", name: str = ""
     ):
         return DataStorage(
-            data_array=np.arange(start, end, increments), name=name, data_key=data_key
+            data_array=np.arange(start, end, dx), name=name, data_key=data_key
         )
 
     def from_linspace(
@@ -158,7 +158,7 @@ class DataStorage:
         )
 
     def reset(self):
-        self.__init__(self.dx, self.max_x, self.name)
+        self.__init__(self.data_array, self.name, self.__data_key)
 
     def print(self):
         datadict = self.datadict
