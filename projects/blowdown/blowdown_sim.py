@@ -25,7 +25,7 @@ tank: fluids.BasicStaticVolume = fluids.BasicStaticVolume.from_ptv(
     fluid="N2O",
 )
 
-for t in tqdm(data.time_array_s):
+for t in tqdm(data.data_array):
 
     # Mass flow given dp across fitting
     mdot = -fluids.ideal_orifice_mdot(cda, tank.state, STD_ATM_PA)
@@ -35,7 +35,7 @@ for t in tqdm(data.time_array_s):
         break
 
     # Integrate mdot
-    new_mass = np_rk4([mdot, tank.mass], data.dt_s)
+    new_mass = np_rk4([mdot, tank.mass], data.dx)
 
     # Calc new density
     new_density = new_mass / tank.volume
@@ -80,7 +80,7 @@ tank: fluids.BasicStaticVolume = fluids.BasicStaticVolume.from_ptv(
     fluid="nitrogen",
 )
 
-for t in tqdm(data.time_array_s):
+for t in tqdm(data.data_array):
 
     # Mass flow given dp across fitting
     mdot = -fluids.ideal_orifice_mdot(cda, tank.state, STD_ATM_PA)
@@ -90,7 +90,7 @@ for t in tqdm(data.time_array_s):
         break
 
     # Integrate mdot
-    new_mass = np_rk4([mdot, tank.mass], data.dt_s)
+    new_mass = np_rk4([mdot, tank.mass], data.dx)
 
     # Calc new density
     new_density = new_mass / tank.volume
@@ -135,7 +135,7 @@ tank: fluids.BasicStaticVolume = fluids.BasicStaticVolume.from_ptv(
     fluid="nitrogen",
 )
 
-for t in tqdm(data.time_array_s):
+for t in tqdm(data.data_array):
 
     # Mass flow given dp across fitting
     mdot = -fluids.ideal_orifice_mdot(cda, tank.state, STD_ATM_PA)
@@ -145,7 +145,7 @@ for t in tqdm(data.time_array_s):
         break
 
     # Integrate mdot
-    new_mass = np_rk4([mdot, tank.mass], data.dt_s)
+    new_mass = np_rk4([mdot, tank.mass], data.dx)
 
     # Calc new density
     new_density = new_mass / tank.volume
@@ -190,7 +190,7 @@ tank: fluids.BasicStaticVolume = fluids.BasicStaticVolume.from_ptv(
     fluid="nitrogen",
 )
 
-for t in tqdm(data.time_array_s):
+for t in tqdm(data.data_array):
 
     # Mass flow given dp across fitting
     mdot = -fluids.ideal_orifice_mdot(cda, tank.state, STD_ATM_PA)
@@ -203,8 +203,8 @@ for t in tqdm(data.time_array_s):
     udot = mdot * tank.state.sp_enthalpy
 
     # Integrate mdot and udto
-    new_mass = np_rk4([mdot, tank.mass], data.dt_s)
-    new_energy = np_rk4([udot, tank.inenergy], data.dt_s)
+    new_mass = np_rk4([mdot, tank.mass], data.dx)
+    new_energy = np_rk4([udot, tank.inenergy], data.dx)
 
     # try a new state lookup
     try:

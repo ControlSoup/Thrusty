@@ -1,7 +1,11 @@
 ==================== Current Engine Results ====================
 |Exit Length [in]| = 0.5677
+|Chamber Pressure [psia]| = 150.0
 |Ideal Thrust [lbf]| = 53.46622864
+|Mixture Ratio [-]| = 1.72
 |mdot [lbm/s]| = 0.33069339
+|Fuel mdot [lbm/s]| = 0.13842979
+|Ox mdot [lbm/s]| = 0.1922636
 |Throat Diameter [in]| = 0.59657771
 |Throat Area [in^2]| = 0.27952711
 |Exit Diameter [in]| = 0.90081259
@@ -20,7 +24,6 @@
 |Exit Pressure [psia]| = 15.07011904
 |Throat to Exit Velocity [in/s]| = 52044.74773811
 |Chamber to Exit Velocity [in/s]| = 62422.68835369
-|Mix Ratio [-]| = 1.72
 |Chamber Exit Pressure Ratio [psia]| = 0.00144363
 |Chamber Thermal Conductivity [Btu/(hr*ft*degF)]| = 0.11992935
 |Throat Thermal Conductivity [Btu/(hr*ft*degF)]| = 0.12512872

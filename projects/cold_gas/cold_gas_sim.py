@@ -14,7 +14,7 @@ tank: fluids.BasicStaticVolume = fluids.BasicStaticVolume.from_ptv(
     fluid="air",
 )
 
-for t in data.time_array_s:
+for t in data.data_array:
     # Stop the sim if tank pressure matches atmospheric
     if tank.state.pressure <= STD_ATM_PA + 100.0:
         break
@@ -26,8 +26,8 @@ for t in data.time_array_s:
     udot = mdot * tank.state.sp_enthalpy
 
     # Integrate udot and mdot
-    new_mass = np_rk4([mdot, tank.mass], data.dt_s)
-    new_inenergy = np_rk4([udot, tank.inenergy], data.dt_s)
+    new_mass = np_rk4([mdot, tank.mass], data.dx)
+    new_inenergy = np_rk4([udot, tank.inenergy], data.dx)
 
     # Try a real gas lookup, update state properties
     try:
