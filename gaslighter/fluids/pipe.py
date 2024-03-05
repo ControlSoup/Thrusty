@@ -4,9 +4,13 @@ from scipy.optimize import root_scalar
 from .. import MIN_RESONABLE_DP_PA, MIN_RESONABLE_PRESSURE_PA
 from ..geometry import circle_area_from_diameter
 from .general import velocity_from_mdot
-from .incompressible import (friction_factor, incompressible_orifice_mdot,
-                             incompressible_pipe_dp, is_incompressible,
-                             reynolds)
+from .incompressible import (
+    friction_factor,
+    incompressible_orifice_mdot,
+    incompressible_pipe_dp,
+    is_incompressible,
+    reynolds,
+)
 
 
 class IncompressiblePipe:
