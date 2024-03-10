@@ -105,6 +105,7 @@ def imperial_dictionary(dictionary: dict[str, np.array]):
 # Constants
 # ------------------------------------------------------------------------------
 
+# Standard Constants
 # Source:https://en.wikipedia.org/wiki/Standard_temperature_and_pressure
 STD_G_MPS2 = 9.80665
 STD_ATM_PA = 101_325
@@ -117,5 +118,13 @@ STD_G_INPS2 = convert(STD_G_MPS2, "m/s^2", "in/s^2")
 STD_ATM_PSIA = convert(STD_ATM_PA, "Pa", "psia")
 STD_ATM_F = convert(STD_ATM_K, "degK", "degF")
 
+# Solver Variables
 MIN_RESONABLE_DP_PA = 10
 MIN_RESONABLE_PRESSURE_PA = 25
+
+# MATERIALS
+PCBWAY_CU_COND_WPMK = 391
+PCBWAY_CU_CP_JPKGK = 420
+PCBWAY_CU_MELT_K = 1357.65
+PCBWAY_CU_DENSITY_KGPM3 = 8960
+PCBWAY_CU_DIFFUSIVITY = PCBWAY_CU_COND_WPMK / (PCBWAY_CU_DENSITY_KGPM3 * PCBWAY_CU_CP_JPKGK)
