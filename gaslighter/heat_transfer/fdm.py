@@ -22,19 +22,6 @@ def conduction_fdm_dT_dt(
 
     return diffusivity * heat_comp / dx**2
 
-def convection_fdm_dT_dt(
-    diffusivity: float,
-    next_node_t: float,
-    current_node_t: float,
-    last_node_t: float,
-    dx: float
-):
-    """Discreteized 1D Convection Heat Equation"""
-    heat_comp = (next_node_t - (2 * current_node_t) + last_node_t)
-
-    return diffusivity * heat_comp / dx **2 - ()
-
-
 def plot_fdm_solution(
     diffusivity: float,
     start_t: float,
