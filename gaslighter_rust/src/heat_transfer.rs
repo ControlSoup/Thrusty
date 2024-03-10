@@ -19,9 +19,7 @@ fn euler_explicit(
 
 
 /// Solvers the explicit finite diffrence method
-/// for the heat equation. Returns the temperature as
-/// a function of time, in array format where the last element
-/// of the array is the time
+/// for the heat equation. Returns the temperature as history of time dx [final two elements in the data]
 /// Source: https://www-udc.ig.utexas.edu/external/becker/teaching/557/problem_sets/problem_set_fd_explicit.pdf
 #[pyfunction]
 pub fn fdm_1d(
@@ -33,17 +31,15 @@ pub fn fdm_1d(
 
     // Stability Estimate
     let dt = dx.powf(2.0) / (4.0 * diffusivity);
-    println!("Dt: {:?}", dt);
 
     let max_temp_index = intial_temps.len();
     let time_index = (time / dt) as usize;
-    println!("Time Indexs: {:?}", time_index);
-    println!("Temp Indexs: {:?}", max_temp_index);
 
     // Create the temp history
-    let mut temp_history = vec![vec![0.0; max_temp_index + 1]];
+    let mut temp_history = vec![vec![0.0; max_temp_index + 2]];
     let mut new_t = 404.0;
     let mut current_temps = intial_temps.clone();
+    current_temps.push(0.0);
     current_temps.push(0.0);
     temp_history[0] = current_temps;
 
@@ -57,8 +53,14 @@ pub fn fdm_1d(
 
         for j in 0..current_temps.len(){
 
-            // Add time on the end
+            // Add dx on the end
             if j == current_temps.len() - 1{
+                current_temps[j] = dx;
+                continue
+            }
+
+            // Add time on the end
+            if j == current_temps.len() - 2{
                 current_temps[j] = i as f64 * dt;
                 continue
             }
