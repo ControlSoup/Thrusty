@@ -1,6 +1,7 @@
 isort
 black
 pytest
+scipy>=1.12.0
 CoolProp>=6.6.0
 numpy>=1.24.2
 pandas>=2.2.0
