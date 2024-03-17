@@ -1,5 +1,3 @@
-from dataclasses import dataclass
-
 from ..errors import check_float, check_str
 from .intensive_state import IntensiveState
 

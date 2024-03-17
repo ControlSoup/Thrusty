@@ -8,6 +8,9 @@ from .incompressible import (
     incompressible_orifice_mdot,
     is_incompressible,
 )
+from . import dryer_injector_equations as dryer
+from .intensive_state import IntensiveState
+from .ideal_gas import ideal_orifice_mdot
 
 
 class IncompressibleOrifice:
@@ -106,3 +109,118 @@ class IncompressibleOrifice:
                 )
 
         return mdot
+
+class DryerOrifice():
+
+    def __init__(self, cd: float, area: float, fluid: str, beta_ratio=None):
+        self.__cd = cd
+        self.__area = area
+        self.__cda = cd * area
+        self.__cv = convert(self.__cda, "Cda_m2", "Cv")
+        self.__fluid = fluid
+        self.__beta_ratio = beta_ratio
+
+    def from_cda(cda: float, fluid: str, cd: float = 0.65, beta_ratio: float = None):
+        return DryerOrifice(cd, cda / cd, fluid, beta_ratio)
+
+    def from_cv(cv: float, fluid: str, cd: float = 0.65, beta_ratio: float = None):
+        cda = convert(cv, "Cv", "Cda_m2")
+
+        return DryerOrifice.from_cda(
+            cda=cda, fluid=fluid, cd=cd, beta_ratio=beta_ratio
+        )
+
+    @property
+    def cd(self):
+        return self.__cd
+
+    @property
+    def area(self):
+        return self.__area
+
+    @property
+    def cda(self):
+        return self.__cda
+
+    @property
+    def cv(self):
+        return self.__cv
+
+    @property
+    def beta_ratio(self):
+        return self.__beta_ratio
+
+    @property
+    def fluid(self):
+        return self.__fluid
+
+    def mdot(
+        self,
+        upstream_press: float,
+        upstream_temp: float,
+        downstream_press: float,
+        suppress_warnings: bool = False,
+    ):
+        """
+        Source: Review and Evaluation of Models for Self-Pressurizing Propellant Tank Dynamics
+        """
+
+        if upstream_press <= MIN_RESONABLE_PRESSURE_PA:
+            return 0.0
+
+        # Upstream vapor pressure at current temperature
+        upstream_vapor_pressure = PropsSI(
+            'P',
+            'T', upstream_temp,
+            'Q', 1,
+            self.__fluid
+        )
+
+        # State Lookup
+        up_density, up_sp_enthalpy, up_sp_entropy = PropsSI(
+            ['D', 'HMASS', 'SMASS'],
+            'P', upstream_press,
+            'T', upstream_temp,
+            self.__fluid
+        )
+
+        # Isentropic expansion
+        dwn_sp_enthalpy, dwn_density = PropsSI(
+            ['HMASS', 'D'],
+            'P', downstream_press,
+            'SMASS', up_sp_entropy,
+            self.__fluid
+        )
+
+
+        # Dryer method
+        k = dryer.k(
+            upstream_press,
+            upstream_vapor_pressure,
+            downstream_press
+        )
+        g_spi = dryer.g_spi(
+            upstream_press,
+            up_density,
+            downstream_press
+        )
+        g_hem = dryer.g_hem(
+            dwn_density,
+            up_sp_enthalpy,
+            dwn_sp_enthalpy
+        )
+
+        return dryer.dryer_mdot(self.cda, k, g_spi, g_hem)
+
+    def dp(
+        self,
+        mdot: float,
+        upstream_press: float,
+        upstream_temp: float,
+        suppress_warnings=False,
+    ):
+        return ValueError("NO METHOD IMPLEMENTED FOR DP ON DRYER ORIFICE")
+
+
+
+
