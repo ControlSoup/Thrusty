@@ -7,7 +7,7 @@ chamber = fluids.RocketChamber.from_fuelmdot(
     fuel="IPA",
     chamber_pressure=convert(150, "psia", "Pa"),
     fuel_mdot=convert(0.1, 'gal', 'm^3') * 778, # Convert 0.5gal/5s of ipa to mdot
-    MR=1.63,
+    MR=1.6,
     eps=2.3,
 )
 
