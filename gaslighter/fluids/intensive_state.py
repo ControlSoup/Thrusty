@@ -31,6 +31,7 @@ class IntensiveState:
         self.__pressure = self.lookup("P")
         self.__temp = self.lookup("T")
         self.__density = self.lookup("D")
+        self.__molar_mass = self.lookup("MOLAR_MASS")
         self.__sp_inenergy = self.lookup("UMASS")
         self.__sp_enthalpy = self.lookup("HMASS")
         self.__sp_entropy = self.lookup("SMASS")
@@ -49,6 +50,10 @@ class IntensiveState:
     @property
     def density(self):
         return self.__density
+
+    @property
+    def molar_mass(self):
+        return self.__molar_mass
 
     @property
     def sp_inenergy(self):
@@ -73,6 +78,10 @@ class IntensiveState:
     @property
     def gamma(self):
         return self.__gamma
+
+    @property
+    def vapor_pressure(self):
+        return PropsSI('P', 'T', self.__temp, 'Q', 1.0, self.__fluid)
 
     @property
     def fluid(self):

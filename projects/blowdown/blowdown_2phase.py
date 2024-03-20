@@ -15,8 +15,7 @@ tank_volume_gal = 1.0
 
 cd = 0.7
 orifice_diameter = convert(orifice_diameter_in, "in", "m")
-cda = cd * circle_area_from_diameter(orifice_diameter)
-orifice: DryerOrifice = DryerOrifice.from_cda(cda, 'N2O', cd = cd)
+orifice: DryerOrifice = DryerOrifice(cd = cd, area = circle_area_from_diameter(orifice_diameter), fluid ='N2O')
 
 # -----------------------------------------------------------------------------
 # Pure Isentropic Example
