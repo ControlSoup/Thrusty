@@ -2,13 +2,13 @@ from gaslighter import *
 from gaslighter import fluids
 
 # Make a base chamber
-chamber = fluids.RocketChamber(
+chamber = fluids.RocketChamber.from_fuelmdot(
     ox="N2O",
     fuel="IPA",
     chamber_pressure=convert(150, "psia", "Pa"),
-    mdot=0.15,
-    MR=1.72,
-    eps=2.28,
+    fuel_mdot=convert(0.1, 'gal', 'm^3') * 778, # Convert 0.5gal/5s of ipa to mdot
+    MR=1.6,
+    eps=2.3,
 )
 
 # Get Pressure data
@@ -42,7 +42,7 @@ graph_datadict(
 )
 
 # Get mdot data
-mdot_data = chamber.mdot_study(start_mdot=0.05, end_mdot=0.3)
+mdot_data = chamber.mdot_study(start_mdot=0.5, end_mdot=1.0)
 graph_datadict(
     mdot_data,
     "mdot [kg/s]",
@@ -64,8 +64,8 @@ chamber.pressure_mix_contour(
 # Plot contour on pressure vs eps in the chamber class (see @prameters)
 chamber.pressure_eps_contour(
     ["chamber_temp", "isp", "cstar", "exit_pressure"],
-    convert(10, "psia", "Pa"),
     convert(100, "psia", "Pa"),
+    convert(200, "psia", "Pa"),
     start_eps=1.1,
     end_eps=5,
     export_path="plots/",
