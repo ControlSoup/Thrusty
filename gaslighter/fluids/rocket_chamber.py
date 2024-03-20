@@ -62,8 +62,8 @@ class RocketChamber:
         self.cea_obj = CEA_SI(ox, fuel)
         self.__chamber_pressure = chamber_pressure
         self.__mdot = mdot
-        self.__ox_mdot = mdot / MR
-        self.__fuel_mdot = mdot - self.__ox_mdot
+        self.__fuel_mdot = mdot / (MR + 1)
+        self.__ox_mdot = mdot - self.__fuel_mdot
         self.__ox = ox
         self.__fuel = fuel
         self.__mix_ratio = MR
@@ -76,6 +76,30 @@ class RocketChamber:
         self.__throat_diameter = circle_diameter_from_area(self.__throat_area)
         self.__exit_area = self.__throat_area * eps
         self.__exit_diameter = circle_diameter_from_area(self.__exit_area)
+
+    def from_fuelmdot(
+        ox: str,
+        fuel: str,
+        chamber_pressure: float,
+        fuel_mdot: float,
+        MR=1.0,
+        eps=40.0,
+        frozen=0.0,
+        frozen_throat=0.0,
+    ):
+
+        mdot = fuel_mdot * (MR + 1)
+
+        return RocketChamber(
+            ox=ox,
+            fuel=fuel,
+            chamber_pressure=chamber_pressure,
+            mdot=mdot,
+            MR=MR,
+            eps=eps,
+            frozen=frozen,
+            frozen_throat=frozen_throat
+        )
 
     @property
     def thrust(self):
@@ -116,7 +140,7 @@ class RocketChamber:
     @property
     def fuel(self):
         return self.__fuel
-    
+
     @property
     def isp(self):
         return self.cea_obj.get_Isp(
