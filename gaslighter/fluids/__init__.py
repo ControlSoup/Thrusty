@@ -8,4 +8,5 @@ from .pipe import *
 from .real_gas import *
 from .rocket_chamber import *
 from .system_curve import *
-from .dryer_injector_equations import *
+from . import dryer_injector_equations as dryer
+from . import zilliac_equations as zilliac

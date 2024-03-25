@@ -19,7 +19,7 @@ def system_curve_incompressible(
     data: DataStorage = DataStorage.from_arange(
         start=mdot_start,
         end=mdot_end,
-        increments=increments,
+        dx=increments,
         data_key="mdot [kg/s]",
         name="System Curve",
     )
@@ -42,9 +42,15 @@ def system_curve_incompressible(
             upstream_press = total_source_pressure - total_pressure_drop
 
             if upstream_press > 0:
-                density = PropsSI(
-                    "D", "P", upstream_press, "T", total_source_temperature, fluid
-                )
+
+                # Check if your close to saturation pressure
+                p_sat = PropsSI('P', 'T', total_source_temperature, 'Q', 0.0, fluid)
+                if abs(p_sat - upstream_press) <= 1e-4:
+                    density = PropsSI('D', 'P', upstream_press, 'Q', 0.0, fluid)
+                else:
+                    density = PropsSI(
+                        "D", "P", upstream_press, "T", total_source_temperature, fluid
+                    )
             else:
                 density = 0
 

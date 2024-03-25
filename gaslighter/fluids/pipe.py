@@ -136,7 +136,7 @@ class IncompressiblePipe:
         )
 
         if not mdot_root.converged:
-            raise ValueError(f"ERROR| {mdot_root}")
+            raise ValueError(f"ROOT ERROR| {mdot_root}")
 
         mdot = mdot_root.root
         velocity = velocity_from_mdot(mdot, density, self.area)
