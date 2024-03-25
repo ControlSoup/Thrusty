@@ -122,6 +122,9 @@ class DataStorage:
     def export_to_csv(self, file_name: str):
         datadict_to_csv(self.datadict, file_name)
 
+    def export_imperial_to_csv(self, file_name: str):
+        datadict_to_csv(self.datadict_imperial, file_name)
+
     def plot_all(
         self, export_path=None, show_fig=True, title=None, y_axis_tile=None, log_x=False
     ):

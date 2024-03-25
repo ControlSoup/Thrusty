@@ -11,6 +11,7 @@ from .incompressible import (
 from . import dryer_injector_equations as dryer
 from .intensive_state import IntensiveState
 from .ideal_gas import ideal_orifice_mdot
+from scipy.optimize import root_scalar
 
 
 class IncompressibleOrifice:
@@ -68,7 +69,12 @@ class IncompressibleOrifice:
             return upstream_press
 
         # Fluid State
-        density = PropsSI("D", "P", upstream_press, "T", upstream_temp, self.__fluid)
+        psat = PropsSI('P', 'T', upstream_temp, 'Q', 0.0, self.__fluid)
+
+        if abs(psat - upstream_press) < 1e-4:
+            density = PropsSI('D', 'P', upstream_press, 'Q', 0.0, self.__fluid)
+        else:
+            density = PropsSI("D", "P", upstream_press, "T", upstream_temp, self.__fluid)
 
         dp = incompressible_orifice_dp(self.__cda, density, mdot, self.__beta_ratio)
 
@@ -160,11 +166,11 @@ class DryerOrifice():
         upstream_temp: float,
         downstream_press: float,
         suppress_warnings: bool = False,
+        impose_liquid: bool = True
     ):
         """
         Source: Review and Evaluation of Models for Self-Pressurizing Propellant Tank Dynamics
         """
-
         if upstream_press <= MIN_RESONABLE_PRESSURE_PA:
             return 0.0
 
@@ -172,17 +178,27 @@ class DryerOrifice():
         upstream_vapor_pressure = PropsSI(
             'P',
             'T', upstream_temp,
-            'Q', 1,
+            'Q', 1.0,
             self.__fluid
         )
 
         # State Lookup
-        up_density, up_sp_enthalpy, up_sp_entropy = PropsSI(
-            ['D', 'HMASS', 'SMASS'],
-            'P', upstream_press,
-            'T', upstream_temp,
-            self.__fluid
-        )
+        # Check if your close to saturation
+        p_sat = PropsSI('P', 'T', upstream_temp, 'Q', 0.0, self.__fluid)
+        if abs(p_sat - upstream_press) <= 1e-4:
+            up_density, up_sp_enthalpy, up_sp_entropy = PropsSI(
+                ['D', 'HMASS', 'SMASS'],
+                'P', upstream_press,
+                'Q', 0.0,
+                self.__fluid
+            )
+        else:
+            up_density, up_sp_enthalpy, up_sp_entropy = PropsSI(
+                ['D', 'HMASS', 'SMASS'],
+                'P', upstream_press,
+                'T', upstream_temp,
+                self.__fluid
+            )
 
         # Isentropic expansion
         dwn_sp_enthalpy, dwn_density = PropsSI(
@@ -191,7 +207,6 @@ class DryerOrifice():
             'SMASS', up_sp_entropy,
             self.__fluid
         )
-
 
         # Dryer method
         k = dryer.k(
@@ -218,9 +233,33 @@ class DryerOrifice():
         upstream_press: float,
         upstream_temp: float,
         suppress_warnings=False,
+        max_dp = 10e10
     ):
-        return ValueError("NO METHOD IMPLEMENTED FOR DP ON DRYER ORIFICE")
+        if mdot == 0.0:
+            return 0.0
 
+        def mdot_error(dp: float):
 
+            new_mdot = self.mdot(upstream_press, upstream_temp, upstream_press - dp, suppress_warnings = True)
+
+            return mdot - new_mdot
+
+        dp_root = root_scalar(
+            mdot_error,
+            method='secant',
+            x0 = incompressible_orifice_dp( # As a first guess assume saturated liquid conditions through an incompressible orifice
+                self.cda,
+                PropsSI('D', 'T', upstream_temp, 'Q', 0.0, self.fluid),
+                mdot = mdot
+            ),
+            maxiter=1000,
+            xtol=1e-6
+        )
+
+        if not dp_root.converged:
+            if not suppress_warnings:
+                raise ValueError(f"ROOT ERROR| {dp_root}")
+
+        return dp_root.root
 
 

@@ -75,7 +75,7 @@ def real_orifice_mdot(
         )
 
         if not throat_pressure_root_result.converged:
-            raise ValueError(f"ERROR| {throat_pressure_root_result}")
+            raise ValueError(f"ROOT ERROR| {throat_pressure_root_result}")
 
         throat = Throat(
             upstream.sp_entropy, throat_pressure_root_result.root, upstream.fluid
