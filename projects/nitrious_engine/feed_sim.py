@@ -40,6 +40,7 @@ for t in tqdm(data.data_array):
 
     # Record Results
     data.record_from_dict(nitrous_tank.dict(prefix='nitrious_tank'))
+    data.record_from_dict(orifice.dict(prefix='nitrious_orifice'))
     data.next_cycle()
 
 data.plot_imperial(export_path='results/feed_sim.py')
