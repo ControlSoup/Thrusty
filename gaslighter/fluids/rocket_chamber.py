@@ -98,11 +98,7 @@ class RocketChamber:
             MR=MR,
             eps=eps,
             frozen=frozen,
-<<<<<<< HEAD
             frozen_throat=frozen_throat,
-=======
-            frozen_throat=frozen_throat
->>>>>>> main
         )
 
     @property
