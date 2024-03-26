@@ -98,7 +98,7 @@ class RocketChamber:
             MR=MR,
             eps=eps,
             frozen=frozen,
-            frozen_throat=frozen_throat
+            frozen_throat=frozen_throat,
         )
 
     @property

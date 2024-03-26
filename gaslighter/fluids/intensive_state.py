@@ -1,8 +1,16 @@
+from __future__ import annotations
+
 import sys
 
 from CoolProp.CoolProp import PropsSI
 
 from ..errors import check_float, check_str
+
+
+def look_from_quality(
+    target: str | list, prop: str, value: float, quality: float, fluid: str
+):
+    return PropsSI(target, prop, value, "Q", quality, fluid)
 
 
 class IntensiveState:
@@ -31,6 +39,7 @@ class IntensiveState:
         self.__pressure = self.lookup("P")
         self.__temp = self.lookup("T")
         self.__density = self.lookup("D")
+        self.__molar_mass = self.lookup("MOLAR_MASS")
         self.__sp_inenergy = self.lookup("UMASS")
         self.__sp_enthalpy = self.lookup("HMASS")
         self.__sp_entropy = self.lookup("SMASS")
@@ -49,6 +58,10 @@ class IntensiveState:
     @property
     def density(self):
         return self.__density
+
+    @property
+    def molar_mass(self):
+        return self.__molar_mass
 
     @property
     def sp_inenergy(self):
@@ -102,6 +115,22 @@ class IntensiveState:
                 f"ERROR| Props Lookup error with ({prop},{self.__prop_1},{self.__value_1},{self.__prop_2},{self.__value_2})"
             )
 
+    def trivial(self, prop: str) -> float:
+        check_str(prop)
+
+        if prop == self.__prop_1:
+            return self.__value_1
+
+        if prop == self.__prop_2:
+            return self.__value_2
+
+        try:
+            return ProcessLookupError(prop, self.fluid)
+        except:
+            raise ValueError(
+                f"ERROR| Props Trivial Lookup error with ({prop}, {self.fluid})"
+            )
+
     def update_from_props(self, prop_1: str, value_1: str, prop_2: str, value_2: str):
         check_str(prop_1)
         check_str(prop_2)
@@ -124,7 +153,7 @@ class IntensiveState:
 
     def update_from_pt(self, pressure: float, temperature: float):
         check_float(pressure)
-        check_str(temperature)
+        check_float(temperature)
         self.__prop_1 = "P"
         self.__value_1 = pressure
         self.__prop_2 = "T"

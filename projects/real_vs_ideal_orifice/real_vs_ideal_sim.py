@@ -7,11 +7,7 @@ from gaslighter import fluids
 # Constants
 FLUID = "helium"
 
-data = DataStorage.from_arange(
-    start = 0.0,
-    end = 100.0,
-    dx = 1e-3 
-)
+data = DataStorage.from_arange(start=0.0, end=100.0, dx=1e-3)
 
 # 1/4" fitting blowing out a tank
 orifice_diameter_in = 0.25

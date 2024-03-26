@@ -1,3 +1,4 @@
+from .data_helper import *
 from .errors import *
 from .file_hanlding import *
 from .geometry import *
@@ -5,5 +6,4 @@ from .integration import *
 from .plotting import *
 from .pretty_print import *
 from .rpe_equations import *
-from .data_helper import *
 from .units import *
