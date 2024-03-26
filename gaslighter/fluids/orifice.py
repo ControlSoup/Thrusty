@@ -125,6 +125,11 @@ class DryerOrifice():
         self.__cv = convert(self.__cda, "Cda_m2", "Cv")
         self.__fluid = fluid
         self.__beta_ratio = beta_ratio
+        self.__k = 0.0
+        self.__g_spi_mdot = 0.0
+        self.__g_hem_mdot = 0.0
+        self.__dryer_mdot = 0.0
+        self.__incomp_velocity = 0.0
 
     def from_cda(cda: float, fluid: str, cd: float = 0.65, beta_ratio: float = None):
         return DryerOrifice(cd, cda / cd, fluid, beta_ratio)
@@ -135,6 +140,23 @@ class DryerOrifice():
         return DryerOrifice.from_cda(
             cda=cda, fluid=fluid, cd=cd, beta_ratio=beta_ratio
         )
+
+    def dict(self, prefix: str = None):
+        if prefix is None:
+            prefix = ""
+        else:
+            prefix = f"{prefix}."
+        
+        return {
+            f"{prefix}cd [-]": self.__cd, 
+            f"{prefix}area [m^2]": self.__area, 
+            f"{prefix}cda [m^2]": self.__cda, 
+            f"{prefix}k [-]": self.__k, 
+            f"{prefix}g_spi_mdot [kg/s]": self.__g_spi_mdot, 
+            f"{prefix}incomp_velocity [m/s]": self.__incomp_velocity, 
+            f"{prefix}g_hem_mdot [kg/s]": self.__g_hem_mdot, 
+            f"{prefix}dyer_mdot [kg/s]": self.__dryer_mdot, 
+        }
 
     @property
     def cd(self):
@@ -209,23 +231,32 @@ class DryerOrifice():
         )
 
         # Dryer method
-        k = dryer.k(
+        self.__k = dryer.k(
             upstream_press,
             upstream_vapor_pressure,
             downstream_press
         )
+
+
         g_spi = dryer.g_spi(
             upstream_press,
             up_density,
             downstream_press
         )
+        self.__g_spi_mdot = self.cda * g_spi
+
         g_hem = dryer.g_hem(
             dwn_density,
             up_sp_enthalpy,
             dwn_sp_enthalpy
         )
+        self.__g_hem_mdot = self.cda * g_hem 
 
-        return dryer.dryer_mdot(self.cda, k, g_spi, g_hem)
+        self.__dryer_mdot = dryer.dryer_mdot(self.cda, self.__k, g_spi, g_hem)
+
+        self.__incomp_velocity = self.__g_spi_mdot / (up_density * self.area)
+
+        return self.__dryer_mdot
 
     def dp(
         self,

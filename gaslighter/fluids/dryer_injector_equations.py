@@ -35,6 +35,6 @@ def dryer_mdot(
     g_spi: float,
     g_hem: float
 ):
-    """Slightly Modified Eq: 36 From Dryers 2phase injector model (Solomon Correction)"""
+    """Eq: 36 From Dryers 2phase injector model (Solomon Correction)"""
     return cda * ((k * g_spi) + g_hem) / (1 + k)
 
