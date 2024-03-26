@@ -4,11 +4,7 @@ from tqdm import tqdm
 from gaslighter import *
 from gaslighter import fluids
 
-data = DataStorage.from_arange(
-    start = 0.0, 
-    end = 40.0,
-    dx = 1e-3
-)
+data = DataStorage.from_arange(start=0.0, end=40.0, dx=1e-3)
 
 # 1/4" fitting blowing out a tank
 orifice_diameter_in = 0.125
@@ -55,17 +51,19 @@ for t in tqdm(data.data_array):
     tank.update_mu(new_mass, new_tank_state.sp_inenergy * new_mass)
 
     # Record Results
-    data.record_from_dict({
-        "isentropic_mdot [kg/s]": mdot,
-        "isentropic_tank.mass [kg]": tank.mass,
-        "isentropic_tank.volume [m^3]": tank.volume,
-        "isentropic_tank.inenergy [J]": tank.inenergy,
-        "isentropic_tank.pressure [Pa]": tank.state.pressure,
-        "isentropic_tank.temperature [degK]": tank.state.temp,
-        "isentropic_tank.density [kg/m^3]": tank.state.density,
-        "isentropic_tank.sp_inenergy [J/kg]": tank.state.sp_inenergy,
-        "isentropic_tank.sp_enthalpy [J/kg]": tank.state.sp_enthalpy,
-    })
+    data.record_from_dict(
+        {
+            "isentropic_mdot [kg/s]": mdot,
+            "isentropic_tank.mass [kg]": tank.mass,
+            "isentropic_tank.volume [m^3]": tank.volume,
+            "isentropic_tank.inenergy [J]": tank.inenergy,
+            "isentropic_tank.pressure [Pa]": tank.state.pressure,
+            "isentropic_tank.temperature [degK]": tank.state.temp,
+            "isentropic_tank.density [kg/m^3]": tank.state.density,
+            "isentropic_tank.sp_inenergy [J/kg]": tank.state.sp_inenergy,
+            "isentropic_tank.sp_enthalpy [J/kg]": tank.state.sp_enthalpy,
+        }
+    )
     data.next_cycle()
 
 data.export_to_csv("results/isentropic.csv")

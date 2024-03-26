@@ -1,3 +1,4 @@
+import numpy as np
 from CoolProp.CoolProp import PropsSI
 from scipy.optimize import root_scalar
 
@@ -62,7 +63,12 @@ class IncompressiblePipe:
     ):
         """dp across the pipe"""
 
-        if upstream_press <= MIN_RESONABLE_PRESSURE_PA:
+        pmin = PropsSI("PMIN", self.fluid)
+        if upstream_press <= pmin:
+            if not suppress_warnings:
+                print(
+                    f"WARNING| Upstream pressure is less than PMIN = {np.round(pmin, 2)} Pa"
+                )
             return upstream_press
 
         # Fluid State
@@ -109,7 +115,12 @@ class IncompressiblePipe:
     ):
         """mdot across the pipe"""
 
-        if upstream_press <= MIN_RESONABLE_DP_PA:
+        pmin = PropsSI("PMIN", self.fluid)
+        if upstream_press <= pmin:
+            if not suppress_warnings:
+                print(
+                    f"WARNING| Upstream pressure is less than PMIN = {np.round(pmin, 2)} Pa"
+                )
             return 0.0
 
         # Fluid State

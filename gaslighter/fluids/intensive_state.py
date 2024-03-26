@@ -1,18 +1,17 @@
 from __future__ import annotations
+
 import sys
 
 from CoolProp.CoolProp import PropsSI
 
 from ..errors import check_float, check_str
 
+
 def look_from_quality(
-    target: str | list,
-    prop: str,
-    value: float,
-    quality: float,
-    fluid: str
+    target: str | list, prop: str, value: float, quality: float, fluid: str
 ):
-    return PropsSI(target, prop, value, 'Q', quality, fluid)
+    return PropsSI(target, prop, value, "Q", quality, fluid)
+
 
 class IntensiveState:
     def __init__(
@@ -88,7 +87,6 @@ class IntensiveState:
     def gamma(self):
         return self.__gamma
 
-
     @property
     def fluid(self):
         return self.__fluid
@@ -127,10 +125,7 @@ class IntensiveState:
             return self.__value_2
 
         try:
-            return ProcessLookupError(
-                prop,
-                self.fluid
-            )
+            return ProcessLookupError(prop, self.fluid)
         except:
             raise ValueError(
                 f"ERROR| Props Trivial Lookup error with ({prop}, {self.fluid})"

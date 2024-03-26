@@ -44,9 +44,9 @@ def system_curve_incompressible(
             if upstream_press > 0:
 
                 # Check if your close to saturation pressure
-                p_sat = PropsSI('P', 'T', total_source_temperature, 'Q', 0.0, fluid)
+                p_sat = PropsSI("P", "T", total_source_temperature, "Q", 0.0, fluid)
                 if abs(p_sat - upstream_press) <= 1e-4:
-                    density = PropsSI('D', 'P', upstream_press, 'Q', 0.0, fluid)
+                    density = PropsSI("D", "P", upstream_press, "Q", 0.0, fluid)
                 else:
                     density = PropsSI(
                         "D", "P", upstream_press, "T", total_source_temperature, fluid
