@@ -5,5 +5,5 @@ from .geometry import *
 from .integration import *
 from .plotting import *
 from .pretty_print import *
-from .rpe_equations import *
+from .rocket_engines import *
 from .units import *

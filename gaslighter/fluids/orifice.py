@@ -4,17 +4,22 @@ from scipy.optimize import root_scalar
 
 from .. import circle_diameter_from_area
 from ..units import convert
-from . import dryer_injector_equations as dryer
+from . import dryer_equations as dryer
 from .general import velocity_from_mdot
-from .incompressible import (
-    incompressible_orifice_dp,
-    incompressible_orifice_mdot,
-    is_incompressible,
-)
+from .incompressible import (incompressible_orifice_dp,
+                             incompressible_orifice_mdot, is_incompressible)
 
 
-class IncompressibleOrifice:
-    def __init__(self, cd: float, area: float, fluid: str, beta_ratio=None):
+class IncompressibleOrifice():
+    def __init__(
+        self, 
+        cd: float, 
+        area: float, 
+        fluid: str, 
+        number_of: int=1,
+        beta_ratio: float=None,
+    ):
+        self.__number_of = number_of
         self.__cd = cd
         self.__area = area
         self.__cda = cd * area
@@ -22,15 +27,41 @@ class IncompressibleOrifice:
         self.__fluid = fluid
         self.__beta_ratio = beta_ratio
 
-    def from_cda(cda: float, fluid: str, cd: float = 0.65, beta_ratio: float = None):
-        return IncompressibleOrifice(cd, cda / cd, fluid, beta_ratio)
+    def from_cda(
+        cda: float,
+        fluid: str,
+        cd: float = 0.65,
+        number_of: int=1,
+        beta_ratio: float = None,
+    ):
+        return IncompressibleOrifice(
+            cd=cd, 
+            area=cda / cd, 
+            fluid=fluid, 
+            beta_ratio=beta_ratio, 
+            number_of=number_of
+        )
 
-    def from_cv(cv: float, fluid: str, cd: float = 0.65, beta_ratio: float = None):
+    def from_cv(
+        cv: float,
+        fluid: str,
+        cd: float = 0.65,
+        number_of: int=1,
+        beta_ratio: float = None,
+    ):
         cda = convert(cv, "Cv", "Cda_m2")
 
         return IncompressibleOrifice.from_cda(
-            cda=cda, fluid=fluid, cd=cd, beta_ratio=beta_ratio
+            cda=cda, 
+            fluid=fluid, 
+            cd=cd, 
+            beta_ratio=beta_ratio,
+            number_of=number_of
         )
+
+    @property
+    def number_of(self):
+        return self.__number_of
 
     @property
     def cd(self):
@@ -63,6 +94,7 @@ class IncompressibleOrifice:
         upstream_temp: float,
         suppress_warnings=False,
     ):
+        split_mdot = mdot / self.number_of
 
         pmin = PropsSI("PMIN", self.fluid)
         if upstream_press <= pmin:
@@ -82,7 +114,9 @@ class IncompressibleOrifice:
                 "D", "P", upstream_press, "T", upstream_temp, self.__fluid
             )
 
-        dp = incompressible_orifice_dp(self.__cda, density, mdot, self.__beta_ratio)
+        dp = incompressible_orifice_dp(
+            self.__cda, density, split_mdot, self.__beta_ratio
+        )
 
         if dp > upstream_press:
             if not suppress_warnings:
@@ -114,10 +148,13 @@ class IncompressibleOrifice:
             ["D", "A"], "P", upstream_press, "T", upstream_temp, self.__fluid
         )
 
-        mdot = incompressible_orifice_mdot(
-            self.__cda, upstream_press, density, downstream_press, self.__beta_ratio
+        split_mdot = (
+            incompressible_orifice_mdot(
+                self.__cda, upstream_press, density, downstream_press, self.__beta_ratio
+            )
+            / self.number_of
         )
-        velocity = velocity_from_mdot(mdot, density, self.area)
+        velocity = velocity_from_mdot(split_mdot, density, self.area)
 
         if not is_incompressible(velocity, sos):
             if not suppress_warnings:
@@ -125,7 +162,11 @@ class IncompressibleOrifice:
                     f"WARNING| Fluid conditions may not be incompressible MACH: [{velocity / sos}] > 0.3"
                 )
 
-        return mdot
+        return split_mdot
+
+    def velocity(self, density: float, mdot: float):
+        """Constant cross section velocity"""
+        return velocity_from_mdot(mdot / self.number_of, density, self.__area)
 
 
 class DryerOrifice:

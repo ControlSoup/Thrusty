@@ -1,29 +1,36 @@
 from CoolProp.CoolProp import PropsSI
-
-from gaslighter import STD_ATM_PA, circle_area_from_diameter, convert
-from gaslighter.fluids import (
-    IncompressibleOrifice,
-    IncompressiblePipe,
-    system_curve_incompressible,
-)
+from gaslighter import STD_ATM_K, circle_area_from_diameter, convert, fluids
 
 # This Nos ladder is an example of why traditional pressure ladders dont work for low vapor presure flow objects
-nos_pressure = convert(1000, "psia", "Pa")
-nos_list = {
-    "FeedPipe": IncompressiblePipe(
-        convert(1, "in", "m"), roughness=0.001, length=1, fluid="N2O"
+ipa_set_pressure = convert(220, "psia", "Pa")
+ipa_comp_list = {
+    "Sump": fluids.IncompressibleOrifice(
+        cd=0.65, area=convert(0.5, "in", "m"), fluid="ethanol"
     ),
-    # "Injector": IncompressibleOrifice(
-    #     cd=7,
-    #     area=circle_area_from_diameter(convert(0.04, 'in', 'm')),
-    #     fluid="N2O"
-    # ),
+    "Ball Valve": fluids.IncompressibleOrifice.from_cv(cv=4.8, fluid="ethanol"),
+    "Outlet pipe": fluids.IncompressiblePipe(
+        diameter=convert(0.5, "in", "m"), roughness=0.003, length=3, fluid="ethanol"
+    ),
+    "Injector Flex Pipe": fluids.IncompressiblePipe(
+        number_of=2,
+        diameter=convert(0.25, "in", "m"),
+        roughness=0.003,
+        length=0.25,
+        fluid="ethanol",
+    ),
+    "Injector": fluids.IncompressibleOrifice(
+        number_of=2,
+        cd=0.65,
+        area=circle_area_from_diameter(convert(0.15, "in", "m")),
+        fluid="ethanol",
+    ),
 }
-nos_data = system_curve_incompressible(
-    nos_list,
-    total_source_pressure=nos_pressure,
-    total_source_temperature=PropsSI("T", "P", nos_pressure, "Q", 1.0, "N2O") + 1,
-    mdot_start=convert(0.8, "lbm/s", "kg/s"),
-    mdot_end=convert(1.2, "lbm/s", "kg/s"),
+ipa_system_curve_data = fluids.system_curve_incompressible(
+    ipa_comp_list,
+    total_source_pressure=ipa_set_pressure,
+    total_source_temperature=STD_ATM_K,
+    mdot_start=convert(0.4, "lbm/s", "kg/s"),
+    mdot_end=convert(0.8, "lbm/s", "kg/s"),
 )
-nos_data.plot_imperial(title="NOS Pressure Drop")
+ipa_system_curve_data.plot_all(show_fig=False, export_path='plots/ipa_pressure_ladder.html')
+ipa_system_curve_data.plot_imperial(show_fig=False, export_path='plots/ipa_pressure_ladder_imperial.html')

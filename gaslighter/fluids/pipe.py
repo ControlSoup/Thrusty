@@ -5,30 +5,46 @@ from scipy.optimize import root_scalar
 from .. import MIN_RESONABLE_DP_PA, MIN_RESONABLE_PRESSURE_PA
 from ..geometry import circle_area_from_diameter
 from .general import velocity_from_mdot
-from .incompressible import (
-    friction_factor,
-    incompressible_orifice_mdot,
-    incompressible_pipe_dp,
-    is_incompressible,
-    reynolds,
-)
+from .incompressible import (friction_factor, incompressible_orifice_mdot,
+                             incompressible_pipe_dp, is_incompressible,
+                             reynolds)
 
 
-class IncompressiblePipe:
-    def __init__(self, diameter: float, roughness: float, length: float, fluid: str):
+class IncompressiblePipe():
+    def __init__(
+        self,
+        diameter: float,
+        roughness: float,
+        length: float,
+        fluid: str,
+        number_of: int=1 
+    ):
         self.__diameter = diameter
         self.__area = circle_area_from_diameter(diameter)
         self.__roughness = roughness
         self.__relative_roughness = roughness / diameter
         self.__length = length
         self.__fluid = fluid
+        self.__number_of = number_of
 
     def from_relative_roughness(
-        hydraulic_diameter: float, relative_roughness: float, length: float, fluid
+        hydraulic_diameter: float,
+        relative_roughness: float,
+        length: float,
+        fluid,
+        number_of: int=1 
     ):
         return IncompressiblePipe(
-            hydraulic_diameter, hydraulic_diameter * relative_roughness, length, fluid
+            hydraulic_diameter,
+            hydraulic_diameter * relative_roughness,
+            length,
+            fluid,
+            number_of=number_of,
         )
+
+    @property
+    def number_of(self):
+        return self.__number_of
 
     @property
     def diameter(self):
@@ -63,6 +79,8 @@ class IncompressiblePipe:
     ):
         """dp across the pipe"""
 
+        split_mdot = mdot / self.number_of
+
         pmin = PropsSI("PMIN", self.fluid)
         if upstream_press <= pmin:
             if not suppress_warnings:
@@ -76,7 +94,7 @@ class IncompressiblePipe:
             ["D", "V", "A"], "P", upstream_press, "T", upstream_temp, self.__fluid
         )
 
-        velocity = velocity_from_mdot(mdot, density, self.area)
+        velocity = velocity_from_mdot(split_mdot, density, self.area)
 
         if not is_incompressible(velocity, sos):
             if not suppress_warnings:
@@ -162,4 +180,4 @@ class IncompressiblePipe:
 
     def velocity(self, density: float, mdot: float):
         """Constant cross section velocity"""
-        return velocity_from_mdot(mdot, density, self.__area)
+        return velocity_from_mdot(mdot / self.number_of, density, self.__area)

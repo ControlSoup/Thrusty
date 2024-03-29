@@ -1,8 +1,8 @@
 from gaslighter import *
-from gaslighter import fluids
+from gaslighter import sutton
 
 # Half Cat inputs form Half Cat Sim
-chamber = fluids.RocketChamber(
+chamber = RocketEngineCEA(
     ox="N2O",
     fuel="IPA",
     chamber_pressure=convert(261, "psia", "Pa"),
@@ -11,7 +11,7 @@ chamber = fluids.RocketChamber(
     eps=2.28,
 )
 
-current_exit_length = exit_length(
+current_exit_length = sutton.exit_length(
     chamber.throat_diameter, np.deg2rad(15), chamber.exit_diameter
 )
 output = pretty_key_val("Exit Length [m]", current_exit_length, round_places=8)
