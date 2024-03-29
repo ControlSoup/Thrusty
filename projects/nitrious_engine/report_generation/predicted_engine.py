@@ -43,6 +43,7 @@ to_file(
 )
 
 output = pretty_dict(imperial_dictionary(output))
+output = sort_dict(output)
 to_file(
     output,
     "../results/predicted_engine_results_imperial.md",
