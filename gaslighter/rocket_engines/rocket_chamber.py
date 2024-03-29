@@ -712,10 +712,6 @@ class RocketEngineCEA:
                 "Thrust Efficency Fraction [-]": self.thrust_eff,
                 "Thrust With Losses [N]": self.thrust * self.thrust_eff,
             }
-
-            unsorted = list(dict.keys())
-            unsorted.sort()
-            dict = {i: dict[i] for i in unsorted}
         
         return dict
 
