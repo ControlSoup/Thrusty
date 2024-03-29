@@ -1,7 +1,6 @@
 from CoolProp.CoolProp import PropsSI
 from gaslighter import STD_ATM_K, circle_area_from_diameter, convert, fluids
 
-# This Nos ladder is an example of why traditional pressure ladders dont work for low vapor presure flow objects
 ipa_set_pressure = convert(220, "psia", "Pa")
 ipa_comp_list = {
     "Sump": fluids.IncompressibleOrifice(
