@@ -15,7 +15,7 @@ geometry: RocketEngineGeometry = RocketEngineGeometry(
     exit_diameter=convert(2.04, "in", "m"),
     chamber_diameter=convert(2.67, "in", "m"),
     chamber_length=convert(7.5, "in", "m"),
-    chamber_volume=convert(7.5 * circle_area_from_diameter(2.67), "in^2", "m^2"),
+    chamber_volume=convert(7.5 * circle_area_from_diameter(2.67), "in^3", "m^3"),
     exit_length=convert(1.6, "in", "m"),
 )
 
@@ -42,10 +42,10 @@ to_file(
     file_name="Predicted Engine Results",
 )
 
-output = pretty_dict(imperial_dictionary(output))
+output = imperial_dictionary(output)
 output = sort_dict(output)
 to_file(
-    output,
+    pretty_dict(output),
     "../results/predicted_engine_results_imperial.md",
     file_name="Predicted Engine Results Imperial",
 )
