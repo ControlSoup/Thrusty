@@ -54,3 +54,4 @@ Expansion Ratio [-] = 2.339
 Half Angle Losses [-] = 0.988
 Lstar [m] = 30.045
 Cstar Efficency [-] = 0.7
+Min Wall [m] = 0.004

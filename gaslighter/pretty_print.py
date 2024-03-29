@@ -16,3 +16,9 @@ def pretty_dict(dict, round_places: int = 3):
     for key in dict:
         string += pretty_key_val(key, dict[key], round_places)
     return string
+
+def sort_dict(dict: dict):
+    sorted = list(dict.keys())
+    sorted.sort()
+    new_dict = {i: dict[i] for i in sorted}
+    return new_dict 
