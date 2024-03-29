@@ -1,5 +1,4 @@
 import numpy as np
-
 from gaslighter import STD_ATM_K, convert
 from gaslighter.heat_transfer import plot_fdm_solution
 

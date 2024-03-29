@@ -1,13 +1,10 @@
 import unittest
 
 from gaslighter import *
-from gaslighter.fluids import (
-    IntensiveState,
-    friction_factor,
-    incompressible_orifice_dp,
-    incompressible_orifice_mdot,
-    incompressible_pipe_dp,
-)
+from gaslighter.fluids import (IntensiveState, friction_factor,
+                               incompressible_orifice_dp,
+                               incompressible_orifice_mdot,
+                               incompressible_pipe_dp)
 
 
 class Test(unittest.TestCase):
