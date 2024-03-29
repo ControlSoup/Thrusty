@@ -35,7 +35,7 @@ output = cea.dict
 output = output | geometry.dict()
 output["Cstar Efficency [-]"] = cstar_eff
 output["Min Wall [m]"] = min_wall
-sort_dict(output)
+output = sort_dict(output)
 to_file(
     pretty_dict(output),
     "../results/predicted_engine_results.md",

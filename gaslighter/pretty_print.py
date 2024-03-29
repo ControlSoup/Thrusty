@@ -18,7 +18,7 @@ def pretty_dict(dict, round_places: int = 3):
     return string
 
 def sort_dict(dict: dict):
-    sorted = list(dict.keys())
-    sorted.sort()
-    new_dict = {i: dict[i] for i in sorted}
+    unsorted = list(dict.keys())
+    unsorted.sort()
+    new_dict = {i: dict[i] for i in unsorted}
     return new_dict 
