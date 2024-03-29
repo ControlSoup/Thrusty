@@ -6,8 +6,8 @@ from gaslighter import (RocketEngineCEA, RocketEngineGeometry,
 """Generates a engine report based on true geometry"""
 
 # Need some sim or test results for this but input mdot here
-ox_mdot_result = convert(0.61, "lbm/s", "kg/s")
-fuel_mdot_result = convert(1.01, "lbm/s", "kg/s")
+ox_mdot_result = convert(1.01, "lbm/s", "kg/s")
+fuel_mdot_result = convert(0.61, "lbm/s", "kg/s")
 cstar_eff = 0.7
 
 geometry: RocketEngineGeometry = RocketEngineGeometry(
