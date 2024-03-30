@@ -15,7 +15,7 @@ geometry: RocketEngineGeometry = RocketEngineGeometry(
     exit_diameter=convert(2.04, "in", "m"),
     chamber_diameter=convert(2.67, "in", "m"),
     chamber_length=convert(7.5, "in", "m"),
-    chamber_volume=convert(7.5 * circle_area_from_diameter(2.67), "in^3", "m^3"),
+    chamber_volume=convert(40.32, "in^3", "m^3"),
     exit_length=convert(1.6, "in", "m"),
 )
 
