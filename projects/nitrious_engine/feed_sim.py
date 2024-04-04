@@ -1,7 +1,8 @@
+from tqdm import tqdm
+
 from gaslighter import (STD_ATM_K, STD_ATM_PA, DataStorage,
                         circle_area_from_diameter, convert, np_rk4)
 from gaslighter.fluids import BasicStaticVolume, DryerOrifice, EquilibrumTank
-from tqdm import tqdm
 
 data: DataStorage = DataStorage.from_arange(start=0.0, end=10.0, dx=1e-3)
 
