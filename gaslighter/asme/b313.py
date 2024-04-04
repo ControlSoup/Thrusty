@@ -42,7 +42,7 @@ def table_a1_stress(material: str, temp: int):
 
     for i, val in enumerate(temp_array):
 
-        if i == len(temp) - 1:
+        if i == len(temp_array) - 1:
             raise ValueError(
                 f"ERROR| No stress data recorded for B31.3 TAble A1 {material} : > {val} [degK]"
             )

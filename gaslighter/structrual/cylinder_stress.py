@@ -3,7 +3,6 @@ Source:
 https://en.wikipedia.org/wiki/Cylinder_stress
 """
 
-
 def thin_wall_hoop_stress(
     pressure: float, 
     radius: float, 
