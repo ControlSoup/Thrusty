@@ -10,14 +10,14 @@ from .incompressible import (incompressible_orifice_dp,
                              incompressible_orifice_mdot, is_incompressible)
 
 
-class IncompressibleOrifice():
+class IncompressibleOrifice:
     def __init__(
-        self, 
-        cd: float, 
-        area: float, 
-        fluid: str, 
-        number_of: int=1,
-        beta_ratio: float=None,
+        self,
+        cd: float,
+        area: float,
+        fluid: str,
+        number_of: int = 1,
+        beta_ratio: float = None,
     ):
         self.__number_of = number_of
         self.__cd = cd
@@ -31,32 +31,28 @@ class IncompressibleOrifice():
         cda: float,
         fluid: str,
         cd: float = 0.65,
-        number_of: int=1,
+        number_of: int = 1,
         beta_ratio: float = None,
     ):
         return IncompressibleOrifice(
-            cd=cd, 
-            area=cda / cd, 
-            fluid=fluid, 
-            beta_ratio=beta_ratio, 
-            number_of=number_of
+            cd=cd,
+            area=cda / cd,
+            fluid=fluid,
+            beta_ratio=beta_ratio,
+            number_of=number_of,
         )
 
     def from_cv(
         cv: float,
         fluid: str,
         cd: float = 0.65,
-        number_of: int=1,
+        number_of: int = 1,
         beta_ratio: float = None,
     ):
         cda = convert(cv, "Cv", "Cda_m2")
 
         return IncompressibleOrifice.from_cda(
-            cda=cda, 
-            fluid=fluid, 
-            cd=cd, 
-            beta_ratio=beta_ratio,
-            number_of=number_of
+            cda=cda, fluid=fluid, cd=cd, beta_ratio=beta_ratio, number_of=number_of
         )
 
     @property

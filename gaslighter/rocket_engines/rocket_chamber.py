@@ -6,16 +6,10 @@ import numpy as np
 import plotly.graph_objects as go
 from rocketcea.cea_obj_w_units import CEA_Obj
 
-from ..units import (
-    R_JPDEGK_MOL, 
-    STD_ATM_PA, 
-    convert, 
-    imperial_dictionary, 
-)
+from ..data_helper import DataStorage
 from ..geometry import circle_diameter_from_area
 from ..pretty_print import pretty_dict
-
-from ..data_helper import DataStorage
+from ..units import R_JPDEGK_MOL, STD_ATM_PA, convert, imperial_dictionary
 from . import sutton_equations as sutton
 from .rocket_geometry import RocketEngineGeometry
 
@@ -105,7 +99,7 @@ class RocketEngineCEA:
             eps=eps,
             frozen=frozen,
             frozen_throat=frozen_throat,
-            thrust_efficency_fraction=thrust_efficency_fraction
+            thrust_efficency_fraction=thrust_efficency_fraction,
         )
 
     def from_geometry(
@@ -117,18 +111,18 @@ class RocketEngineCEA:
         fuel_mdot: float,
         frozen=0.0,
         frozen_throat=0.0,
-        thrust_efficency_fraction=None
+        thrust_efficency_fraction=None,
     ):
         return RocketEngineCEA(
             ox=ox,
             fuel=fuel,
             chamber_pressure=chamber_pressure,
             MR=ox_mdot / fuel_mdot,
-            mdot=ox_mdot+fuel_mdot,
+            mdot=ox_mdot + fuel_mdot,
             eps=rocket_engine_geometry.expansion_ratio,
             frozen=frozen,
             frozen_throat=frozen_throat,
-            thrust_efficency_fraction=thrust_efficency_fraction
+            thrust_efficency_fraction=thrust_efficency_fraction,
         )
 
     @property
@@ -712,7 +706,7 @@ class RocketEngineCEA:
                 "Thrust Efficency Fraction [-]": self.thrust_eff,
                 "Thrust With Losses [N]": self.thrust * self.thrust_eff,
             }
-        
+
         return dict
 
     def string(self, round_places=3):

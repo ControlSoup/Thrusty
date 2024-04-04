@@ -26,12 +26,9 @@ class RocketEngineGeometry:
         self.chamber_length = chamber_length
         self.chamber_volume = chamber_volume
 
-
-
         self.exit_area = circle_area_from_diameter(exit_diameter)
         self.exit_diameter = exit_diameter
         self.exit_length = exit_length
-
 
         self.throat_area = circle_area_from_diameter(throat_diameter)
         self.throat_diameter = throat_diameter
