@@ -10,14 +10,14 @@ from .incompressible import (friction_factor, incompressible_orifice_mdot,
                              reynolds)
 
 
-class IncompressiblePipe():
+class IncompressiblePipe:
     def __init__(
         self,
         diameter: float,
         roughness: float,
         length: float,
         fluid: str,
-        number_of: int=1 
+        number_of: int = 1,
     ):
         self.__diameter = diameter
         self.__area = circle_area_from_diameter(diameter)
@@ -32,7 +32,7 @@ class IncompressiblePipe():
         relative_roughness: float,
         length: float,
         fluid,
-        number_of: int=1 
+        number_of: int = 1,
     ):
         return IncompressiblePipe(
             hydraulic_diameter,

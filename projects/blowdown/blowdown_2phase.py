@@ -1,11 +1,9 @@
 from CoolProp.CoolProp import PropsSI
 from tqdm import tqdm
 
-from gaslighter import (R_JPDEGK_MOL,STD_ATM_K, STD_ATM_PA, DataStorage,
+from gaslighter import (R_JPDEGK_MOL, STD_ATM_K, STD_ATM_PA, DataStorage,
                         circle_area_from_diameter, convert, np_rk4)
-from gaslighter.fluids import (BasicStaticVolume, DryerOrifice,
-                               EquilibrumTank)
-            
+from gaslighter.fluids import BasicStaticVolume, DryerOrifice, EquilibrumTank
 
 data: DataStorage = DataStorage.from_arange(start=0.0, end=40.0, dx=1e-3)
 

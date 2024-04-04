@@ -1,4 +1,5 @@
 from CoolProp.CoolProp import PropsSI
+
 from gaslighter import STD_ATM_K, circle_area_from_diameter, convert, fluids
 
 ipa_set_pressure = convert(220, "psia", "Pa")
@@ -31,5 +32,9 @@ ipa_system_curve_data = fluids.system_curve_incompressible(
     mdot_start=convert(0.4, "lbm/s", "kg/s"),
     mdot_end=convert(0.8, "lbm/s", "kg/s"),
 )
-ipa_system_curve_data.plot_all(show_fig=False, export_path='plots/ipa_pressure_ladder.html')
-ipa_system_curve_data.plot_imperial(show_fig=False, export_path='plots/ipa_pressure_ladder_imperial.html')
+ipa_system_curve_data.plot_all(
+    show_fig=False, export_path="plots/ipa_pressure_ladder.html"
+)
+ipa_system_curve_data.plot_imperial(
+    show_fig=False, export_path="plots/ipa_pressure_ladder_imperial.html"
+)
