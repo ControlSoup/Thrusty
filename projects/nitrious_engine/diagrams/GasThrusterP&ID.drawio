@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram name="P&amp;ID" id="ptwcyao2qoM2ukkbA5NZ">
-        <mxGraphModel dx="1353" dy="505" grid="0" gridSize="10" guides="1" tooltips="0" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="1" shadow="0">
+        <mxGraphModel dx="1963" dy="1117" grid="0" gridSize="10" guides="1" tooltips="0" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="1" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -20,7 +20,7 @@
                         <mxGeometry x="-627.84" y="70" width="51.58" height="270" as="geometry"/>
                     </mxCell>
                 </object>
-                <mxCell id="E2To5tkKnf_a1yXdmPDb-53" value="OX-CGA-092" style="text;strokeColor=none;align=center;fillColor=none;html=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+                <mxCell id="E2To5tkKnf_a1yXdmPDb-53" value="OX-CGA-092&lt;br&gt;[Cv = 0.41]" style="text;strokeColor=none;align=center;fillColor=none;html=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
                     <mxGeometry x="-664.0400000000001" y="267" width="101" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="E2To5tkKnf_a1yXdmPDb-58" value="" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;endFill=0;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=4;" parent="1" source="E2To5tkKnf_a1yXdmPDb-54" target="E2To5tkKnf_a1yXdmPDb-1" edge="1">
@@ -364,7 +364,7 @@
                         <mxPoint x="-292.09000000000003" y="716" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="209" value="&lt;span style=&quot;&quot;&gt;N2-V-020&lt;/span&gt;" style="text;strokeColor=none;align=center;fillColor=none;html=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;rotation=0;" parent="1" vertex="1">
+                <mxCell id="209" value="&lt;span style=&quot;&quot;&gt;N2-V-020&lt;br&gt;[Cv = 2.33]&lt;br&gt;&lt;/span&gt;" style="text;strokeColor=none;align=center;fillColor=none;html=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;rotation=0;" parent="1" vertex="1">
                     <mxGeometry x="-499.09000000000003" y="467" width="100" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="227" value="" style="group" parent="1" vertex="1" connectable="0">
@@ -372,11 +372,11 @@
                 </mxCell>
                 <object label="" Price="350" Cv="0.698****" Volume_cuft="0.23663194" MAWP_psia="1100***** double check this" Link="https://www.nitrousexpress.com/10lb-bottle-lightning-500-valve-6an-nipple-11100-6.asp" id="E2To5tkKnf_a1yXdmPDb-16">
                     <mxCell style="shape=mxgraph.pid.vessels.gas_bottle;html=1;pointerEvents=1;align=center;verticalLabelPosition=middle;verticalAlign=middle;dashed=0;rotation=-360;horizontal=0;labelPosition=center;deletable=0;textDirection=ltr;" parent="227" vertex="1">
-                        <mxGeometry x="8" y="1.4210854715202004e-14" width="64.26413331256813" height="140" as="geometry"/>
+                        <mxGeometry x="-3" width="86" height="140" as="geometry"/>
                     </mxCell>
                 </object>
-                <mxCell id="E2To5tkKnf_a1yXdmPDb-17" value="N2O &lt;br&gt;Tank&lt;br&gt;[1000 psia]&lt;br&gt;(??? cuft)" style="text;strokeColor=none;align=center;fillColor=none;html=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;rotation=0;" parent="227" vertex="1">
-                    <mxGeometry y="60.000000000000014" width="79.99999999999999" height="30" as="geometry"/>
+                <mxCell id="E2To5tkKnf_a1yXdmPDb-17" value="N2O &lt;br&gt;Tank&lt;br&gt;MAWP: &amp;lt;1200psia&lt;br&gt;Mass: 20lbm&lt;br&gt;" style="text;strokeColor=none;align=center;fillColor=none;html=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;rotation=0;" parent="227" vertex="1">
+                    <mxGeometry x="7.105427357601002e-15" y="60.000000000000014" width="79.99999999999999" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="E2To5tkKnf_a1yXdmPDb-65" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.485;entryY=0.005;entryDx=0;entryDy=0;entryPerimeter=0;" parent="227" source="E2To5tkKnf_a1yXdmPDb-16" target="E2To5tkKnf_a1yXdmPDb-16" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
@@ -468,10 +468,10 @@
                 <mxCell id="329" value="" style="verticalLabelPosition=bottom;verticalAlign=top;html=1;shape=mxgraph.basic.half_circle;rotation=-180;" parent="326" vertex="1">
                     <mxGeometry x="7" width="14" height="7" as="geometry"/>
                 </mxCell>
-                <mxCell id="342" value="N2-CV-021" style="text;strokeColor=none;align=center;fillColor=none;html=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+                <mxCell id="342" value="N2-CV-021&lt;br&gt;[Cv = 1.1]" style="text;strokeColor=none;align=center;fillColor=none;html=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
                     <mxGeometry x="-557.26" y="609" width="97.21" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="343" value="N2-CV-022" style="text;strokeColor=none;align=center;fillColor=none;html=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+                <mxCell id="343" value="N2-CV-022&lt;br&gt;[Cv = 1.1]" style="text;strokeColor=none;align=center;fillColor=none;html=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
                     <mxGeometry x="-341.69000000000005" y="609" width="97.21" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="354" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;endFill=0;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=4;exitX=1;exitY=0.7;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.507;entryY=1.001;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" target="346" edge="1">
@@ -645,7 +645,7 @@
                         <mxPoint x="8" y="-3" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="121" value="&lt;span style=&quot;&quot;&gt;N2-PT-018&lt;br&gt;[300psig]&lt;br&gt;&lt;/span&gt;" style="text;strokeColor=none;align=center;fillColor=none;html=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="395" vertex="1">
+                <mxCell id="121" value="&lt;span style=&quot;&quot;&gt;N2-PT-019&lt;br&gt;[300psig]&lt;br&gt;&lt;/span&gt;" style="text;strokeColor=none;align=center;fillColor=none;html=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="395" vertex="1">
                     <mxGeometry width="100" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="294" value="" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;endFill=0;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=1;" parent="1" edge="1">
@@ -1030,7 +1030,7 @@
                 <mxCell id="467" value="" style="group" vertex="1" connectable="0" parent="1">
                     <mxGeometry x="-692.3000000000001" y="569" width="132.04000000000008" height="40" as="geometry"/>
                 </mxCell>
-                <mxCell id="30" value="OX-V-096" style="text;strokeColor=none;align=center;fillColor=none;html=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="467" vertex="1">
+                <mxCell id="30" value="OX-V-096&lt;br&gt;[Cv = 4.5]" style="text;strokeColor=none;align=center;fillColor=none;html=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="467" vertex="1">
                     <mxGeometry y="6" width="97.21" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="18" value="" style="verticalLabelPosition=bottom;align=center;html=1;verticalAlign=top;pointerEvents=1;dashed=0;shape=mxgraph.pid2valves.valve;valveType=gate;actuator=solenoid;fontSize=2;rotation=90;points=[[0.3,0,0,0,0],[0.3,1,0,0,0]];strokeColor=#000000;fillColor=#141414;" parent="467" vertex="1">
