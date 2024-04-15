@@ -62,6 +62,21 @@ class BasicStaticVolume:
         self.state.update_from_du(
             self.__mass / self.__volume, self.__inenergy / self.__mass
         )
+    
+    def dict(self, prefix: str = None):
+
+        if prefix is None:
+            prefix = ""
+        else:
+            prefix = f"{prefix}."
+
+        return {
+            f"{prefix}volume [m^3]": self.volume,
+            f"{prefix}total_mass [kg]": self.mass,
+            f"{prefix}total_inenergy [J]": self.inenergy,
+            f"{prefix}pressure [Pa]": self.state.pressure,
+            f"{prefix}temp [degK]": self.state.temp,
+        }
 
 
 class EquilibrumTank:

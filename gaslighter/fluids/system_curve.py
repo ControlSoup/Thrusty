@@ -60,7 +60,7 @@ def system_curve_incompressible(
 
             data.record(f"{name}.dp [dPa]", component_dp)
 
-            data.record(f"{name}.velocity [m/s]",flow_obj.velocity(density, mdot))
+            data.record(f"{name}.velocity [m/s]", flow_obj.velocity(density, mdot))
 
             total_pressure_drop += component_dp
 
