@@ -31,5 +31,5 @@ ipa_system_curve_data = fluids.system_curve_incompressible(
     mdot_start=convert(0.64, "lbm/s", "kg/s"),
     mdot_end=convert(0.65, "lbm/s", "kg/s"),
 )
-ipa_system_curve_data.plot_all(show_fig=False, export_path='ipa_pressure_ladder.html')
-ipa_system_curve_data.plot_imperial(show_fig=True, export_path='ipa_pressure_ladder_imperial.html')
+ipa_system_curve_data.plot_all(show_fig=False, export_path='plots/ipa_pressure_ladder.html')
+ipa_system_curve_data.plot_imperial(show_fig=True, export_path='plots/ipa_pressure_ladder_imperial.html')
