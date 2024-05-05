@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram name="P&amp;ID" id="ptwcyao2qoM2ukkbA5NZ">
-        <mxGraphModel dx="1629" dy="782" grid="0" gridSize="10" guides="1" tooltips="0" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="1" shadow="0">
+        <mxGraphModel dx="1569" dy="607" grid="0" gridSize="10" guides="1" tooltips="0" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="1" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -82,7 +82,7 @@
                         <mxPoint x="-179.09000000000015" y="536" as="sourcePoint"/>
                     </mxGeometry>
                 </mxCell>
-                <object label="&lt;font style=&quot;font-size: 10px;&quot;&gt;IPA TANK&lt;br&gt;MDP: 2216psig&lt;br&gt;Volume:&amp;nbsp;0.0059 m^3&lt;/font&gt;" Link="https://www.amazon.com/Kegco-I22-580-Nitrogen-Pressure-Aluminum/dp/B0037B3BLE/ref=sr_1_5?crid=189FJLK5VGD7V&amp;dib=eyJ2IjoiMSJ9.kKSaQLcCbBU_4ziaPGCH2pR_W19GQ_DGJ5qfe-3U96PqgCmT5-hMFpHKlijd49UHP8OPYMHDaqxQoMUKcnowXHZxP1YaVax5w0Qhiz9s8x3gLI67C8EK9CvOppyQf30dG5BEmC50MKXVcQognfPkfIv-Oytoeifr2dkRyF9ptHGS6GQiwGqs2_PFLeqv2wRFL3RX3XV2_OJZdPbUVhowm7x9uLSdsG4rI_gyWCZ-g7g9BdLO8fGXbS_fez6ppWc3t80pHmG13wHMQcwG-UsR3aQb4DLdKlmWC_uVWvvVzsM.F5SNlG_caipPtgKYApMQqfA0-bVt0L3i1NSasG_ge0Q&amp;dib_tag=se&amp;keywords=aluminum+nitrogen+tank&amp;qid=1712515315&amp;sprefix=aluminum+nitrogen+ta%2Caps%2C324&amp;sr=8-5" id="7">
+                <object label="&lt;font style=&quot;font-size: 10px;&quot;&gt;IPA TANK&lt;br&gt;MDP: 200psig&lt;br&gt;Volume:&amp;nbsp;0.0114 m^3&lt;/font&gt;" Link="https://www.amazon.com/Kegco-I22-580-Nitrogen-Pressure-Aluminum/dp/B0037B3BLE/ref=sr_1_5?crid=189FJLK5VGD7V&amp;dib=eyJ2IjoiMSJ9.kKSaQLcCbBU_4ziaPGCH2pR_W19GQ_DGJ5qfe-3U96PqgCmT5-hMFpHKlijd49UHP8OPYMHDaqxQoMUKcnowXHZxP1YaVax5w0Qhiz9s8x3gLI67C8EK9CvOppyQf30dG5BEmC50MKXVcQognfPkfIv-Oytoeifr2dkRyF9ptHGS6GQiwGqs2_PFLeqv2wRFL3RX3XV2_OJZdPbUVhowm7x9uLSdsG4rI_gyWCZ-g7g9BdLO8fGXbS_fez6ppWc3t80pHmG13wHMQcwG-UsR3aQb4DLdKlmWC_uVWvvVzsM.F5SNlG_caipPtgKYApMQqfA0-bVt0L3i1NSasG_ge0Q&amp;dib_tag=se&amp;keywords=aluminum+nitrogen+tank&amp;qid=1712515315&amp;sprefix=aluminum+nitrogen+ta%2Caps%2C324&amp;sr=8-5" id="7">
                     <mxCell style="shape=mxgraph.pid.vessels.pressurized_vessel;html=1;pointerEvents=1;align=center;verticalLabelPosition=middle;verticalAlign=middle;dashed=0;horizontal=1;labelPosition=center;" parent="1" vertex="1">
                         <mxGeometry x="-229.09000000000003" y="295" width="100" height="201" as="geometry"/>
                     </mxCell>
@@ -265,10 +265,10 @@
                 <mxCell id="78" value="" style="verticalLabelPosition=bottom;align=center;html=1;verticalAlign=top;pointerEvents=1;dashed=0;shape=mxgraph.pid2valves.valve;valveType=check;rounded=1;strokeWidth=2;fontSize=2;fillColor=none;gradientColor=default;rotation=90;" parent="1" vertex="1">
                     <mxGeometry x="-353.09000000000003" y="614" width="30" height="20" as="geometry"/>
                 </mxCell>
-                <mxCell id="82" value="" style="verticalLabelPosition=bottom;align=center;html=1;verticalAlign=top;pointerEvents=1;dashed=0;shape=mxgraph.pid2valves.valve;valveType=gate;actuator=solenoid;fontSize=2;rotation=90;points=[[0.3,0,0,0,0],[0.3,1,0,0,0]];fillColor=#141414;fontColor=#333333;strokeColor=#141414;" parent="1" vertex="1">
+                <mxCell id="82" value="" style="verticalLabelPosition=bottom;align=center;html=1;verticalAlign=top;pointerEvents=1;dashed=0;shape=mxgraph.pid2valves.valve;valveType=gate;actuator=solenoid;fontSize=2;rotation=90;points=[[0.3,0,0,0,0],[0.3,1,0,0,0]];fillColor=#141414;fontColor=#333333;strokeColor=#FFFFFF;" parent="1" vertex="1">
                     <mxGeometry x="-411.2" y="462" width="40" height="40" as="geometry"/>
                 </mxCell>
-                <mxCell id="E2To5tkKnf_a1yXdmPDb-52" value="" style="verticalLabelPosition=bottom;align=center;html=1;verticalAlign=top;pointerEvents=1;dashed=0;shape=mxgraph.pid2valves.valve;valveType=needle;rotation=0;strokeColor=#000000;gradientColor=default;fillColor=#141414;" parent="1" vertex="1">
+                <mxCell id="E2To5tkKnf_a1yXdmPDb-52" value="" style="verticalLabelPosition=bottom;align=center;html=1;verticalAlign=top;pointerEvents=1;dashed=0;shape=mxgraph.pid2valves.valve;valveType=needle;rotation=0;strokeColor=#FFFFFF;gradientColor=default;fillColor=#141414;" parent="1" vertex="1">
                     <mxGeometry x="-630.2" y="299" width="33.33" height="20" as="geometry"/>
                 </mxCell>
                 <mxCell id="177" value="" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;endFill=0;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=1;" parent="1" edge="1">
@@ -483,7 +483,7 @@
                 <mxCell id="384" value="" style="group" parent="1" vertex="1" connectable="0">
                     <mxGeometry x="-140.99" y="128" width="83.79" height="65" as="geometry"/>
                 </mxCell>
-                <mxCell id="355" value="N2-PRV-017&lt;br&gt;[300psid]" style="text;strokeColor=none;align=center;fillColor=none;html=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="384" vertex="1">
+                <mxCell id="355" value="N2-PRV-017&lt;br&gt;[200psid]" style="text;strokeColor=none;align=center;fillColor=none;html=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="384" vertex="1">
                     <mxGeometry width="83.79" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="352" value="" style="group" parent="384" vertex="1" connectable="0">
@@ -914,7 +914,7 @@
                 <mxCell id="457" value="" style="group" parent="1" vertex="1" connectable="0">
                     <mxGeometry x="-364" y="435" width="83.79" height="65" as="geometry"/>
                 </mxCell>
-                <mxCell id="458" value="N2-PRV-017&lt;br&gt;[300psid]" style="text;strokeColor=none;align=center;fillColor=none;html=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="457" vertex="1">
+                <mxCell id="458" value="N2-PRV-017&lt;br&gt;[100psid]" style="text;strokeColor=none;align=center;fillColor=none;html=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="457" vertex="1">
                     <mxGeometry width="83.79" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="459" value="" style="group" parent="457" vertex="1" connectable="0">
@@ -964,7 +964,7 @@
                 <mxCell id="30" value="OX-V-096&lt;br&gt;[Cv = 4.5]" style="text;strokeColor=none;align=center;fillColor=none;html=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="467" vertex="1">
                     <mxGeometry y="6" width="97.21" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="18" value="" style="verticalLabelPosition=bottom;align=center;html=1;verticalAlign=top;pointerEvents=1;dashed=0;shape=mxgraph.pid2valves.valve;valveType=gate;actuator=solenoid;fontSize=2;rotation=90;points=[[0.3,0,0,0,0],[0.3,1,0,0,0]];strokeColor=#000000;fillColor=#141414;" parent="467" vertex="1">
+                <mxCell id="18" value="" style="verticalLabelPosition=bottom;align=center;html=1;verticalAlign=top;pointerEvents=1;dashed=0;shape=mxgraph.pid2valves.valve;valveType=gate;actuator=solenoid;fontSize=2;rotation=90;points=[[0.3,0,0,0,0],[0.3,1,0,0,0]];strokeColor=#FFFFFF;fillColor=#141414;" parent="467" vertex="1">
                     <mxGeometry x="92.04000000000008" width="40" height="40" as="geometry"/>
                 </mxCell>
             </root>
