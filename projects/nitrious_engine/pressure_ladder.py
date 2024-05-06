@@ -8,7 +8,7 @@ ipa_comp_list = {
     ),
     "Ball Valve": fluids.IncompressibleOrifice.from_cv(cv=4.8, fluid="ethanol"),
     "Outlet pipe": fluids.IncompressiblePipe(
-        diameter=convert(0.444, "in", "m"), roughness=0.0015, length=1.5, fluid="ethanol"
+        diameter=convert(0.444, "in", "m"), roughness=0.0015e-3, length=1.5, fluid="ethanol"
     ),
     "Injector Flex Pipe": fluids.IncompressiblePipe(
         number_of=2,
@@ -31,5 +31,5 @@ ipa_system_curve_data = fluids.system_curve_incompressible(
     mdot_start=convert(0.64, "lbm/s", "kg/s"),
     mdot_end=convert(0.65, "lbm/s", "kg/s"),
 )
-ipa_system_curve_data.plot_all(show_fig=False, export_path='ipa_pressure_ladder.html')
-ipa_system_curve_data.plot_imperial(show_fig=True, export_path='ipa_pressure_ladder_imperial.html')
+ipa_system_curve_data.plot_all(show_fig=False, export_path='plots/ipa_pressure_ladder.html')
+ipa_system_curve_data.plot_imperial(show_fig=True, export_path='plots/ipa_pressure_ladder_imperial.html')
