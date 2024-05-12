@@ -8,7 +8,7 @@ ipa_comp_list = {
     ),
     "Ball Valve": fluids.IncompressibleOrifice.from_cv(cv=4.8, fluid="ethanol"),
     "Outlet pipe": fluids.IncompressiblePipe(
-        diameter=convert(0.444, "in", "m"), roughness=0.0015, length=1.5, fluid="ethanol"
+        diameter=convert(0.444, "in", "m"), roughness=0.0015e-3, length=1.5, fluid="ethanol"
     ),
     "Injector Flex Pipe": fluids.IncompressiblePipe(
         number_of=2,
