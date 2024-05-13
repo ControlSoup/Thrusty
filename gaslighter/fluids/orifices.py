@@ -2,6 +2,7 @@ import numpy as np
 from CoolProp.CoolProp import PropsSI
 from scipy.optimize import root_scalar
 
+import warnings
 from .. import circle_diameter_from_area
 from ..units import convert
 from . import dryer_equations as dryer
@@ -95,7 +96,7 @@ class IncompressibleOrifice:
         pmin = PropsSI("PMIN", self.fluid)
         if upstream_press <= pmin:
             if not suppress_warnings:
-                print(
+                warnings.warn(
                     f"WARNING| Upstream pressure is less than PMIN = {np.round(pmin, 2)} Pa"
                 )
             return upstream_press
@@ -116,7 +117,7 @@ class IncompressibleOrifice:
 
         if dp > upstream_press:
             if not suppress_warnings:
-                print(
+                warnings.warn(
                     f"WARNING| Dp is greater than upstream pressure [{dp} > {upstream_press}]"
                 )
             return upstream_press
@@ -134,7 +135,7 @@ class IncompressibleOrifice:
         pmin = PropsSI("PMIN", self.fluid)
         if upstream_press <= pmin:
             if not suppress_warnings:
-                print(
+                warnings.warn(
                     f"WARNING| Upstream pressure is less than PMIN = {np.round(pmin, 2)} Pa"
                 )
             return 0.0
@@ -154,7 +155,7 @@ class IncompressibleOrifice:
 
         if not is_incompressible(velocity, sos):
             if not suppress_warnings:
-                print(
+                warnings.warn(
                     f"WARNING| Fluid conditions may not be incompressible MACH: [{velocity / sos}] > 0.3"
                 )
 

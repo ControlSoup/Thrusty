@@ -2,6 +2,7 @@ import numpy as np
 from CoolProp.CoolProp import PropsSI
 from scipy.optimize import root_scalar
 
+import warnings 
 from .. import MIN_RESONABLE_DP_PA, MIN_RESONABLE_PRESSURE_PA
 from ..geometry import circle_area_from_diameter
 from .general import velocity_from_mdot
@@ -84,7 +85,7 @@ class IncompressiblePipe:
         pmin = PropsSI("PMIN", self.fluid)
         if upstream_press <= pmin:
             if not suppress_warnings:
-                print(
+                warnings.warn(
                     f"WARNING| Upstream pressure is less than PMIN = {np.round(pmin, 2)} Pa"
                 )
             return upstream_press
@@ -98,7 +99,7 @@ class IncompressiblePipe:
 
         if not is_incompressible(velocity, sos):
             if not suppress_warnings:
-                print(
+                warnings.warn(
                     f"WARNING| Fluid conditions may not be incompressible MACH: [{velocity / sos}] > 0.3"
                 )
 
@@ -117,7 +118,7 @@ class IncompressiblePipe:
 
         if dp > upstream_press:
             if not suppress_warnings:
-                print(
+                warnings.warn(
                     f"WARNING| Dp is greater than upstream pressure [{dp} > {upstream_press}]"
                 )
             return upstream_press
@@ -136,7 +137,7 @@ class IncompressiblePipe:
         pmin = PropsSI("PMIN", self.fluid)
         if upstream_press <= pmin:
             if not suppress_warnings:
-                print(
+                warnings.warn(
                     f"WARNING| Upstream pressure is less than PMIN = {np.round(pmin, 2)} Pa"
                 )
             return 0.0
@@ -172,7 +173,7 @@ class IncompressiblePipe:
 
         if not is_incompressible(velocity, sos):
             if not suppress_warnings:
-                print(
+                warnings.warn(
                     f"WARNING| Fluid conditions may not be incompressible MACH: [{velocity / sos}] > 0.3"
                 )
 

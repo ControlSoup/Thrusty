@@ -99,7 +99,7 @@ def incompressible_orifice_mdot(
     cda: float,
     upstream_press: float,
     upstream_density: float,
-    downstream_pressure: float,
+    downstream_press: float,
     beta_ratio: float = None,
 ):
     """Incompressible Cda Orifice Flow Equation"""
@@ -109,7 +109,24 @@ def incompressible_orifice_mdot(
     if beta_ratio is not None:
         beta_comp = np.sqrt(1 - beta_ratio**4)
 
-    return cda * np.sqrt(2 * upstream_density * (upstream_press - downstream_pressure))
+    return cda / beta_comp * np.sqrt(2 * upstream_density * (upstream_press - downstream_press))
+
+def incompressible_orifice_cda(
+    mdot: float,
+    upstream_press: float,
+    upstream_density: float,
+    downstream_press: float,
+    beta_ratio: float = None,
+):
+    """Incompressible Cda Orifice Flow Equation"""
+    # Beta correction factor formula
+
+    beta_comp = 1
+
+    if beta_ratio is not None:
+        beta_comp = np.sqrt(1 - beta_ratio**4)
+
+    return mdot / (beta_comp * np.sqrt(2 * upstream_density * (upstream_press - downstream_press)))
 
 
 def incompressible_orifice_dp(

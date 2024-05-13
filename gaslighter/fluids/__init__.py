@@ -4,7 +4,7 @@ from .general import *
 from .ideal_gas import *
 from .incompressible import *
 from .intensive_state import *
-from .orifice import *
+from .orifices import *
 from .pipe import *
 from .real_gas import *
 from .system_curve import *

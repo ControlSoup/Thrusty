@@ -23,7 +23,6 @@ class Test(unittest.TestCase):
         mdot_kgps = incompressible_orifice_mdot(
             cda, upstream.pressure, upstream.density, downstrm_press_Pa
         )
-
         # Compare to Cv equation
         m3ps = convert(cv * np.sqrt(100 - STD_ATM_PSIA / 1), "gpm", "m^3/s")
         self.assertAlmostEqual(m3ps, mdot_kgps / upstream.density, delta=1e-6)
