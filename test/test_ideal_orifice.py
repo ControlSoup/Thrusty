@@ -25,8 +25,12 @@ class Test(unittest.TestCase):
         mdot_kgps = ideal_orifice_mdot(
             Cd * orifice_area_m2, upstream, downstrm_press_Pa
         )
+        cda_m2 = ideal_orifice_cda(
+            mdot_kgps, upstream, downstrm_press_Pa, verbose_return=False
+        )
 
         self.assertAlmostEqual(mdot_kgps, 16.679131378034153, delta=1e-4)
+        self.assertAlmostEqual(cda_m2, Cd * orifice_area_m2, delta=1e-4)
 
 
 if __name__ == "__main__":

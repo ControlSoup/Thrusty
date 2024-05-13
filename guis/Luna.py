@@ -4,7 +4,14 @@ import tkinter.messagebox
 import customtkinter
 from PIL import Image, ImageOps
 from gaslighter import convert, circle_area_from_diameter, circle_diameter_from_area
-from gaslighter.fluids import incompressible_orifice_mdot, incompressible_orifice_cda, IntensiveState
+from gaslighter.fluids import (
+    DryerOrifice,
+    incompressible_orifice_mdot,
+    incompressible_orifice_cda,
+    IntensiveState,
+    ideal_orifice_mdot,
+    ideal_orifice_cda,
+)
 
 # ALL OF THIS WAS A MISTAKE AND I HATE IT
 
@@ -24,7 +31,9 @@ def input_as_float(name: str, string: str) -> bool:
 
 def input_converted(name: str, string: str, in_units: str, out_units: str) -> bool:
     if not isinstance(string, str):
-        raise ValueError(f"JOE FUCKED UP AND PASSED SOMTHING THAT IS NOT A STING TO THIS -> {type(string)}")
+        raise ValueError(
+            f"JOE FUCKED UP AND PASSED SOMTHING THAT IS NOT A STING TO THIS -> {type(string)}"
+        )
     try:
         return convert(input_as_float(name, string), in_units, out_units)
     except Exception:
@@ -37,6 +46,7 @@ def update_text(CTkObject, text):
     text = str(text)
     CTkObject.delete(0, "end")
     CTkObject.insert(0, text)
+
 
 def update_converted(CTkObject, value: float, in_units: str, out_units: str) -> bool:
     try:
@@ -372,7 +382,6 @@ class App(customtkinter.CTk):
 
         match self.orifice_method.get():
             case "Incomp":
-
                 match self.orifice_solve_for.get():
                     case "Mdot":
                         update_converted(
@@ -382,25 +391,135 @@ class App(customtkinter.CTk):
                                 upstream_press=upstream_state.pressure,
                                 upstream_density=upstream_state.density,
                                 downstream_press=downstream_pressure,
-                                beta_ratio=beta
+                                beta_ratio=beta,
                             ),
                             "kg/s",
-                            self.orifice_mdot_units.get()
+                            self.orifice_mdot_units.get(),
                         )
                     case "Geometry":
-                        mdot = input_converted("Mdot", self.orifice_mdot.get(), self.orifice_mdot_units.get(), "kg/s")
-                        print(mdot)
+                        mdot = input_converted(
+                            "Mdot",
+                            self.orifice_mdot.get(),
+                            self.orifice_mdot_units.get(),
+                            "kg/s",
+                        )
                         cda__m2 = incompressible_orifice_cda(
                             mdot=mdot,
                             upstream_press=upstream_state.pressure,
                             upstream_density=upstream_state.density,
                             downstream_press=downstream_pressure,
-                            beta_ratio=beta 
+                            beta_ratio=beta,
                         )
-                        update_converted(self.orifice_cda, cda__m2, "m^2", self.orifice_cda_units.get())
-                        
+                        cv = convert(cda__m2, "m^2", "in^2") * 38
+                        diameter__m = circle_diameter_from_area(
+                            cda__m2 / input_as_float("Cd", self.orifice_cd.get())
+                        )
+
+                        update_converted(
+                            self.orifice_cda,
+                            cda__m2,
+                            "m^2",
+                            self.orifice_cda_units.get(),
+                        )
+                        update_converted(
+                            self.orifice_diameter,
+                            diameter__m,
+                            "m",
+                            self.orifice_diameter_units.get(),
+                        )
+                        update_text(self.orifice_cv, str(cv))
                     case _:
                         raise ValueError("THIS SHOULD NEVER HAPPEN CALL ME 7477557511")
+
+            case "Ideal":
+                match self.orifice_solve_for.get():
+                    case "Mdot":
+                        update_converted(
+                            self.orifice_mdot,
+                            ideal_orifice_mdot(
+                                cda=cda__m2,
+                                upstream=upstream_state,
+                                downstream_press=downstream_pressure,
+                            ),
+                            "kg/s",
+                            self.orifice_mdot_units.get(),
+                        )
+                    case "Geometry":
+                        mdot = input_converted(
+                            "Mdot",
+                            self.orifice_mdot.get(),
+                            self.orifice_mdot_units.get(),
+                            "kg/s",
+                        )
+                        cda__m2 = ideal_orifice_cda(
+                            mdot=mdot,
+                            upstream=upstream_state,
+                            downstream_press=downstream_pressure,
+                        )
+                        cv = convert(cda__m2, "m^2", "in^2") * 38
+                        diameter__m = circle_diameter_from_area(
+                            cda__m2 / input_as_float("Cd", self.orifice_cd.get())
+                        )
+
+                        update_converted(
+                            self.orifice_cda,
+                            cda__m2,
+                            "m^2",
+                            self.orifice_cda_units.get(),
+                        )
+                        update_converted(
+                            self.orifice_diameter,
+                            diameter__m,
+                            "m",
+                            self.orifice_diameter_units.get(),
+                        )
+                        update_text(self.orifice_cv, str(cv))
+                    case _:
+                        raise ValueError("THIS SHOULD NEVER HAPPEN CALL ME 7477557511")
+            case "Dryer":
+                match self.orifice_solve_for.get():
+                    case "Mdot":
+                        dryer: DryerOrifice = DryerOrifice.from_cda(cda__m2, upstream_state.fluid)
+                        update_converted(
+                            self.orifice_mdot,
+                            dryer.mdot(upstream_state.press, upstream_state.temp, downstream_pressure),
+                            "kg/s",
+                            self.orifice_mdot_units.get(),
+                        )
+                    case "Geometry":
+                        mdot = input_converted(
+                            "Mdot",
+                            self.orifice_mdot.get(),
+                            self.orifice_mdot_units.get(),
+                            "kg/s",
+                        )
+                        cda__m2 = ideal_orifice_cda(
+                            mdot=mdot,
+                            upstream=upstream_state,
+                            downstream_press=downstream_pressure,
+                        )
+                        cv = convert(cda__m2, "m^2", "in^2") * 38
+                        diameter__m = circle_diameter_from_area(
+                            cda__m2 / input_as_float("Cd", self.orifice_cd.get())
+                        )
+
+                        update_converted(
+                            self.orifice_cda,
+                            cda__m2,
+                            "m^2",
+                            self.orifice_cda_units.get(),
+                        )
+                        update_converted(
+                            self.orifice_diameter,
+                            diameter__m,
+                            "m",
+                            self.orifice_diameter_units.get(),
+                        )
+                        update_text(self.orifice_cv, str(cv))
+                    case _:
+                        raise ValueError("THIS SHOULD NEVER HAPPEN CALL ME 7477557511")
+            case _:
+                raise ValueError("THIS SHOULD NEVER HAPPEN JOE FUCKED UP CALL 7477557511")
 
         self.update_orifice_geometry()
 

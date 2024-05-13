@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import numpy as np
 
-from ..units import convert
 from .intensive_state import IntensiveState
+from scipy.optimize import root_scalar
 
 
 # ------------------------------------------------------------------------------
@@ -22,7 +22,7 @@ def ideal_critical_pressure(upstrm_stag_press, upstream_gamma):
     return ciritcal_press
 
 
-def ideal_is_choked(upstream_presure, upstream_gamma, downstream_pressure):
+def ideal_is_choked(upstream_presure, upstream_gamma, downstream_press):
     """
     Returns if the compressible fluid conditions are choked
     Source:
@@ -31,13 +31,13 @@ def ideal_is_choked(upstream_presure, upstream_gamma, downstream_pressure):
 
     critical_press = ideal_critical_pressure(upstream_presure, upstream_gamma)
 
-    return True if downstream_pressure < critical_press else False
+    return True if downstream_press < critical_press else False
 
 
 def ideal_orifice_mdot(
     cda: float,
     upstream: IntensiveState,
-    downstream_pressure: float,
+    downstream_press: float,
     verbose_return: bool = False,
 ) -> float | tuple[float, bool]:
     """
@@ -46,14 +46,14 @@ def ideal_orifice_mdot(
     """
 
     # No flow under very low dp
-    if upstream.pressure - downstream_pressure < 0.1:
+    if upstream.pressure - downstream_press < 0.1:
         if verbose_return:
             return 0.0, False
         return 0.0
 
     is_choked = False
 
-    if ideal_is_choked(upstream.pressure, upstream.gamma, downstream_pressure):
+    if ideal_is_choked(upstream.pressure, upstream.gamma, downstream_press):
         # Choked flow equation
         gamma_choked_comp = (2 / (upstream.gamma + 1)) ** (
             (upstream.gamma + 1) / (upstream.gamma - 1)
@@ -66,10 +66,8 @@ def ideal_orifice_mdot(
     else:
         # UnChoked flow equation
         gamma_UNchoked_comp = upstream.gamma / (upstream.gamma - 1)
-        pressure_ideal1 = (downstream_pressure / upstream.pressure) ** (
-            2 / upstream.gamma
-        )
-        pressure_ideal2 = (downstream_pressure / upstream.pressure) ** (
+        pressure_ideal1 = (downstream_press / upstream.pressure) ** (2 / upstream.gamma)
+        pressure_ideal2 = (downstream_press / upstream.pressure) ** (
             (upstream.gamma + 1) / upstream.gamma
         )
         mdot_kgps = cda * np.sqrt(
@@ -84,3 +82,31 @@ def ideal_orifice_mdot(
         return mdot_kgps, is_choked
 
     return mdot_kgps
+
+
+def ideal_orifice_cda(
+    mdot: float,
+    upstream: IntensiveState,
+    downstream_press: float,
+    verbose_return: bool = False,
+):
+
+    def area_error(area):
+        return mdot - ideal_orifice_mdot(area, upstream, downstream_press)
+
+    root = root_scalar(area_error, method="secant", x0=1, maxiter=500, xtol=1e-6)
+
+    if not root.converged:
+        raise ValueError(f"ROOT ERROR|{root}")
+
+    cda = root.root
+
+    if verbose_return:
+        return cda, ideal_is_choked(
+            upstream_presure=upstream.pressure,
+            upstream_gamma=upstream.gamma,
+            upstream=downstream_press,
+        )
+
+    else:
+        return cda

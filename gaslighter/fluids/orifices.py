@@ -7,8 +7,11 @@ from .. import circle_diameter_from_area
 from ..units import convert
 from . import dryer_equations as dryer
 from .general import velocity_from_mdot
-from .incompressible import (incompressible_orifice_dp,
-                             incompressible_orifice_mdot, is_incompressible)
+from .incompressible import (
+    incompressible_orifice_dp,
+    incompressible_orifice_mdot,
+    is_incompressible,
+)
 
 
 class IncompressibleOrifice:
@@ -187,7 +190,6 @@ class DryerOrifice:
 
     def from_cv(cv: float, fluid: str, cd: float = 0.65, beta_ratio: float = None):
         cda = convert(cv, "Cv", "Cda_m2")
-
         return DryerOrifice.from_cda(cda=cda, fluid=fluid, cd=cd, beta_ratio=beta_ratio)
 
     def dict(self, prefix: str = None):
@@ -238,7 +240,6 @@ class DryerOrifice:
         upstream_temp: float,
         downstream_press: float,
         suppress_warnings: bool = False,
-        impose_liquid: bool = True,
     ):
         """
         Source: Review and Evaluation of Models for Self-Pressurizing Propellant Tank Dynamics

@@ -1,10 +1,14 @@
 import unittest
 
 from gaslighter import *
-from gaslighter.fluids import (IntensiveState, friction_factor,
-                               incompressible_orifice_dp,
-                               incompressible_orifice_mdot,
-                               incompressible_pipe_dp)
+from gaslighter.fluids import (
+    IntensiveState,
+    friction_factor,
+    incompressible_orifice_dp,
+    incompressible_orifice_mdot,
+    incompressible_pipe_dp,
+    incompressible_orifice_cda,
+)
 
 
 class Test(unittest.TestCase):
@@ -23,9 +27,14 @@ class Test(unittest.TestCase):
         mdot_kgps = incompressible_orifice_mdot(
             cda, upstream.pressure, upstream.density, downstrm_press_Pa
         )
+        result_cda = incompressible_orifice_cda(
+            mdot_kgps, upstream.pressure, upstream.density, downstrm_press_Pa
+        )
+
         # Compare to Cv equation
         m3ps = convert(cv * np.sqrt(100 - STD_ATM_PSIA / 1), "gpm", "m^3/s")
         self.assertAlmostEqual(m3ps, mdot_kgps / upstream.density, delta=1e-6)
+        self.assertAlmostEqual(cda, result_cda, delta=1e-6)
 
         # Ensure dp and flow and backward compatabile
         self.assertAlmostEqual(

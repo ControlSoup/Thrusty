@@ -109,7 +109,12 @@ def incompressible_orifice_mdot(
     if beta_ratio is not None:
         beta_comp = np.sqrt(1 - beta_ratio**4)
 
-    return cda / beta_comp * np.sqrt(2 * upstream_density * (upstream_press - downstream_press))
+    return (
+        cda
+        / beta_comp
+        * np.sqrt(2 * upstream_density * (upstream_press - downstream_press))
+    )
+
 
 def incompressible_orifice_cda(
     mdot: float,
@@ -126,7 +131,9 @@ def incompressible_orifice_cda(
     if beta_ratio is not None:
         beta_comp = np.sqrt(1 - beta_ratio**4)
 
-    return mdot / (beta_comp * np.sqrt(2 * upstream_density * (upstream_press - downstream_press)))
+    return mdot / (
+        beta_comp * np.sqrt(2 * upstream_density * (upstream_press - downstream_press))
+    )
 
 
 def incompressible_orifice_dp(
