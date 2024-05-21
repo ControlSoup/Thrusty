@@ -66,7 +66,7 @@ def system_curve_incompressible(
 
         data.record(f"System Pressure Drop [dPa]", total_pressure_drop)
         data.record(
-            f"System Outlet Pressure [dPa]", total_source_pressure - total_pressure_drop
+            f"System Outlet Pressure [Pa]", total_source_pressure - total_pressure_drop
         )
         data.next_cycle()
 

@@ -52,7 +52,6 @@ def plot_fdm_solution(
 
     temp_history = np.zeros((len(time), len(d)))
 
-    # THIS IS NOT OPTIMZED... CAN BE VECTORIZED BUT I AM LAZY
     # Boundary conditions
     temps[0] = start_t
 
@@ -65,14 +64,21 @@ def plot_fdm_solution(
             temp_history[i] = temps
             continue
 
-        for j, t in enumerate(temps):
+        for j, _ in enumerate(temps):
 
-            # Skip start and finish
-            if j == 0 or j == len(temps) - 1:
+            if j == 0:
                 continue
 
+            if j == len(temps) - 1:
+                next = temps[j]
+            else:
+                next = temps[j + 1]
+
+            current = temps[j]
+            last = temps[j-1]
+
             dTdt = conduction_fdm_dT_dt(
-                diffusivity, temps[j + 1], temps[j], temps[j - 1], dx
+                diffusivity, next, current, last, dx
             )
             new_t = np_rk4([dTdt, temps[j]], dt)
 
@@ -89,29 +95,40 @@ def plot_fdm_solution(
             temps[j] = new_t
 
         temp_history[i] = temps
+
     try:
         temp_history = temp_history[:: int(max_time / (dt * 20))]
         time = time[:: int(max_time / (dt * 20))]
     except ValueError:
         pass
 
-    # Create initial plot
-    fig = go.Figure()
+    overall_min_temp = np.min(temp_history)
+    overall_max_temp = np.max(temp_history)
 
     if imperial_results:
         temp_history = convert(temp_history, "degK", "degF")
         d = convert(d, "m", "in")
-        fig.update_layout(title="Imperial Temperature [degF] vs Distance [in]")
+        overall_min_temp = convert(overall_min_temp, "degK", "degF")
+        overall_max_temp = convert(overall_max_temp, "degK", "degF")
+        fig_title = "Imperial Temperature [degF] vs Distance [in]"
     else:
-        fig.update_layout(title="SI Temperature [degK] vs Distance [m]")
+        fig_title = "SI Temperature [degK] vs Distance [m]"
 
-    # Add initial trace (only the first temperature vs distance graph)
+    fig = go.Figure()
+
     fig.add_trace(
-        go.Heatmap(z=temp_history[0], y=[time[0]] * len(d), x=d, colorscale="Viridis")
+        go.Heatmap(
+            z=temp_history[0],
+            y=[time[0]] * len(d),
+            x=d,
+            colorscale="Viridis",
+            zmin=overall_min_temp,
+            zmax=overall_max_temp
+        )
     )
 
-    # Add scrollbar
     fig.update_layout(
+        title=fig_title,
         xaxis_title="Distance",
         yaxis=dict(showticklabels=False),
         sliders=[
@@ -134,6 +151,7 @@ def plot_fdm_solution(
             }
         ],
     )
+
     if export_path is not None:
         fig.write_html(export_path)
 

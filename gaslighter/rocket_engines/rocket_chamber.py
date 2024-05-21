@@ -7,11 +7,12 @@ import plotly.graph_objects as go
 from rocketcea.cea_obj_w_units import CEA_Obj
 
 from ..data_helper import DataStorage
-from ..geometry import circle_diameter_from_area
+from ..geometry import circle_diameter_from_area, circle_area_from_diameter
 from ..pretty_print import pretty_dict
 from ..units import R_JPDEGK_MOL, STD_ATM_PA, convert, imperial_dictionary
-from . import sutton_equations as sutton
+from . import sutton_equations as sutton, spad_equations as spad
 from .rocket_geometry import RocketEngineGeometry
+from scipy.optimize import root_scalar
 
 # Propellants: https://rocketcea.readthedocs.io/en/latest/propellants.html#propellants-link
 
@@ -75,6 +76,29 @@ class RocketEngineCEA:
         self.__throat_diameter = circle_diameter_from_area(self.__throat_area)
         self.__exit_area = self.__throat_area * eps
         self.__exit_diameter = circle_diameter_from_area(self.__exit_area)
+
+    def from_mdots(
+        ox: str,
+        fuel: str,
+        chamber_pressure: float,
+        fuel_mdot: float,
+        ox_mdot: float,
+        eps=40.0,
+        frozen=0.0,
+        frozen_throat=0.0,
+        thrust_efficency_fraction=None,
+    ):
+        return RocketEngineCEA(
+            ox = ox,
+            fuel = fuel,
+            chamber_pressure = chamber_pressure,
+            mdot = fuel_mdot + ox_mdot,
+            MR = ox_mdot / fuel_mdot,
+            eps = eps,
+            frozen=frozen,
+            frozen_throat=frozen_throat,
+            thrust_efficency_fraction=thrust_efficency_fraction
+        )
 
     def from_fuelmdot(
         ox: str,
@@ -182,10 +206,6 @@ class RocketEngineCEA:
     @property
     def cstar(self):
         return self.cea_obj.get_Cstar(self.__chamber_pressure, self.__mix_ratio)
-
-    @property
-    def cstar_eff(self):
-        return self.__cstar_eff
 
     @property
     def chamber_pressure(self):
@@ -442,6 +462,10 @@ class RocketEngineCEA:
     def mix_ratio(self):
         return self.__mix_ratio
 
+    @property
+    def critical_pressure(self):
+        return sutton.critical_pressure(self.chamber_pressure, self.chamber_gamma)
+
     def pressure_study(self, start_pressure: float, end_pressure: float, name=""):
 
         # Use the data storage to create some easy recorind... dx is limtiing lol
@@ -508,6 +532,63 @@ class RocketEngineCEA:
                 fuel=self.fuel,
                 chamber_pressure=self.__chamber_pressure,
                 mdot=self.__mdot,
+                MR=self.__mix_ratio,
+                eps=eps,
+                frozen=self.__frozen,
+                frozen_throat=self.__frozen_throat,
+            )
+            data.record("Atmospheric Pressure [Pa]", STD_ATM_PA)
+            record_rocketchamber_data(cea, data)
+            data.next_cycle()
+
+        return data.datadict
+
+    def throat_errosion_study(
+        self,
+        start_throat_diameter,
+        end_throat_diameter,
+        ox_mdot_from_downstream_pressure: function,
+        fuel_mdot_from_downstream_pressure: function,
+        name =""
+    ):
+
+        data: DataStorage = DataStorage.from_linspace(
+            start=start_throat_diameter,
+            end=end_throat_diameter,
+            increments=500,
+            data_key="Throat Diameter [m]",
+            name=name,
+        )
+
+        for throat_diameter in data.data_array:
+            throat_area = circle_area_from_diameter(throat_diameter)
+            eps = sutton.eps(self.__exit_area, throat_area)
+
+            # Root solve for mdot, that balances increased mdot from lower chamber pressure
+            def mdot_from_chamber_pressure(mdot):
+                chamber_pressure = sutton.throat_pressure(self.cstar, throat_area, mdot)
+                new_ox_mdot = ox_mdot_from_downstream_pressure(chamber_pressure)
+                new_fuel_mdot = fuel_mdot_from_downstream_pressure(chamber_pressure)
+                return mdot - (new_fuel_mdot + new_ox_mdot)
+
+            root = root_scalar(
+                mdot_from_chamber_pressure,
+                x0=self.__mdot,
+                xtol=1e-2,
+                method="secant",
+                maxiter=1000
+            )
+
+            if not root.converged:
+                raise ValueError(f"ROOT ERROR| {root}")
+
+            new_mdot = root.root
+
+            cea = RocketEngineCEA(
+                ox=self.ox,
+                fuel=self.fuel,
+                chamber_pressure=sutton.throat_pressure(self.cstar, throat_area, new_mdot),
+                mdot=new_mdot,
                 MR=self.__mix_ratio,
                 eps=eps,
                 frozen=self.__frozen,
@@ -698,6 +779,7 @@ class RocketEngineCEA:
             "Throat to Exit Velocity [m/s]": self.throat_to_exit_velocity,
             "Thrust Ideal [N]": self.thrust,
             "Mdot [kg/s]": self.mdot,
+            "Critical pressure [Pa]": self.critical_pressure
         }
 
         # Add in optional parameters

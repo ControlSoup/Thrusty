@@ -33,6 +33,15 @@ def throat_area(cstar: float, chamber_pressure: float, mdot: float):
     return mdot * cstar / chamber_pressure
 
 
+def throat_pressure(cstar: float, throat_area: float, mdot: float):
+    """Eq 2-16 Re-aranged"""
+    return mdot * cstar / throat_area
+
+
+def critical_pressure(upstream_stagnation_pressure: float, gamma):
+    return upstream_stagnation_pressure * (2 / (gamma + 1))**(gamma / (gamma - 1))
+
+
 def half_angle_rad(throat_diameter: float, exit_length: float, exit_diameter: float):
     oppsite = (exit_diameter / 2.0) - (throat_diameter / 2.0)
     return np.arctan(oppsite / exit_length)
