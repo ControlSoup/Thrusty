@@ -12,11 +12,16 @@ nitrous_injector: DryerOrifice = DryerOrifice(
 
 # Lazy way to get a fit
 ipa_system_curve_data = csv_to_datadict('../data/ipa_pressure_ladder.csv')
+ipa_system_curve_fit = np_poly(
+    ipa_system_curve_data['System Outlet Pressure [Pa]'],
+    ipa_system_curve_data['mdot [kg/s]'],
+    3
+)
 
 def fuel_mdot_from_chamber_pressure(chamber_pressure: float):
-    # This really should be a poly fit
-    target_index = np_within_tolerance(ipa_system_curve_data['System Outlet Pressure [Pa]'], chamber_pressure, 1000)
-    return ipa_system_curve_data['mdot [kg/s]'][target_index]
+    if chamber_pressure < 0:
+        return 0
+    return ipa_system_curve_fit(chamber_pressure)
 
 def ox_mdot_from_chamber_pressure(chamber_pressure: float):
     return nitrous_injector.mdot(convert(1000.0, 'psia', 'Pa'), convert(70, 'degF', 'degK'), chamber_pressure)
@@ -64,7 +69,7 @@ graph_datadict(
     show_fig=False
 )
 
-# Expansion Ratio Graph
+# Throat errosion study
 throat_data = chamber.throat_errosion_study(
     chamber.throat_diameter,
     chamber.throat_diameter * 2,
@@ -102,7 +107,7 @@ chamber.pressure_mix_contour(
     convert(100, "psia", "Pa"),
     convert(200, "psia", "Pa"),
     start_mix_ratio=1.8,
-    end_mix_ratio=3.0,
+    end_mix_ratio=6.0,
     export_path="../plots/ideal_",
     show_plot=False,
 )

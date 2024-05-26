@@ -9,3 +9,7 @@ def np_within_tolerance(array: np.array, target: float, tolerance: float):
         return within_tolerance_indices[0]
     else:
         raise ValueError(f"Could not find value [{target}] within tolerance [{tolerance}]")
+
+def np_poly(x: np.array, y: np.array, degree: int):
+    polyfit = np.polyfit(x, y, degree)
+    return np.poly1d(polyfit)
