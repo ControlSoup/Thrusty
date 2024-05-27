@@ -4,8 +4,8 @@ from gaslighter import fluids
 # Setup ullage tank
 # https://gascylindersource.com/shop/nitrogen-cylinders/40-cu-ft-steel-nitrogen-cylinder/
 gas_state = fluids.IntensiveState(
-    'P',  convert(2500, 'psia', 'Pa'), 
-    'T', convert(80, 'degF', 'degK'), 
+    'P',  convert(2500, 'psia', 'Pa'),
+    'T', convert(80, 'degF', 'degK'),
     'nitrogen'
 )
 gas_volume = convert(7.8, 'liters', 'm^3')
@@ -14,11 +14,11 @@ gas_mass = gas_volume * gas_state.density
 
 # Calculate Mass Usage Through a Run
 
-# Use the whole tank volume to be conservative 
+# Use the whole tank volume to be conservative
 usage_mass: fluids.BasicStaticVolume = fluids.BasicStaticVolume.from_ptv(
     convert(200, 'psia', 'Pa'),
     convert(80, 'degF', 'degK'),
-    convert(5.9, 'liters', 'm^3'),
+    convert(3, 'gal', 'm^3'),
     'nitrogen'
 ).mass
 
