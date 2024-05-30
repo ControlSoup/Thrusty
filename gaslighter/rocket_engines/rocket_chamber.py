@@ -463,6 +463,10 @@ class RocketEngineCEA:
         return self.__mix_ratio
 
     @property
+    def eps(self):
+        return self.__eps
+
+    @property
     def critical_pressure(self):
         return sutton.critical_pressure(self.chamber_pressure, self.chamber_gamma)
 
@@ -574,7 +578,7 @@ class RocketEngineCEA:
             root = root_scalar(
                 mdot_from_chamber_pressure,
                 x0=self.__mdot,
-                xtol=1e-2,
+                xtol=1e-5,
                 method="secant",
                 maxiter=1000
             )
@@ -599,6 +603,63 @@ class RocketEngineCEA:
             data.next_cycle()
 
         return data.datadict
+
+    def ox_mdot_increase_study(
+        self,
+        start_mdot,
+        end_mdot,
+        fuel_mdot_from_downstream_pressure: function,
+        fuel_stiffness_from_mdot: function,
+        name=""
+    ):
+
+        data: DataStorage = DataStorage.from_linspace(
+            start=start_mdot,
+            end=end_mdot,
+            increments=500,
+            data_key="Ox mdot [lbm/s]",
+            name=name,
+        )
+
+        for ox_mdot in data.data_array:
+
+            def new_fuel_mdot(fuel_mdot):
+                mdot = ox_mdot + fuel_mdot
+                chamber_pressure = sutton.throat_pressure(self.cstar, self.throat_area, mdot)
+                new_fuel_mdot = fuel_mdot_from_downstream_pressure(chamber_pressure)
+                return fuel_mdot - new_fuel_mdot
+
+            root = root_scalar(
+                new_fuel_mdot,
+                x0=self.__mdot,
+                xtol=1e-5,
+                method="secant",
+                maxiter=1000
+            )
+
+            if not root.converged:
+                raise ValueError(f"ROOT ERROR| {root}")
+
+            fuel_mdot = root.root
+            new_mdot = fuel_mdot + ox_mdot
+
+            cea = RocketEngineCEA.from_mdots(
+                ox=self.ox,
+                fuel=self.fuel,
+                chamber_pressure=sutton.throat_pressure(self.cstar, self.throat_area, new_mdot),
+                ox_mdot=ox_mdot,
+                fuel_mdot=fuel_mdot,
+                eps=self.eps,
+                frozen=self.__frozen,
+                frozen_throat=self.__frozen_throat,
+            )
+            data.record("Atmospheric Pressure [Pa]", STD_ATM_PA)
+            data.record("Fuel Injector Stiffness [-]", fuel_stiffness_from_mdot(fuel_mdot))
+            record_rocketchamber_data(cea, data)
+            data.next_cycle()
+
+        return data.datadict
+
 
     def mdot_study(self, start_mdot=0.1, end_mdot=10, name=""):
         data: DataStorage = DataStorage.from_linspace(
@@ -756,6 +817,7 @@ class RocketEngineCEA:
             "Chamber Thermal Conductivity [watt/(m*degK)]": self.chamber_thermal_conductivity,
             "Chamber to Exit Velocity [m/s]": self.chamber_to_exit_velocity,
             "Cstar [m/s]": self.cstar,
+            "Eps [-]": self.eps,
             "Exit Area [m^2]": self.exit_area,
             "Exit Density [kg/m^3]": self.exit_density,
             "Exit Diameter [m]": self.exit_diameter,

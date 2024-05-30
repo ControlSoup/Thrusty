@@ -1,6 +1,6 @@
 import numpy as np
 
-def np_within_tolerance(array: np.array, target: float, tolerance: float):
+def np_within_tolerance(array: np.array, target: float, tolerance: float = 1e-4):
   # Find the indices where the absolute difference between the array values and the target is within the tolerance
     within_tolerance_indices = np.where(np.abs(array - target) <= tolerance)[0]
 

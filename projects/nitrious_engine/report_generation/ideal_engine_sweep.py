@@ -14,16 +14,37 @@ nitrous_injector: DryerOrifice = DryerOrifice(
 
 # Lazy way to get a fit
 ipa_system_curve_data = csv_to_datadict('../data/ipa_pressure_ladder.csv')
+ipa_system_curve_data['Injector Stiffness'] = (
+    ipa_system_curve_data['Injector.upstream_presure [Pa]'] /
+    ipa_system_curve_data['System Outlet Pressure [Pa]']
+) - 1
+
+
 ipa_system_curve_fit = np_poly(
     ipa_system_curve_data['System Outlet Pressure [Pa]'],
     ipa_system_curve_data['mdot [kg/s]'],
-    3
+    6
 )
 
 def fuel_mdot_from_chamber_pressure(chamber_pressure: float):
     if chamber_pressure < 0:
         return 0
     return ipa_system_curve_fit(chamber_pressure)
+
+def fuel_stiffness_from_mdot(mdot: float):
+    if mdot < 0:
+        return 0
+
+    index = np_within_tolerance(
+        array=ipa_system_curve_data['mdot [kg/s]'],
+        target=mdot,
+        tolerance=1e-3
+    )
+    return ipa_system_curve_data['Injector Stiffness'][index]
+
+ipa_system_curve_data['CURVE CHECK pc -> mdot'] = [fuel_mdot_from_chamber_pressure(p) for p in ipa_system_curve_data['System Outlet Pressure [Pa]']]
+ipa_system_curve_data['CURVE CHECK mdot -> Stiffnes'] = [fuel_stiffness_from_mdot(m) for m in ipa_system_curve_data['mdot [kg/s]']]
+# graph_datadict(ipa_system_curve_data, x_key='mdot [kg/s]')
 
 def ox_mdot_from_chamber_pressure(chamber_pressure: float):
     return nitrous_injector.mdot(convert(1000.0, 'psia', 'Pa'), convert(70, 'degF', 'degK'), chamber_pressure)
@@ -34,10 +55,11 @@ chamber: rocket_engines.RocketEngineCEA = rocket_chamber.RocketEngineCEA.from_md
     ox="N2O",
     fuel="IPA",
     chamber_pressure=chamber_pressure,
-    fuel_mdot=fuel_mdot_from_chamber_pressure(chamber_pressure),  # Convert 0.5gal/5s of ipa to mdot
-    ox_mdot = ox_mdot_from_chamber_pressure(chamber_pressure),
+    fuel_mdot=fuel_mdot_from_chamber_pressure(chamber_pressure),
+    ox_mdot=ox_mdot_from_chamber_pressure(chamber_pressure),
     eps=2.5,
 )
+
 # Pressure Graphs
 pressure_data = chamber.pressure_study(
     convert(100, "psia", "Pa"),
@@ -92,7 +114,23 @@ report.write_collapsable(
         return_html=True
     ),
     section_title=f"Throat Erosion [{chamber.ox},{chamber.fuel}]",
+)
 
+# Ox Mdot Study
+ox_data = chamber.ox_mdot_increase_study(
+    chamber.ox_mdot,
+    chamber.ox_mdot * 1.5,
+    fuel_mdot_from_chamber_pressure,
+    fuel_stiffness_from_mdot
+)
+report.write_collapsable(
+    graph_datadict(
+        imperial_dictionary(ox_data),
+        "Ox mdot [lbm/s]",
+        show_fig=False,
+        return_html=True
+    ),
+    section_title=f"Ox Mdot Increase [{chamber.ox},{chamber.fuel}]",
 )
 
 # Mdot Graph
@@ -107,6 +145,10 @@ report.write_collapsable(
     section_title=f"Mdot Sweep [{chamber.ox},{chamber.fuel}]",
 )
 report.export('../plots/ideal_engine_plots.html')
+
+# Stiffness Concerns
+
+
 
 # Calculate External geomtry stuff
 output = chamber.string(round_places=8)
