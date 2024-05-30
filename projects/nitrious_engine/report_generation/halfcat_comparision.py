@@ -22,7 +22,7 @@ chamber = RocketEngineCEA(
     mdot=0.883,
     MR=2.605,
     eps=halfcat.expansion_ratio,
-    thrust_efficency_fraction=halfcat.half_angle_losses * cstar_efficency
+    thrust_efficency_fraction = halfcat.half_angle_losses * cstar_efficency
 )
 
 output = chamber.dict

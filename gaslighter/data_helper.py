@@ -126,7 +126,13 @@ class DataStorage:
         datadict_to_csv(self.datadict_imperial, file_name)
 
     def plot_all(
-        self, export_path=None, show_fig=True, title=None, y_axis_tile=None, log_x=False
+        self,
+        export_path=None,
+        show_fig=True,
+        title=None,
+        y_axis_tile=None,
+        log_x=False,
+        return_html=False
     ):
 
         if title is None:
@@ -143,7 +149,13 @@ class DataStorage:
         )
 
     def plot_imperial(
-        self, export_path=None, show_fig=True, title=None, y_axis_tile=None, log_x=False
+        self,
+        export_path=None,
+        show_fig=True,
+        title=None,
+        y_axis_tile=None,
+        log_x=False,
+        return_html=False
     ):
 
         if title is None:

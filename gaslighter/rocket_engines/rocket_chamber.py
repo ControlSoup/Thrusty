@@ -633,7 +633,7 @@ class RocketEngineCEA:
         start_mix_ratio=0.1,
         end_mix_ratio=3,
         show_plot=True,
-        export_path=None,
+        export_path=None
     ):
 
         pressure = np.linspace(start_pressure, end_pressure, 30)
@@ -679,6 +679,9 @@ class RocketEngineCEA:
             if show_plot:
                 fig.show()
 
+            if return_html:
+                return fig.to_html(full_html=False)
+
     def pressure_eps_contour(
         self,
         parameter: str | list,
@@ -688,6 +691,7 @@ class RocketEngineCEA:
         end_eps=40,
         show_plot=True,
         export_path=None,
+        return_html=False
     ):
 
         pressure = np.linspace(start_pressure, end_pressure, 30)
@@ -732,6 +736,9 @@ class RocketEngineCEA:
 
             if show_plot:
                 fig.show()
+
+            if return_html:
+                return fig.to_html(full_html=False)
 
     @property
     def dict(self):

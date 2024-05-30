@@ -1,6 +1,8 @@
 from gaslighter import *
 from gaslighter.fluids import DryerOrifice
 
+report = ReportHTML(title="Ideal Engine Plots")
+
 # Copy pasta of nos injector stuff
 cd = 0.63  # <- need data
 orifice_diameter_m = convert(0.1520, "in", "m")
@@ -41,87 +43,70 @@ pressure_data = chamber.pressure_study(
     convert(100, "psia", "Pa"),
     convert(300, "psia", "Pa"),
 )
-graph_datadict(
-    pressure_data,
-    "Chamber Pressure [Pa]",
-    title=f"Pressure Sweep [{chamber.ox},{chamber.fuel}]",
-    export_path="../plots/ideal_pressure_sweep.html",
-    show_fig=False
+report.write_collapsable(
+    graph_datadict(
+        imperial_dictionary(pressure_data),
+        "Chamber Pressure [psia]",
+        show_fig=False,
+        return_html=True
+    ),
+    section_title=f"Pressure Sweep [{chamber.ox},{chamber.fuel}]",
 )
 
 # Mixture ratio graph
 mix_data = chamber.mix_study(start_mix_ratio_ratio=1.05, end_mix_ratio_ratio=10.0)
-graph_datadict(
-    mix_data,
-    "Mix Ratio [-]",
-    title=f"Mix Sweep [{chamber.ox},{chamber.fuel}]",
-    export_path="../plots/ideal_mixratio_sweep.html",
-    show_fig=False
+report.write_collapsable(
+    graph_datadict(
+        imperial_dictionary(mix_data),
+        "Mix Ratio [-]",
+        show_fig=False,
+        return_html=True
+    ),
+    section_title=f"Mix Sweep [{chamber.ox},{chamber.fuel}]",
 )
 
 # Expansion Ratio Graph
 eps_data = chamber.eps_study(start_eps=1.1, end_eps=3.0)
-graph_datadict(
-    eps_data,
-    "Area Expansion Ratio [-]",
-    title=f"Eps Sweep [{chamber.ox},{chamber.fuel}]",
-    export_path="../plots/ideal_esps_sweep.html",
-    show_fig=False
+report.write_collapsable(
+    graph_datadict(
+        imperial_dictionary(eps_data),
+        "Area Expansion Ratio [-]",
+        show_fig=False,
+        return_html=True
+    ),
+    section_title=f"Eps Sweep [{chamber.ox},{chamber.fuel}]",
 )
 
-# Throat errosion study
+# Throat erosion study
 throat_data = chamber.throat_errosion_study(
     chamber.throat_diameter,
     chamber.throat_diameter * 2,
     ox_mdot_from_chamber_pressure,
     fuel_mdot_from_chamber_pressure
 )
-graph_datadict(
-    throat_data,
-    "Throat Diameter [m]",
-    title=f"Throat Errosion [{chamber.ox},{chamber.fuel}]",
-    export_path="../plots/ideal_throat_errosion.html",
-    show_fig=False
-)
-graph_datadict(
-    imperial_dictionary(throat_data),
-    "Throat Diameter [in]",
-    title=f"Eps Sweep [{chamber.ox},{chamber.fuel}]",
-    export_path="../plots/ideal_throat_errosion_imperial.html",
-    show_fig=False
+report.write_collapsable(
+    graph_datadict(
+        imperial_dictionary(throat_data),
+        "Throat Diameter [in]",
+        show_fig=False,
+        return_html=True
+    ),
+    section_title=f"Throat Erosion [{chamber.ox},{chamber.fuel}]",
+
 )
 
 # Mdot Graph
 mdot_data = chamber.mdot_study(start_mdot=0.5, end_mdot=1.0)
-graph_datadict(
-    mdot_data,
-    "mdot [kg/s]",
-    title=f"Mdot Sweep [{chamber.ox},{chamber.fuel}]",
-    export_path="../plots/ideal_mdot_sweep.html",
-    show_fig=False
+report.write_collapsable(
+    graph_datadict(
+        imperial_dictionary(mdot_data),
+        "mdot [lbm/s]",
+        show_fig=False,
+        return_html=True
+    ),
+    section_title=f"Mdot Sweep [{chamber.ox},{chamber.fuel}]",
 )
-
-# Plot any contour on pressure vs mix ratio in the chamber class (see @prameters)
-chamber.pressure_mix_contour(
-    ["chamber_temp", "isp", "cstar"],
-    convert(100, "psia", "Pa"),
-    convert(200, "psia", "Pa"),
-    start_mix_ratio=1.8,
-    end_mix_ratio=6.0,
-    export_path="../plots/ideal_",
-    show_plot=False,
-)
-
-# Plot contour on pressure vs eps in the chamber class (see @prameters)
-chamber.pressure_eps_contour(
-    ["chamber_temp", "isp", "cstar", "exit_pressure"],
-    convert(100, "psia", "Pa"),
-    convert(200, "psia", "Pa"),
-    start_eps=1.1,
-    end_eps=5,
-    export_path="../plots/ideal_",
-    show_plot=False,
-)
+report.export('../plots/ideal_engine_plots.html')
 
 # Calculate External geomtry stuff
 output = chamber.string(round_places=8)
