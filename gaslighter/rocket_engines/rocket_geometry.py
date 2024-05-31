@@ -35,6 +35,7 @@ class RocketEngineGeometry:
 
         self.lstar = sutton.lstar(self.chamber_volume, self.throat_area)
         self.contration_ratio = self.chamber_area / self.throat_area
+
         self.expansion_ratio = sutton.eps(self.exit_area, self.throat_area)
         self.exit_half_angle = sutton.half_angle_rad(
             self.throat_diameter, self.exit_length, self.exit_diameter

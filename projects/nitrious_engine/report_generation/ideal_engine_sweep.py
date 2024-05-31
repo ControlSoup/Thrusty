@@ -148,8 +148,6 @@ report.export('../plots/ideal_engine_plots.html')
 
 # Stiffness Concerns
 
-
-
 # Calculate External geomtry stuff
 output = chamber.string(round_places=8)
 

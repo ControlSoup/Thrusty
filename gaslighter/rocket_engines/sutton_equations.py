@@ -1,6 +1,7 @@
 import numpy as np
 
-from gaslighter import circle_area_from_diameter, circle_radius_from_area
+from ..geometry import circle_area_from_diameter, circle_diameter_from_area
+from ..math import np_poly
 
 """
 Equations from Rocket Propulsion Elements 9th edition (Sutton)
