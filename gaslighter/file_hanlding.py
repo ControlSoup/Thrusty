@@ -26,14 +26,14 @@ def csv_to_datadict(file_path: str) -> dict[str, np.array]:
 
 
 def to_file(string: str, file_path: str, file_name=""):
-    with open(file_path, "w") as f:
+    with open(file_path, "w", encoding="utf-8") as f:
         if file_name is not None:
             f.write(f"==================== {file_name} ====================\n")
         f.write(string)
 
 
 def to_file_as_is(string: str, file_path):
-    with open(file_path,'w') as f:
+    with open(file_path,'w',encoding="utf-8") as f:
         f.write(string)
 
 

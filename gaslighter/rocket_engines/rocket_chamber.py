@@ -194,7 +194,7 @@ class RocketEngineCEA:
         return self.__fuel
 
     @property
-    def isp(self):
+    def isp_vac(self):
         return self.cea_obj.get_Isp(
             self.__chamber_pressure,
             self.__mix_ratio,
@@ -202,6 +202,10 @@ class RocketEngineCEA:
             self.__frozen,
             self.__frozen_throat,
         )
+    
+    @property
+    def isp(self):
+        return sutton.isp(self.thrust, self.mdot)
 
     @property
     def cstar(self):
@@ -831,7 +835,8 @@ class RocketEngineCEA:
             "Exit Thermal Conductivity [watt/(m*degK)]": self.exit_thermal_conductivity,
             "Exit Velocity [m/s]": self.exit_velocity,
             "Fuel mdot [kg/s]": self.fuel_mdot,
-            "Isp Vac [s]": self.isp,
+            "Isp Vac [s]": self.isp_vac,
+            "Isp Sutton [s]": self.isp,
             "Mixture Ratio [-]": self.mix_ratio,
             "Ox mdot [kg/s]": self.ox_mdot,
             "Throat Area [m^2]": self.throat_area,

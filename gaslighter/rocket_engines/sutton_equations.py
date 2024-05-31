@@ -1,4 +1,5 @@
 import numpy as np
+from .. units import STD_G_MPS2 
 
 from ..geometry import circle_area_from_diameter, circle_diameter_from_area
 from ..math import np_poly
@@ -6,7 +7,6 @@ from ..math import np_poly
 """
 Equations from Rocket Propulsion Elements 9th edition (Sutton)
 """
-
 
 def thrust(mdot: float, velocity: float):
 
@@ -60,3 +60,7 @@ def exit_length(throat_diameter: float, half_angle: float, exit_diameter: float)
 def lstar(chamber_volume: float, throat_area: float):
     """Eq 8.9"""
     return chamber_volume / throat_area
+
+def isp(thrust:float, mdot:float):
+    """Eq 2-5"""
+    return thrust/(mdot*STD_G_MPS2)
