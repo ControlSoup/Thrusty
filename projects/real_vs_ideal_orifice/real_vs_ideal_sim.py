@@ -3,15 +3,17 @@ from tqdm import tqdm
 
 from gaslighter import *
 from gaslighter import fluids
+from CoolProp.CoolProp import PropsSI
 
 # Constants
-FLUID = "helium"
+FLUID = "nitrogen"
 
-data = DataStorage.from_arange(start=0.0, end=100.0, dx=1e-3)
+data: DataStorage = DataStorage.from_arange(start=0.0, end=150.0, dx=1e-3)
 
 # 1/4" fitting blowing out a tank
 orifice_diameter_in = 0.25
-tank_pressure_psia = 10000
+tank_pressure_psia = 3000
+tank_temperature_degF = 150
 tank_volume_gal = 1.0
 
 cd = 0.7
@@ -23,7 +25,7 @@ cda = cd * circle_area_from_diameter(orifice_diameter)
 # -----------------------------------------------------------------------------
 tank: fluids.BasicStaticVolume = fluids.BasicStaticVolume.from_ptv(
     pressure=convert(tank_pressure_psia, "psia", "Pa"),
-    temp=STD_ATM_K,
+    temp=convert(tank_temperature_degF, 'degF', 'degK'),
     volume=convert(tank_volume_gal, "gal", "m^3"),
     fluid=FLUID,
 )
@@ -44,7 +46,10 @@ for t in tqdm(data.data_array):
         break
 
     # Change in energy, which has no external work so must be internal energy
-    udot = mdot * tank.state.sp_enthalpy
+    try:
+        udot = mdot * tank.state.sp_enthalpy
+    except Exception as e:
+        udot = mdot * PropsSI("HMASS", 'P', tank.state.pressure, 'T', tank.state.temp, tank.state.fluid)
 
     # Integrate mdot and udot
     new_mass = np_rk4([-mdot, tank.mass], data.dx)
@@ -70,21 +75,21 @@ for t in tqdm(data.data_array):
             "real_tank.density [kg/m^3]": tank.state.density,
             "real_tank.sp_inenergy [J/kg]": tank.state.sp_inenergy,
             "real_tank.sp_enthalpy [J/kg]": tank.state.sp_enthalpy,
+            "real_tank.sp_entropy [J/degK]": tank.state.sp_entropy,
             "atmospheric.pressure [Pa]": STD_ATM_PA,
         }
     )
     data.next_cycle()
 
-data.export_to_csv("results/real.csv")
 real = data.datadict
-data.reset(confirm=True)
 
+data: DataStorage = DataStorage.from_arange(start=0.0, end=150.0, dx=1e-3)
 # -----------------------------------------------------------------------------
 #  Ideal Conservation
 # -----------------------------------------------------------------------------
 tank: fluids.BasicStaticVolume = fluids.BasicStaticVolume.from_ptv(
     pressure=convert(tank_pressure_psia, "psia", "Pa"),
-    temp=STD_ATM_K,
+    temp=convert(tank_temperature_degF, 'degF', 'degK'),
     volume=convert(tank_volume_gal, "gal", "m^3"),
     fluid=FLUID,
 )
@@ -127,12 +132,12 @@ for t in tqdm(data.data_array):
             "ideal_tank.density [kg/m^3]": tank.state.density,
             "ideal_tank.sp_inenergy [J/kg]": tank.state.sp_inenergy,
             "ideal_tank.sp_enthalpy [J/kg]": tank.state.sp_enthalpy,
+            "ideal_tank.sp_entropy [J/degK]": tank.state.sp_entropy,
             "atmospheric.pressure [Pa]": STD_ATM_PA,
         }
     )
     data.next_cycle()
 
-data.export_to_csv("results/ideal.csv")
 ideal = data.datadict
 
 # Combine all data
@@ -140,24 +145,24 @@ ideal = data.datadict
 fig = go.Figure()
 results = real | ideal
 
-
-results["mdot_error [kg/s]"] = np.zeros_like(results["real_mdot [kg/s]"])
-for i, real in enumerate(results["real_mdot [kg/s]"]):
-    results["mdot_error [kg/s]"][i] = real - results["ideal_mdot [kg/s]"][i]
+if len(results['real_mdot [kg/s]']) >= len(results["ideal_mdot [kg/s]"]):
+    results["mdot_error [kg/s]"] = [(results["real_mdot [kg/s]"][i] - mdot) for i, mdot in enumerate(results['ideal_mdot [kg/s]'])]
+else:
+    results["mdot_error [kg/s]"] = [(results["ideal_mdot [kg/s]"][i] - mdot) for i, mdot in enumerate(results['real_mdot [kg/s]'])]
 
 plotting.graph_by_key(
     fig=fig,
     title="Real vs Ideal Orifice",
-    datadict=results,
+    datadict=imperial_dictionary(results),
     x_key="time [s]",
     key_list=[
-        "ideal_mdot [kg/s]",
-        "ideal_tank.pressure [Pa]",
-        "ideal_tank.temperature [degK]",
-        "real_mdot [kg/s]",
-        "real_tank.pressure [Pa]",
-        "real_tank.temperature [degK]",
-        "mdot_error [kg/s]",
+        "ideal_mdot [lbm/s]",
+        "ideal_tank.pressure [psia]",
+        "ideal_tank.temperature [degF]",
+        "real_mdot [lbm/s]",
+        "real_tank.pressure [psia]",
+        "real_tank.temperature [degF]",
+        "mdot_error [lbm/s]",
     ],
     show_fig=False,
     export_path="results/real_vs_ideal_ptm_comparision.html",
@@ -168,7 +173,7 @@ fig = go.Figure()
 plotting.graph_datadict(
     fig=fig,
     title="Real vs Ideal Orifice",
-    datadict=results,
+    datadict=imperial_dictionary(results),
     x_key="time [s]",
     show_fig=True,
     export_path="results/real_vs_ideal_orifice.html",

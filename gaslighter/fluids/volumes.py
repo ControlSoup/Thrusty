@@ -1,11 +1,10 @@
 from CoolProp.CoolProp import PropsSI
 from scipy.optimize import root_scalar
 
-from .. import MIN_RESONABLE_PRESSURE_PA, pretty_dict
 from ..errors import check_float, check_str
 from ..integration import np_rk4
 from . import zilliac_equations as zilliac
-from .intensive_state import IntensiveState, look_from_quality
+from .intensive_state import IntensiveState
 
 
 # Very bare bones data containter for volume
@@ -62,7 +61,7 @@ class BasicStaticVolume:
         self.state.update_from_du(
             self.__mass / self.__volume, self.__inenergy / self.__mass
         )
-    
+
     def dict(self, prefix: str = None):
 
         if prefix is None:

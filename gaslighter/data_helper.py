@@ -160,7 +160,7 @@ class DataStorage:
         )
 
     def reset(self):
-        self.__init__(self.data_array, self.name, self.__data_key)
+        return DataStorage(self.data_array, self.name, self.__data_key)
 
     def print(self):
         datadict = self.datadict
