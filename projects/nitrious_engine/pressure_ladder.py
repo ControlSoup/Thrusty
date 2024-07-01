@@ -28,8 +28,10 @@ ipa_system_curve_data = fluids.system_curve_incompressible(
     ipa_comp_list,
     total_source_pressure=ipa_set_pressure,
     total_source_temperature=STD_ATM_K,
-    mdot_start=convert(0.64, "lbm/s", "kg/s"),
-    mdot_end=convert(0.65, "lbm/s", "kg/s"),
+    mdot_start=convert(0.1, "lbm/s", "kg/s"),
+    mdot_end=convert(1.5, "lbm/s", "kg/s"),
+    increments=1e-4
 )
 ipa_system_curve_data.plot_all(show_fig=False, export_path='plots/ipa_pressure_ladder.html')
 ipa_system_curve_data.plot_imperial(show_fig=True, export_path='plots/ipa_pressure_ladder_imperial.html')
+ipa_system_curve_data.export_to_csv("data/ipa_pressure_ladder.csv")

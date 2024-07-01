@@ -17,17 +17,20 @@ nitrous_tank: EquilibrumTank = EquilibrumTank.from_mass(
     mass=convert(35, "lbm", "kg"),
     fluid="N2O",
 )
-# No Injector
+
+# Nos Injector
 cd = 0.63  # <- need data
 orifice_diameter_m = convert(11 / 64, "in", "m")
-orifice: DryerOrifice = DryerOrifice(
-    cd=cd, area=circle_area_from_diameter(orifice_diameter_m), fluid="N2O"
+nitrous_injector: DryerOrifice = DryerOrifice(
+    cd=cd,
+    area=circle_area_from_diameter(orifice_diameter_m),
+    fluid="N2O"
 )
 
 for t in tqdm(data.data_array):
 
     # Nitrious
-    nitrous_mdot = orifice.mdot(
+    nitrous_mdot = nitrous_injector.mdot(
         nitrous_tank.pressure, nitrous_tank.temp, convert(150, "psia", "Pa")
     )
     try:
@@ -42,7 +45,7 @@ for t in tqdm(data.data_array):
 
     # Record Results
     data.record_from_dict(nitrous_tank.dict(prefix="nitrious_tank"))
-    data.record_from_dict(orifice.dict(prefix="nitrious_orifice"))
+    data.record_from_dict(nitrous_injector.dict(prefix="nitrious_orifice"))
     data.next_cycle()
 
 data.plot_imperial(export_path="plots/feed_sim.html")

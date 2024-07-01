@@ -12,6 +12,7 @@ def graph_by_key(
     fig=None,
     yaxis_title="",
     log_x=False,
+    return_html=False
 ):
     if fig == None:
         fig = go.Figure()
@@ -39,20 +40,24 @@ def graph_by_key(
     if export_path:
         fig.write_html(export_path)
 
+    if return_html:
+        return fig.to_html(full_html=False)
+
 
 def graph_datadict(
     datadict: str,
     x_key: str,
-    title: str,
+    title: str = "",
     export_path: str = None,
     show_fig=True,
     fig=None,
     yaxis_title="",
     log_x=False,
+    return_html = False
 ):
     key_list = [key for key in datadict if key != x_key]
 
-    graph_by_key(
+    html = graph_by_key(
         datadict=datadict,
         key_list=key_list,
         x_key=x_key,
@@ -62,7 +67,11 @@ def graph_datadict(
         fig=fig,
         yaxis_title=yaxis_title,
         log_x=log_x,
+        return_html=return_html
     )
+
+    if return_html:
+        return html
 
 
 # def graph_countour(
