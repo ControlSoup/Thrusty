@@ -27,6 +27,13 @@ def graph_by_key(
             )
         )
 
+    fig.update_layout(
+        modebar_add =[
+            "v1hovermode",
+            "toggleSpikeLines"
+        ]
+    )
+
     if log_x:
         fig.update_layout(
             title=title, xaxis_title=x_key, xaxis_type="log", yaxis_title=yaxis_title
