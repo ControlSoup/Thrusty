@@ -3,7 +3,6 @@
 // Globals
 const long datarate_ms = 10;
 const long lograte_ms = 10;
-const long logs_to_save = 50;
 static long prev_ms = 0.0;
 
 static bool is_recording = false;
@@ -23,8 +22,8 @@ static state_options State;
 
 
 void setup_try(){
-  sd_setup();
-  instrumentation_setup();
+  if(sd_setup() == 0) while(1); // <- get stuck here like a pro c++ coder
+  if(instrumentation_setup() == 0) while(1);
 }
 
 
@@ -35,7 +34,7 @@ void setup() {
   delay(2000);
 
   while (1){
-    if (Serial.available() >0){
+    if (Serial.available() > 0){
       String message = Serial.readString();
       if (message == "y"){
         Serial.println(":S okay then!");
@@ -53,26 +52,25 @@ void loop() {
   u_int logs_unsaved = 0;
 
   time_s = ms / 1000.0;
-  
+
 
   switch (State){
     case STATE_IDLE:
-      if (ms - input_timer > (1.0 * 1000.0)){
+      if (ms - input_timer > 1000.0){
         input_timer = ms;
         if (Serial.available() > 0) {
           String message = Serial.readString();
           user_inputs(message);
         };
       };
-  
       break;
+
     default:
       Serial.println("You have found a Poisen Arrow cause Joe Fucked up");
   };
 
-  if (ms > log_timer_ms){
-    log_timer_ms = ms + lograte_ms;
-    logs_unsaved += 1;
+  if ((ms - log_timer_ms) > lograte_ms){
+    log_timer_ms = ms;
     update_instrumentation();
     do_the_data();
   }

@@ -6,11 +6,11 @@ const float ox_l1_slope = 1.0;
 const float ox_l1_offset = 0.0;
 
 
-void instrumentation_setup() {
+int instrumentation_setup() {
   Serial.println("\n\n __ Instrumentation Setup __");
   ox_l1_obj.begin(5, 4);
-
   Serial.println("Instrumentation setup complete");
+  return 1;
 }
 
 void update_instrumentation() {
