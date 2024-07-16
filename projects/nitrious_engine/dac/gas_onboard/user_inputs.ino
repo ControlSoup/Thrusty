@@ -3,7 +3,11 @@ void user_inputs(String message){
     is_recording = !is_recording;
 
     if (is_recording){
-      init_data_file();
+      if (init_data_file() == 0){
+        is_recording = false;
+      }
+    }else{
+      close_data();
     };
 
   } else if (message == "--stream"){

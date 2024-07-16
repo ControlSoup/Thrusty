@@ -1,13 +1,18 @@
 
+
 // Globals
+const long datarate_ms = 10;
+const long lograte_ms = 10;
+const long logs_to_save = 50;
+static long prev_ms = 0.0;
+
 static bool is_recording = false;
 static bool is_streaming = false;
-
 // Data (so lazy with globals lol)
 float time_s = 0.0;
 float ox_l1 = 0.0;
 
-
+float input_timer = 0.0;
 
 // State machine
 typedef enum{
@@ -24,7 +29,7 @@ void setup_try(){
 
 
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(9600);
   Serial.println("\nWelcome! Hopfully this works out for ya, lets walk through some setup");
   Serial.println("Would you like to continue this adventure? (y to continue)");
   delay(2000);
@@ -43,24 +48,43 @@ void setup() {
   }
 }
 void loop() {
+  long ms = millis();
+  long log_timer_ms = lograte_ms;
+  u_int logs_unsaved = 0;
+
+  time_s = ms / 1000.0;
   
-  time_s = millis() / 1000.0;
 
   switch (State){
     case STATE_IDLE:
-      if (Serial.available() > 0) {
-        String message = Serial.readString();
-        user_inputs(message);
-      }
+      if (ms - input_timer > (1.0 * 1000.0)){
+        input_timer = ms;
+        if (Serial.available() > 0) {
+          String message = Serial.readString();
+          user_inputs(message);
+        };
+      };
+  
       break;
     default:
-      Serial.println("You have found a Poisend Arrow cause Joe Fucked up");
+      Serial.println("You have found a Poisen Arrow cause Joe Fucked up");
   };
-  update_instrumentation();
-  do_the_data();
-  delay(2);
-  
 
+  if (ms > log_timer_ms){
+    log_timer_ms = ms + lograte_ms;
+    logs_unsaved += 1;
+    update_instrumentation();
+    do_the_data();
+  }
+
+
+  // Limit
+  long cur_dms = ms - prev_ms;
+  if (cur_dms > datarate_ms){
+    Serial.print("WARNING| data rate is being choked: ");
+    Serial.println(cur_dms);
+  }
+  prev_ms = ms;
 }
 
 

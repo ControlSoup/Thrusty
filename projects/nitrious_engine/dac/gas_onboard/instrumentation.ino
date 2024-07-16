@@ -17,7 +17,7 @@ void update_instrumentation() {
   
   // Ox Load Cells
   if (ox_l1_obj.is_ready()) {
-    ox_l1 = (ox_l1_obj.read() * ox_l1_slope) + ox_l1_offset;
+    ox_l1 = (ox_l1_obj.get_value() * ox_l1_slope) + ox_l1_offset;
   }
 
 }
