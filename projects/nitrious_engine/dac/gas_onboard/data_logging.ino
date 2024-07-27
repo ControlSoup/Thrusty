@@ -1,4 +1,4 @@
-#include <SD.h>
+#include <SdFat.h>
 #include <SPI.h>
 #define FILE_BASE_NAME "log-"
 
@@ -12,9 +12,18 @@ static String data_file_name;
 static u_int flush_count = 0;
 static float relative_time_start_s;
 
+
 // Configure data, NOTE: This is pretty sketch as there no catch for length checks.... or ordering
 // =================================================================================================
-const char header[] = "run_time [s],time [s],state [-],ox_l1 [lbf]";
+
+
+const char header[] = "run_time [s],time [s],state [-]," \
+"ox_l1 [lbf],ox_l2 [lbf],ox_l3 [lbf],ox_l4 [lbf]," \ 
+"fu_l1 [lbf],fu_l2 [lbf],fu_l3 [lbf],fu_l4 [lbf]," \ 
+"ox_tc_094 [degF],ox_tc_097 [degF]," \ 
+"fu_tc_056 [degF]," \ 
+"ch_stc_101_a [degF],ch_stc_101_b [degF],ch_stc_101_c [degF]";
+
 const int places = 4;
 
 // =================================================================================================
@@ -32,35 +41,73 @@ void close_data(){
   Serial.println("Data has been saved");
 }
 
-void check_flush(){
-  if (flush_count > 10){ // TODO: Actually do a ring buffer, or get a better number here 10, 100 ect still choke the data 
-    File.sync();
-    flush_count = 0;
-    return 0;
-  }
-  flush_count += 1;
-}
+// void check_flush(){
+//   if (flush_count > 10){ // TODO: Actually do a ring buffer, or get a better number here 10 by estimates byte size of each run and seeing how many you can fit 
+//     File.sync();
+//     flush_count = 0;
+//     return 0;
+//   }
+//   flush_count += 1;
+//   return 1;
+// }
 
 void do_the_data() {
 
   float relative_time_s = time_s - relative_time_start_s;
 
   if (is_streaming){
-    Serial.println(ox_l1);
+    Serial.print(ox_l1 + ox_l2 + ox_l3 + ox_l4);;
+    Serial.print(",");
+    Serial.print(fu_l1 + fu_l2 + fu_l3 + fu_l4);;
+    Serial.print(",");
+    Serial.print(ox_tc_094);
+    Serial.print(",");
+    Serial.print(ox_tc_097);
+    Serial.print(",");
+    Serial.print(fu_tc_056);
+    Serial.print(",");
+    Serial.print(ch_stc_101_a);
+    Serial.print(",");
+    Serial.print(ch_stc_101_b);
+    Serial.print(",");
+    Serial.println(ch_stc_101_c);
   }
 
 
   if (is_recording){
-    // Sd card writes in 512 byte chunks
-    // Re-evaluate if this
     File.print(time_s, places);
     File.print(',');
     File.print(relative_time_s, places);
     File.print(',');
     File.print(State);
     File.print(',');
-    File.println(ox_l1, places);
-    check_flush();
+    File.print(ox_l1, places);
+    File.print(',');  
+    File.print(ox_l2, places);
+    File.print(',');
+    File.print(ox_l3, places);
+    File.print(',');
+    File.print(ox_l4, places);
+    File.print(',');
+    File.print(fu_l1, places);
+    File.print(',');  
+    File.print(fu_l2, places);
+    File.print(',');  
+    File.print(fu_l3, places);
+    File.print(',');  
+    File.print(fu_l4, places);
+    File.print(",");
+    File.print(ox_tc_094);
+    File.print(",");
+    File.print(ox_tc_097);
+    File.print(",");
+    File.print(fu_tc_056);
+    File.print(",");
+    File.print(ch_stc_101_a);
+    File.print(",");
+    File.print(ch_stc_101_b);
+    File.print(",");
+    File.println(ch_stc_101_c);
   }
 }
 
