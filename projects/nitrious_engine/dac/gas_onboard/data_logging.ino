@@ -13,20 +13,97 @@ static u_int flush_count = 0;
 static float relative_time_start_s;
 
 
-// Configure data, NOTE: This is pretty sketch as there no catch for length checks.... or ordering
-// =================================================================================================
 
+// =================================================================================================
+// Configure data, NOTE: This is pretty sketch as there no catch for length checks.... or ordering
 
 const char header[] = "run_time [s],time [s],state [-]," \
-"ox_l1 [lbf],ox_l2 [lbf],ox_l3 [lbf],ox_l4 [lbf]," \ 
-"fu_l1 [lbf],fu_l2 [lbf],fu_l3 [lbf],fu_l4 [lbf]," \ 
-"ox_tc_094 [degF],ox_tc_097 [degF]," \ 
-"fu_tc_056 [degF]," \ 
-"ch_stc_101_a [degF],ch_stc_101_b [degF],ch_stc_101_c [degF]";
+"OX-LC-A [lbf],OX-LC-B [lbf],OX-LC-C [lbf],OX-LC-D[lbf], FU-LC-A [lbf],FU-LC-B [lbf],FU-LC-C [lbf],FU-LC-D [lbf],CH-LC-A [lbf], CH-LC-B [lbf]" \ 
+"OX-TC-093 [degF],OX-TC-097 [degF],FC-TC-056 [degF],CH-STC-101-A [degF], CH-STC-101-B [degF],CH-STC-101-C [degF]"\
+"OX-PT-094 [psig],OX-PT-098 [psig],N2-PT-019 [psig], CH-PT-100 [psig]";
+
+void write_data(){
+  
+  float relative_time_s = time_s - relative_time_start_s;
+
+  File.print(time_s, places);
+  File.print(",");
+  File.print(relative_time_s, places);
+  File.print(",");
+  File.print(State);
+  File.print(",");
+  File.print(ox_lc_a, places);
+  File.print(",");  
+  File.print(ox_lc_b, places);
+  File.print(",");
+  File.print(ox_lc_c, places);
+  File.print(",");
+  File.print(ox_lc_d, places);
+  File.print(",");
+  File.print(fu_lc_a, places);
+  File.print(",");  
+  File.print(fu_lc_b, places);
+  File.print(",");  
+  File.print(fu_lc_c, places);
+  File.print(",");  
+  File.print(fu_lc_d, places);
+  File.print(",");
+  File.print(ch_lc_a, places);
+  File.print(",");
+  File.print(ch_lc_b, places);
+  File.print(",");
+  File.print(ox_tc_093, places);
+  File.print(",");
+  File.print(ox_tc_097, places);
+  File.print(",");
+  File.print(fu_tc_056, places);
+  File.print(",");
+  File.print(ch_stc_101_a, places);
+  File.print(",");
+  File.print(ch_stc_101_b, places);
+  File.print(",");
+  File.print(ch_stc_101_c, places);
+  File.print(ox_pt_094,places);
+  File.print(",");
+  File.print(ox_pt_098,places);
+  File.print(","); 
+  File.print(n2_pt_019,places);
+  File.print(","); 
+  File.println(ch_pt_100,places);
+}
+
+void serial_print_data(){
+  Serial.print(ox_l1 + ox_l2 + ox_l3 + ox_l4);
+  Serial.print(",");
+  Serial.print(fu_l1 + fu_l2 + fu_l3 + fu_l4);
+  Serial.print(",");
+  Serial.print(ox_tc_094);
+  Serial.print(",");
+  Serial.print(ox_tc_097);
+  Serial.print(",");
+  Serial.print(fu_tc_056);
+  Serial.print(",");
+  Serial.print(ch_stc_101_a);
+  Serial.print(",");
+  Serial.print(ch_stc_101_b);
+  Serial.print(",");
+  Serial.println(ch_stc_101_c);
+}
 
 const int places = 4;
 
 // =================================================================================================
+int sd_setup() {
+  Serial.println("__ SD Setup __");
+ // Initialize the SD.
+  if (!sd.begin(SD_CONFIG)) {
+    Serial.println("ERROR| Failed to configure SD, check if its in the thingy");
+    return 0;
+  }
+  Serial.println("SD Setup complete");
+  return 1;
+}
+
 void print_header(){
   Serial.println(header);
 }
@@ -41,86 +118,16 @@ void close_data(){
   Serial.println("Data has been saved");
 }
 
-// void check_flush(){
-//   if (flush_count > 10){ // TODO: Actually do a ring buffer, or get a better number here 10 by estimates byte size of each run and seeing how many you can fit 
-//     File.sync();
-//     flush_count = 0;
-//     return 0;
-//   }
-//   flush_count += 1;
-//   return 1;
-// }
-
 void do_the_data() {
-
-  float relative_time_s = time_s - relative_time_start_s;
-
   if (is_streaming){
-    Serial.print(ox_l1 + ox_l2 + ox_l3 + ox_l4);;
-    Serial.print(",");
-    Serial.print(fu_l1 + fu_l2 + fu_l3 + fu_l4);;
-    Serial.print(",");
-    Serial.print(ox_tc_094);
-    Serial.print(",");
-    Serial.print(ox_tc_097);
-    Serial.print(",");
-    Serial.print(fu_tc_056);
-    Serial.print(",");
-    Serial.print(ch_stc_101_a);
-    Serial.print(",");
-    Serial.print(ch_stc_101_b);
-    Serial.print(",");
-    Serial.println(ch_stc_101_c);
+    serial_print_data();
   }
-
-
   if (is_recording){
-    File.print(time_s, places);
-    File.print(',');
-    File.print(relative_time_s, places);
-    File.print(',');
-    File.print(State);
-    File.print(',');
-    File.print(ox_l1, places);
-    File.print(',');  
-    File.print(ox_l2, places);
-    File.print(',');
-    File.print(ox_l3, places);
-    File.print(',');
-    File.print(ox_l4, places);
-    File.print(',');
-    File.print(fu_l1, places);
-    File.print(',');  
-    File.print(fu_l2, places);
-    File.print(',');  
-    File.print(fu_l3, places);
-    File.print(',');  
-    File.print(fu_l4, places);
-    File.print(",");
-    File.print(ox_tc_094);
-    File.print(",");
-    File.print(ox_tc_097);
-    File.print(",");
-    File.print(fu_tc_056);
-    File.print(",");
-    File.print(ch_stc_101_a);
-    File.print(",");
-    File.print(ch_stc_101_b);
-    File.print(",");
-    File.println(ch_stc_101_c);
+    write_data();
   }
 }
 
-int sd_setup() {
-  Serial.println("__ SD Setup __");
- // Initialize the SD.
-  if (!sd.begin(SD_CONFIG)) {
-    Serial.println("ERROR| Failed to configure SD, check if its in the thingy");
-    return 0;
-  }
-  Serial.println("SD Setup complete");
-  return 1;
-}
+
 
 int init_data_file(){
 
@@ -131,10 +138,10 @@ int init_data_file(){
     Serial.println("ERROR| FILE_BASE_NAME too long");
   }
   while (sd.exists(file_name)) {
-    if (file_name[BASE_NAME_SIZE + 1] != '9') {
+    if (file_name[BASE_NAME_SIZE + 1] != "9") {
       file_name[BASE_NAME_SIZE + 1]++;
-    } else if (file_name[BASE_NAME_SIZE] != '9') {
-      file_name[BASE_NAME_SIZE + 1] = '0';
+    } else if (file_name[BASE_NAME_SIZE] != "9") {
+      file_name[BASE_NAME_SIZE + 1] = "0";
       file_name[BASE_NAME_SIZE]++;
     } else {
       Serial.println("ERROR| Can't create file name");

@@ -1,33 +1,34 @@
 
 
 // Globals
-const long datarate_ms = 10;
+const long datarate_ms = 5;
 static long prev_ms = 0.0;
 
 // Global Channels (in order)
-float time_s = -404.0;
-float ox_l1 = -404.0;
-float ox_l2 = -404.0;
-float ox_l3 = -404.0;
-float ox_l4 = -404.0;
-float fu_l1 = -404.0;
-float fu_l2 = -404.0;
-float fu_l3 = -404.0;
-float fu_l4 = -404.0;
-float ox_tc_094 = -404.0;
-float ox_tc_097 = -404.0;
-float fu_tc_056 = -404.0;
-float ch_stc_101_a = -404.0;
-float ch_stc_101_b = -404.0;
-float ch_stc_101_c = -404.0;
-
+static float time_s = -404.0;
+static float ox_lc_a = -404.0;
+static float ox_lc_b = -404.0;
+static float ox_lc_c = -404.0;
+static float ox_lc_d = -404.0;
+static float fu_lc_a = -404.0;
+static float fu_lc_b = -404.0;
+static float fu_lc_c = -404.0;
+static float fu_lc_d = -404.0;
+static float ch_lc_a = -404.0;
+static float ch_lc_b = -404.0;
+static float ox_tc_093 = -404.0;
+static float ox_tc_097 = -404.0;
+static float fu_tc_056 = -404.0;
+static float ch_stc_101_a = -404.0;
+static float ch_stc_101_b = -404.0;
+static float ch_stc_101_c = -404.0;
+static float ox_pt_094 = -404.0;
+static float ox_pt_098 = -404.0;
+static float n2_pt_019 = -404.0;
+static float ch_pt_100 = -404.0;
 
 static bool is_recording = false;
 static bool is_streaming = false;
-
-
-
-float input_timer = 0.0;
 
 // State machine
 typedef enum{
@@ -38,6 +39,8 @@ static state_options State;
 
 
 void setup_try(){
+  Serial.print("Using File: ");
+  Serial.println(__FILE__);
   if(sd_setup() == 0) while(1); // <- get stuck here like a pro c++ coder
   if(instrumentation_setup() == 0) while(1);
 }
@@ -64,8 +67,6 @@ void setup() {
 void loop() {
   switch (State){
     case STATE_IDLE:
-      if (millis() - input_timer > 1000.0){
-        input_timer = millis();
         if (Serial.available() > 0) {
           String message = Serial.readString();
           user_inputs(message);
