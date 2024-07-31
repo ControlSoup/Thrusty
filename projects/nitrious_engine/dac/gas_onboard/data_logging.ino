@@ -9,7 +9,6 @@ SdFile File;
 #define SD_CONFIG  SdioConfig(FIFO_SDIO)
 
 static String data_file_name;
-static u_int flush_count = 0;
 static float relative_time_start_s;
 
 
@@ -17,10 +16,12 @@ static float relative_time_start_s;
 // =================================================================================================
 // Configure data, NOTE: This is pretty sketch as there no catch for length checks.... or ordering
 
-const char header[] = "run_time [s],time [s],state [-]," \
-"OX-LC-A [lbf],OX-LC-B [lbf],OX-LC-C [lbf],OX-LC-D[lbf], FU-LC-A [lbf],FU-LC-B [lbf],FU-LC-C [lbf],FU-LC-D [lbf],CH-LC-A [lbf], CH-LC-B [lbf]" \ 
+const char header[] = "run_time [s],time [s],state [-],"\
+"OX-LC-A [lbf],OX-LC-B [lbf],OX-LC-C [lbf],OX-LC-D[lbf], FU-LC-A [lbf],FU-LC-B [lbf],FU-LC-C [lbf],FU-LC-D [lbf],CH-LC-A [lbf], CH-LC-B [lbf]"\ 
 "OX-TC-093 [degF],OX-TC-097 [degF],FC-TC-056 [degF],CH-STC-101-A [degF], CH-STC-101-B [degF],CH-STC-101-C [degF]"\
 "OX-PT-094 [psig],OX-PT-098 [psig],N2-PT-019 [psig], CH-PT-100 [psig]";
+
+const int places = 4;
 
 void write_data(){
   
@@ -63,6 +64,7 @@ void write_data(){
   File.print(ch_stc_101_b, places);
   File.print(",");
   File.print(ch_stc_101_c, places);
+  File.print(",");
   File.print(ox_pt_094,places);
   File.print(",");
   File.print(ox_pt_098,places);
@@ -73,11 +75,11 @@ void write_data(){
 }
 
 void serial_print_data(){
-  Serial.print(ox_l1 + ox_l2 + ox_l3 + ox_l4);
+  Serial.print(ox_lc_a + ox_lc_b + ox_lc_c + ox_lc_d);
   Serial.print(",");
-  Serial.print(fu_l1 + fu_l2 + fu_l3 + fu_l4);
+  Serial.print(fu_lc_a + fu_lc_b + fu_lc_c + fu_lc_d);
   Serial.print(",");
-  Serial.print(ox_tc_094);
+  Serial.print(ox_tc_093);
   Serial.print(",");
   Serial.print(ox_tc_097);
   Serial.print(",");
@@ -87,10 +89,16 @@ void serial_print_data(){
   Serial.print(",");
   Serial.print(ch_stc_101_b);
   Serial.print(",");
-  Serial.println(ch_stc_101_c);
+  Serial.print(ch_stc_101_c);
+  File.print(",");
+  File.print(ox_pt_094,places);
+  File.print(",");
+  File.print(ox_pt_098,places);
+  File.print(","); 
+  File.print(n2_pt_019,places);
+  File.print(","); 
+  File.println(ch_pt_100,places);
 }
-
-const int places = 4;
 
 // =================================================================================================
 int sd_setup() {

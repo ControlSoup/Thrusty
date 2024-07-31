@@ -71,7 +71,6 @@ void loop() {
           String message = Serial.readString();
           user_inputs(message);
         };
-      };
       break;
     default:
       Serial.println("You have found a Poisen Arrow cause Joe Fucked up");

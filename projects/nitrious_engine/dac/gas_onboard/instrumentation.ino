@@ -1,18 +1,15 @@
 #include "HX711.h"
 #include "ADS1X15.h"
 
-typedef struct{
-  slope: float,
-  offset: float
+typedef struct LSR{
+  float slope;
+  float offset;
 } LinearSensor;
 
-float reading_to_value(float value, LinearSenor info){
-  return (value * info.slope) - info.offset;
-}
 
 // Ox Load Cells
-HX711 ox_l1_obj;
-ox_l1_info = LinearSensor(1.0, 0.0);
+HX711 ox_lc_a_obj;
+LinearSensor ox_lc_a_info = {1.0, 0.0};
 
 // TC Adc
 ADS1015 TC_ADC(0x48);
@@ -35,10 +32,10 @@ uint8_t v2_channels = 0;
 int16_t v2_val[4] = { 0, 0, 0, 0 };
 const int V2_ADC_TRIG = 31;
 
-ox_pt_094_info = LinearSensor(355.5555, 0.0);
-ox_pt_098_info = LinearSensor(355.5555, 0.0);
-n2_pt_019_info = LinearSensor(66.6667, 0.0);
-ch_pt_100_info = LinearSensor(66.6667, 0.0);
+LinearSensor ox_pt_094_info = {355.5555, 0.0};
+LinearSensor ox_pt_098_info = {355.5555, 0.0};
+LinearSensor n2_pt_019_info = {66.6667, 0.0};
+LinearSensor ch_pt_100_info = {66.6667, 0.0};
 
 void tc_adc_setup(){
   pinMode(TC_ADC_TRIG, INPUT_PULLUP);
@@ -107,7 +104,7 @@ int instrumentation_setup() {
   Wire.begin();
   Serial.println("\n\n __ Instrumentation Setup __");
   Serial.println("Ox L1 Init");
-  ox_l1_obj.begin(5, 4);
+  ox_lc_a_obj.begin(5, 4);
 
   Serial.print("ADS1X15_LIB_VERSION: ");
   Serial.println(ADS1X15_LIB_VERSION);
@@ -133,25 +130,29 @@ float to_degF(float adc_reading){
   return ((volt - 1.25) * 360.0) + 32.0;
 }
 
+float reading_to_value(float value, struct LSR info){
+  return (value * info.slope) - info.offset;
+}
+
 
 void update_instrumentation() {
 
   // Ox Load Cells
-  if (ox_l1_obj.is_ready()) {
-    ox_l1 = reading_to_value(ox_l1_obj.get_value(), ox_l1_info);
+  if (ox_lc_a_obj.is_ready()) {
+    ox_lc_a = reading_to_value(ox_lc_a_obj.get_value(), ox_lc_a_info);
   }
 
   // TC adc
   if (tc_ready){
     //  save the value
     tc_val[tc_channels] = TC_ADC.getValue();
-    //  request next tc_channels
+    //  request next calue
     tc_channels++;
     if (tc_channels >= 4) tc_channels = 0;
     TC_ADC.readADC(tc_channels);
     tc_ready = false;
   }
-  ox_tc_094 = to_degF(tc_val[0]);
+  ox_tc_093 = to_degF(tc_val[0]);
   ox_tc_097 = to_degF(tc_val[1]);
   fu_tc_056 = to_degF(tc_val[2]);
   ch_stc_101_a = to_degF(tc_val[3]);
@@ -160,15 +161,15 @@ void update_instrumentation() {
   if (v1_ready){
     //  save the value
     v1_val[v1_channels] = V1_ADC.getValue();
-    //  request next tc_channels
+    //  request next value 
     v1_channels++;
     if (v1_channels >= 4) v1_channels = 0;
     V1_ADC.readADC(v1_channels);
     v1_ready = false;
   }
-  ox_pt_094 =  sensor_to_engineering(v1_channels[0], ox_pt_094_info)
-  ox_pt_098 =  sensor_to_engineering(v1_channels[1], ox_pt_098_info)
-  n2_pt_019 =  sensor_to_engineering(v1_channels[2], n2_pt_019_info)
-  ch_pt_100 =  sensor_to_engineering(v1_channels[3], ch_pt_100_info)
+  ox_pt_094 =  reading_to_value(v1_val[0], ox_pt_094_info);
+  ox_pt_098 =  reading_to_value(v1_val[1], ox_pt_098_info);
+  n2_pt_019 =  reading_to_value(v1_val[2], n2_pt_019_info);
+  ch_pt_100 =  reading_to_value(v1_val[3], ch_pt_100_info);
 
 }
