@@ -90,14 +90,14 @@ void serial_print_data(){
   Serial.print(ch_stc_101_b);
   Serial.print(",");
   Serial.print(ch_stc_101_c);
-  File.print(",");
-  File.print(ox_pt_094,places);
-  File.print(",");
-  File.print(ox_pt_098,places);
-  File.print(","); 
-  File.print(n2_pt_019,places);
-  File.print(","); 
-  File.println(ch_pt_100,places);
+  Serial.print(",");
+  Serial.print(ox_pt_094,places);
+  Serial.print(",");
+  Serial.print(ox_pt_098,places);
+  Serial.print(","); 
+  Serial.print(n2_pt_019,places);
+  Serial.print(","); 
+  Serial.println(ch_pt_100,places);
 }
 
 // =================================================================================================

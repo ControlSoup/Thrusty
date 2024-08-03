@@ -32,10 +32,11 @@ uint8_t v2_channels = 0;
 int16_t v2_val[4] = { 0, 0, 0, 0 };
 const int V2_ADC_TRIG = 31;
 
-LinearSensor ox_pt_094_info = {355.5555, 0.0};
-LinearSensor ox_pt_098_info = {355.5555, 0.0};
-LinearSensor n2_pt_019_info = {66.6667, 0.0};
-LinearSensor ch_pt_100_info = {66.6667, 0.0};
+LinearSensor ox_pt_094_info = {400.0, 200.0};
+LinearSensor ox_pt_098_info = {400.0, 200.0};
+LinearSensor n2_pt_019_info = {75.0,	37.5};
+LinearSensor ch_pt_100_info = {75.0,	37.5};
+
 
 void tc_adc_setup(){
   pinMode(TC_ADC_TRIG, INPUT_PULLUP);
