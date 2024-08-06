@@ -16,65 +16,72 @@ static float relative_time_start_s;
 // =================================================================================================
 // Configure data, NOTE: This is pretty sketch as there no catch for length checks.... or ordering
 
-const char header[] = "run_time [s],time [s],state [-],"\
-"OX-LC-A [lbf],OX-LC-B [lbf],OX-LC-C [lbf],OX-LC-D[lbf], FU-LC-A [lbf],FU-LC-B [lbf],FU-LC-C [lbf],FU-LC-D [lbf],CH-LC-A [lbf], CH-LC-B [lbf]"\ 
-"OX-TC-093 [degF],OX-TC-097 [degF],FC-TC-056 [degF],CH-STC-101-A [degF], CH-STC-101-B [degF],CH-STC-101-C [degF]"\
-"OX-PT-094 [psig],OX-PT-098 [psig],N2-PT-019 [psig], CH-PT-100 [psig]";
+const char header[] =
+"run_time [s],"\
+"time [s],"\
+"state [-],"\
+"Sensor Bus [Volts],"\
+"OX-LC-A [lbf],"\
+"OX-LC-B [lbf],"\
+"OX-LC-C [lbf],"\
+"OX-LC-D [lbf],"\
+"FU-LC-A [lbf],"\
+"FU-LC-B [lbf],"\
+"FU-LC-C [lbf],"\
+"FU-LC-D [lbf],"\
+"CH-LC-A [lbf],"\
+"CH-LC-B [lbf],"\
+"OX-TC-093 [degF],"\
+"OX-TC-097 [degF],"\
+"FC-TC-056 [degF],"\
+"CH-STC-101-A [degF],"\
+"CH-STC-101-B [degF],"\
+"CH-STC-101-C [degF],"\
+"OX-PT-094 [psig],"\
+"OX-PT-098 [psig],"\
+"N2-PT-019 [psig],"\
+"CH-PT-100 [psig]";
 
 const int places = 4;
 
+void file_data(float value){
+  File.print(value, places);
+  File.print(",");
+}
+
 void write_data(){
-  
+
   float relative_time_s = time_s - relative_time_start_s;
 
-  File.print(time_s, places);
-  File.print(",");
-  File.print(relative_time_s, places);
-  File.print(",");
-  File.print(State);
-  File.print(",");
-  File.print(ox_lc_a, places);
-  File.print(",");  
-  File.print(ox_lc_b, places);
-  File.print(",");
-  File.print(ox_lc_c, places);
-  File.print(",");
-  File.print(ox_lc_d, places);
-  File.print(",");
-  File.print(fu_lc_a, places);
-  File.print(",");  
-  File.print(fu_lc_b, places);
-  File.print(",");  
-  File.print(fu_lc_c, places);
-  File.print(",");  
-  File.print(fu_lc_d, places);
-  File.print(",");
-  File.print(ch_lc_a, places);
-  File.print(",");
-  File.print(ch_lc_b, places);
-  File.print(",");
-  File.print(ox_tc_093, places);
-  File.print(",");
-  File.print(ox_tc_097, places);
-  File.print(",");
-  File.print(fu_tc_056, places);
-  File.print(",");
-  File.print(ch_stc_101_a, places);
-  File.print(",");
-  File.print(ch_stc_101_b, places);
-  File.print(",");
-  File.print(ch_stc_101_c, places);
-  File.print(",");
-  File.print(ox_pt_094,places);
-  File.print(",");
-  File.print(ox_pt_098,places);
-  File.print(","); 
-  File.print(n2_pt_019,places);
-  File.print(","); 
-  File.println(ch_pt_100,places);
+  file_data(time_s);
+  file_data(relative_time_s);
+  file_data(State);
+  file_data(sensor_voltage);
+  file_data(ox_lc_a);
+  file_data(ox_lc_b);
+  file_data(ox_lc_c);
+  file_data(ox_lc_d);
+  file_data(fu_lc_a);
+  file_data(fu_lc_b);
+  file_data(fu_lc_c);
+  file_data(fu_lc_d);
+  file_data(ch_lc_a);
+  file_data(ch_lc_b);
+  file_data(ox_tc_093);
+  file_data(ox_tc_097);
+  file_data(fu_tc_056);
+  file_data(ch_stc_101_a);
+  file_data(ch_stc_101_b);
+  file_data(ch_stc_101_c);
+  file_data(ox_pt_094);
+  file_data(ox_pt_098);
+  file_data(n2_pt_019);
+  File.println(ch_pt_100);
 }
 
 void serial_print_data(){
+  Serial.print(sensor_voltage);
+  Serial.print(",");
   Serial.print(ox_lc_a + ox_lc_b + ox_lc_c + ox_lc_d);
   Serial.print(",");
   Serial.print(fu_lc_a + fu_lc_b + fu_lc_c + fu_lc_d);
@@ -94,9 +101,9 @@ void serial_print_data(){
   Serial.print(ox_pt_094,places);
   Serial.print(",");
   Serial.print(ox_pt_098,places);
-  Serial.print(","); 
+  Serial.print(",");
   Serial.print(n2_pt_019,places);
-  Serial.print(","); 
+  Serial.print(",");
   Serial.println(ch_pt_100,places);
 }
 
@@ -138,7 +145,6 @@ void do_the_data() {
 
 
 int init_data_file(){
-
   // Shitty copy pasta code to itterate the next file name
   const uint8_t BASE_NAME_SIZE = sizeof(FILE_BASE_NAME) - 1;
   char file_name[13] = FILE_BASE_NAME "00.csv";

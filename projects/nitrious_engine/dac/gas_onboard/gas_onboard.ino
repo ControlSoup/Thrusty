@@ -1,11 +1,12 @@
 
 
 // Globals
-const long datarate_ms = 5;
+const long datarate_ms = 2;
 static long prev_ms = 0.0;
 
 // Global Channels (in order)
 static float time_s = -404.0;
+static float sensor_voltage = -404.0;
 static float ox_lc_a = -404.0;
 static float ox_lc_b = -404.0;
 static float ox_lc_c = -404.0;
