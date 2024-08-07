@@ -1,7 +1,7 @@
 
 
 // Globals
-const long datarate_ms = 2;
+const long datarate_ms = 3;
 static long prev_ms = 0.0;
 
 // Global Channels (in order)
